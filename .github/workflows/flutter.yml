@@ -1,4 +1,4 @@
-name: Verificar e gerar APK
+name: Verificar e compilar
 
 on:
   push:
@@ -6,8 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  FLUTTER_VERSION: 3.47.9
+
 jobs:
-  build:
+  android:
+    name: Análise, testes e APK
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -20,11 +24,9 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
-
-      - name: Gerar pastas de plataforma
-        run: flutter create . --project-name gm_fitness --org com.gmfitness --platforms=android
 
       - name: Dependências
         run: flutter pub get
@@ -52,3 +54,22 @@ jobs:
           name: gm-fitness-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
+
+  ios:
+    name: Compilação iOS (sem assinatura)
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Dependências
+        run: flutter pub get
+
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign

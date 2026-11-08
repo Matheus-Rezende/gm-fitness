@@ -14,21 +14,33 @@ App Flutter para quem está começando na academia. Funciona **100% offline**: o
 
 ## Como rodar
 
-Este repositório guarda só o código do app (pasta `lib/`) e os dados (`assets/`). As pastas de plataforma (Android, Linux etc.) são geradas pelo próprio Flutter na primeira vez:
+Requisitos: **Flutter 3.47.9** (stable, com Dart 3.13) ou mais novo. Confira com `flutter --version` e atualize com `flutter upgrade`.
 
 ```bash
-git clone git@github.com:Matheus-Rezende/gm-fitness.git
+git clone https://github.com/Matheus-Rezende/gm-fitness.git
 cd gm-fitness
-flutter create . --project-name gm_fitness --org com.gmfitness --platforms=android,linux
 flutter pub get
 flutter run
 ```
 
-O `flutter create .` não sobrescreve os arquivos que já existem, só cria os que faltam.
+### Android
+
+Com um emulador aberto ou um celular conectado com a depuração USB ativa, `flutter run` instala o app. Para gerar o APK:
+
+```bash
+flutter build apk --release
+```
+
+O APK de cada versão também fica disponível na aba **Actions** do GitHub, na execução mais recente, em "gm-fitness-apk".
+
+### iOS
+
+Precisa de um Mac com Xcode. Rode `flutter run` com o simulador aberto, ou abra `ios/Runner.xcworkspace` no Xcode, escolha sua conta em **Signing & Capabilities** e instale num iPhone. O GitHub compila a versão de iOS (sem assinatura) a cada envio para garantir que o projeto continua funcionando.
 
 ## Estrutura
 
 ```
+android/, ios/              projetos nativos (gerados pelo Flutter 3.47.9)
 lib/
   main.dart                 tema e carregamento inicial
   state/app_state.dart      catálogo + dados do usuário (shared_preferences)
