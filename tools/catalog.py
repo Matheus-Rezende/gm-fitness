@@ -869,7 +869,7 @@ def day(weekday, title, items):
 
 PRESETS = [
     dict(
-        id='primeiros_passos', name='Primeiros passos', shape='iniciante',
+        id='primeiros_passos', name='Primeiros passos', shape='iniciante', sex='both',
         summary='Para quem nunca treinou ou está voltando. Corpo inteiro, 3 vezes por semana.',
         description='Antes de buscar um formato de corpo, o corpo precisa aprender os movimentos básicos. '
                     'Este plano usa máquinas e exercícios simples para criar força, coordenação e o hábito '
@@ -891,7 +891,7 @@ PRESETS = [
                                        it('perdigueiro', 3, '10 cada'), it('caminhada_esteira', 1, '20 min', 0)]),
         ]),
     dict(
-        id='triangulo_invertido', name='Triângulo invertido', shape='triangulo_invertido',
+        id='triangulo_invertido', sex='F', name='Triângulo invertido', shape='triangulo_invertido',
         summary='Ombros e costas mais largos que o quadril. Foco em glúteos, quadril e pernas.',
         description='No triângulo invertido a parte de cima é mais larga que a de baixo. A largura dos ombros é '
                     'estrutural e não muda; o que muda é a proporção. Ganhar volume e firmeza em glúteos, '
@@ -919,7 +919,7 @@ PRESETS = [
                                           it('bicicleta_ergometrica', 1, '25 min', 0)]),
         ]),
     dict(
-        id='triangulo', name='Triângulo (pera)', shape='triangulo',
+        id='triangulo', sex='F', name='Triângulo (pera)', shape='triangulo',
         summary='Quadril mais largo que os ombros. Foco em ombros e costas para equilibrar.',
         description='No triângulo, ou pera, o quadril e as coxas são mais largos que os ombros. Desenvolver '
                     'ombros (especialmente a parte lateral) e costas cria largura em cima, enquanto as pernas '
@@ -945,7 +945,7 @@ PRESETS = [
                                      it('prancha_lateral', 3, '20s cada'), it('abdominal_bicicleta', 3, '12 cada')]),
         ]),
     dict(
-        id='ampulheta', name='Ampulheta', shape='ampulheta',
+        id='ampulheta', sex='F', name='Ampulheta', shape='ampulheta',
         summary='Ombros e quadril alinhados, cintura marcada. Foco em manter o equilíbrio.',
         description='Na ampulheta, ombros e quadril têm larguras parecidas e a cintura é bem definida. O objetivo é '
                     'manter essa proporção: treino equilibrado entre parte de cima e de baixo, core forte e '
@@ -969,7 +969,7 @@ PRESETS = [
                                      it('caminhada_inclinada', 1, '20 min', 0)]),
         ]),
     dict(
-        id='retangulo', name='Retângulo', shape='retangulo',
+        id='retangulo', sex='F', name='Retângulo', shape='retangulo',
         summary='Ombros, cintura e quadril com larguras parecidas. Foco em criar curvas.',
         description='No retângulo, a cintura é pouco marcada. Para criar curvas, o treino aumenta glúteos e a parte '
                     'lateral dos ombros e desenvolve as costas, o que dá a impressão de cintura mais fina.',
@@ -990,7 +990,7 @@ PRESETS = [
                                            it('face_pull', 3, '15'), it('caminhada_inclinada', 1, '25 min', 0)]),
         ]),
     dict(
-        id='oval', name='Oval (maçã)', shape='oval',
+        id='oval', sex='F', name='Oval (maçã)', shape='oval',
         summary='Volume concentrado na região da cintura. Foco em perder gordura com baixo impacto.',
         description='No formato oval, ou maçã, a gordura se concentra no abdômen. O objetivo principal é reduzir a '
                     'gordura corporal total com treino de força para o corpo todo, cardio frequente de baixo impacto '
@@ -1018,6 +1018,184 @@ PRESETS = [
 ]
 
 
+PRESETS += [
+    dict(
+        id='m_trapezio', sex='M', name='Trapézio (V)', shape='m_trapezio',
+        summary='Ombros largos e cintura mais estreita. Foco em manter o equilíbrio sem esquecer as pernas.',
+        description='O trapézio, ou V, é o formato que muitos homens buscam: ombros e costas largos e cintura mais '
+                    'estreita. Para manter essa proporção, o treino divide o volume entre parte de cima e pernas, '
+                    'e o core fica forte para sustentar as cargas.',
+        goals=['Manter a proporção entre tronco e pernas', 'Ganhar força nos exercícios básicos',
+               'Manter a cintura definida'],
+        focus=['Corpo inteiro', 'Pernas', 'Costas', 'Peito'],
+        caution=['Não pule o treino de pernas: é ele que impede o visual de tronco grande e pernas finas.'],
+        days=[
+            day(0, 'Peito e tríceps', [it('supino_reto_barra', 4, '8', 120), it('supino_inclinado_halteres', 3, '10', 90),
+                                       it('crossover', 3, '12'), it('paralelas', 3, '8', 90), it('triceps_corda', 3, '12')]),
+            day(1, 'Pernas (quadríceps)', [it('agachamento_barra', 4, '8', 120), it('leg_press_45', 3, '10', 90),
+                                           it('cadeira_extensora', 3, '12'), it('panturrilha_em_pe', 4, '15')]),
+            day(2, 'Costas e bíceps', [it('barra_fixa', 4, '6 a 8', 120), it('remada_curvada_barra', 4, '8', 90),
+                                       it('remada_sentada', 3, '10'), it('rosca_direta_barra', 3, '10'),
+                                       it('rosca_martelo', 3, '12')]),
+            day(3, 'Ombros e core', [it('desenvolvimento_barra', 4, '8', 120), it('elevacao_lateral', 4, '12'),
+                                     it('face_pull', 3, '15'), it('prancha', 3, '45s'), it('elevacao_pernas_barra', 3, '10')]),
+            day(4, 'Posteriores e cardio', [it('levantamento_terra', 4, '5', 150), it('mesa_flexora', 3, '10'),
+                                            it('elevacao_pelvica', 3, '10', 90), it('remo_ergometro', 1, '15 min', 0)]),
+        ]),
+    dict(
+        id='m_triangulo_invertido', sex='M', name='Triângulo invertido', shape='m_triangulo_invertido',
+        summary='Tronco grande e pernas finas. Foco em pernas e glúteos para equilibrar.',
+        description='Quando o peito e os ombros crescem muito mais que as pernas, o corpo fica com o tronco '
+                    'pesado. O plano coloca três dias de membros inferiores e mantém a parte de cima com volume '
+                    'moderado.',
+        goals=['Aumentar coxas e glúteos', 'Fortalecer posterior de coxa', 'Manter o tronco sem exagerar no volume'],
+        focus=['Quadríceps', 'Posterior de coxa', 'Glúteos', 'Panturrilha'],
+        caution=['Pernas respondem bem a cargas altas e amplitude completa: priorize a técnica antes da carga.'],
+        days=[
+            day(0, 'Pernas pesado', [it('agachamento_barra', 5, '6 a 8', 150), it('leg_press_45', 4, '10', 90),
+                                     it('cadeira_extensora', 3, '12'), it('panturrilha_em_pe', 4, '15')]),
+            day(1, 'Superiores', [it('supino_inclinado_halteres', 3, '10', 90), it('puxada_frontal', 3, '10', 90),
+                                  it('remada_sentada', 3, '12'), it('elevacao_lateral', 3, '15')]),
+            day(2, 'Posteriores', [it('stiff_barra', 4, '8', 120), it('elevacao_pelvica', 4, '10', 90),
+                                   it('mesa_flexora', 3, '12'), it('panturrilha_sentado', 4, '15')]),
+            day(3, 'Core e cardio', [it('bicicleta_ergometrica', 1, '25 min', 0), it('prancha', 3, '45s'),
+                                     it('dead_bug', 3, '12'), it('abdominal_bicicleta', 3, '15 cada')]),
+            day(4, 'Pernas volume', [it('agachamento_bulgaro', 4, '10 cada', 90), it('afundo_halteres', 3, '12 cada', 90),
+                                     it('cadeira_flexora', 3, '12'), it('cadeira_abdutora', 3, '15')]),
+        ]),
+    dict(
+        id='m_retangulo', sex='M', name='Retângulo', shape='m_retangulo',
+        summary='Ombros e cintura com larguras parecidas. Foco em costas e ombros para criar o V.',
+        description='No retângulo, o tronco desce reto dos ombros à cintura. Dorsais largas e a parte lateral dos '
+                    'ombros desenvolvida criam o formato em V; o core forte e a gordura sob controle deixam a cintura '
+                    'mais estreita visualmente.',
+        goals=['Alargar as costas', 'Desenvolver os ombros laterais', 'Afinar a cintura visualmente'],
+        focus=['Costas', 'Ombros', 'Peito', 'Core'],
+        caution=['Abdominais com carga pesada nos oblíquos podem engrossar a cintura; prefira core estático.'],
+        days=[
+            day(0, 'Costas (largura)', [it('barra_fixa_assistida', 4, '8', 90), it('puxada_frontal', 4, '10', 90),
+                                        it('pulldown_bracos_estendidos', 3, '12'), it('rosca_direta_halteres', 3, '12')]),
+            day(1, 'Peito e ombros', [it('supino_inclinado_barra', 4, '8', 120), it('elevacao_lateral', 4, '12'),
+                                      it('desenvolvimento_halteres', 3, '10', 90), it('triceps_polia', 3, '12')]),
+            day(2, 'Pernas', [it('agachamento_barra', 4, '8', 120), it('stiff_barra', 3, '10', 90),
+                              it('leg_press_45', 3, '12'), it('panturrilha_em_pe', 3, '15')]),
+            day(3, 'Costas (espessura)', [it('remada_curvada_barra', 4, '8', 90), it('remada_unilateral', 3, '10 cada'),
+                                          it('face_pull', 3, '15'), it('rosca_martelo', 3, '12')]),
+            day(4, 'Ombros e core', [it('elevacao_lateral', 4, '15'), it('voador_invertido', 3, '15'),
+                                     it('prancha', 3, '45s'), it('caminhada_inclinada', 1, '20 min', 0)]),
+        ]),
+    dict(
+        id='m_triangulo', sex='M', name='Triângulo', shape='m_triangulo',
+        summary='Ombros mais estreitos que a cintura e o quadril. Foco em ombros, costas e peito.',
+        description='No triângulo, a parte de baixo é mais larga que os ombros. O plano dá prioridade a ombros, '
+                    'costas e peito para criar largura em cima, mantém as pernas com treino de força e inclui cardio '
+                    'para reduzir a gordura da cintura.',
+        goals=['Alargar ombros e costas', 'Desenvolver o peito', 'Reduzir a gordura na cintura'],
+        focus=['Ombros', 'Costas', 'Peito', 'Cardio'],
+        caution=['Gordura localizada não sai com abdominal; o cardio e a alimentação fazem essa parte.'],
+        days=[
+            day(0, 'Ombros e peito', [it('desenvolvimento_halteres', 4, '10', 90), it('elevacao_lateral', 4, '12'),
+                                      it('supino_reto_halteres', 3, '10', 90), it('crucifixo_halteres', 3, '12')]),
+            day(1, 'Costas', [it('puxada_frontal', 4, '10', 90), it('remada_sentada', 4, '10', 90),
+                              it('pulldown_bracos_estendidos', 3, '12'), it('encolhimento', 3, '12')]),
+            day(2, 'Pernas e cardio', [it('leg_press_45', 3, '12', 90), it('stiff_halteres', 3, '12', 90),
+                                       it('cadeira_flexora', 3, '12'), it('bicicleta_ergometrica', 1, '20 min', 0)]),
+            day(3, 'Ombros e braços', [it('elevacao_lateral', 4, '15'), it('face_pull', 3, '15'),
+                                       it('rosca_direta_barra', 3, '10'), it('triceps_testa', 3, '10')]),
+            day(4, 'Corpo inteiro e cardio', [it('supino_inclinado_halteres', 3, '10'), it('remada_unilateral', 3, '10 cada'),
+                                              it('agachamento_goblet', 3, '12'), it('remo_ergometro', 1, '15 min', 0)]),
+        ]),
+    dict(
+        id='m_oval', sex='M', name='Oval', shape='m_oval',
+        summary='Volume concentrado no abdômen. Foco em perder gordura com treino de força e cardio leve.',
+        description='No formato oval, a gordura se acumula na barriga. O caminho é treino de força para o corpo todo, '
+                    'cardio frequente de baixo impacto e core forte, que também protege a lombar. A alimentação com '
+                    'leve déficit calórico faz parte do resultado.',
+        goals=['Reduzir a gordura corporal', 'Ganhar força no corpo todo', 'Proteger a lombar com core forte'],
+        focus=['Corpo inteiro', 'Cardio de baixo impacto', 'Core'],
+        caution=['Evite corrida e saltos no início para poupar joelhos e tornozelos.',
+                 'Se tiver pressão alta ou outra condição, converse com seu médico antes.'],
+        days=[
+            day(0, 'Força A', [it('leg_press_45', 3, '12', 90), it('supino_reto_halteres', 3, '12', 90),
+                               it('puxada_frontal', 3, '12'), it('prancha_joelhos', 3, '30s'),
+                               it('caminhada_inclinada', 1, '20 min', 0)]),
+            day(1, 'Cardio', [it('bicicleta_ergometrica', 1, '35 min', 0), it('perdigueiro', 3, '10 cada'),
+                              it('dead_bug', 3, '10')]),
+            day(2, 'Força B', [it('agachamento_goblet', 3, '12', 90), it('remada_sentada', 3, '12', 90),
+                               it('desenvolvimento_halteres', 3, '12'), it('ponte_gluteo', 3, '15'),
+                               it('caminhada_esteira', 1, '20 min', 0)]),
+            day(3, 'Cardio e core', [it('remo_ergometro', 1, '15 min', 0), it('marcha_estacionaria', 4, '1 min', 30),
+                                     it('prancha_lateral', 3, '15s cada'), it('super_homem', 3, '10')]),
+            day(4, 'Circuito', [it('subida_banco', 3, '10 cada', 30), it('flexao_inclinada', 3, '10', 30),
+                                it('remada_unilateral', 3, '12 cada', 30), it('caminhada_fazendeiro', 3, '40s', 30),
+                                it('caminhada_inclinada', 1, '20 min', 0)]),
+        ]),
+]
+
+# Observações por gênero. Diferenças médias entre corpos masculinos e femininos (largura do quadril e ângulo
+# do joelho, distribuição de força entre parte de cima e de baixo, flexibilidade, recuperação entre séries).
+# A técnica do movimento é a mesma; o que muda é onde prestar atenção e como progredir.
+KNEES_F = ('Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. '
+           'Pense em empurrar os joelhos para fora, na direção dos pés.')
+MOB_M = ('Em média, homens têm menos mobilidade de quadril e tornozelo. Se o calcanhar sair do chão ou a lombar '
+         'arredondar, abra um pouco mais os pés e diminua a profundidade.')
+NOTES = {
+    'agachamento_livre': {'F': [KNEES_F], 'M': [MOB_M]},
+    'agachamento_goblet': {'F': [KNEES_F], 'M': [MOB_M]},
+    'agachamento_goblet_kettlebell': {'F': [KNEES_F], 'M': [MOB_M]},
+    'agachamento_barra': {'F': [KNEES_F, 'Mulheres costumam recuperar mais rápido entre séries; 90 segundos de '
+                                         'descanso geralmente bastam.'],
+                          'M': [MOB_M, 'Suba a carga só quando todas as repetições saírem com a mesma técnica.']},
+    'agachamento_smith': {'F': [KNEES_F], 'M': [MOB_M]},
+    'agachamento_sumo': {'F': ['A base larga aproveita bem o quadril mais largo e trabalha glúteos e adutores.'],
+                         'M': ['Abra os pés só até onde os joelhos conseguem acompanhar a ponta dos pés.']},
+    'afundo': {'F': [KNEES_F], 'M': ['Mantenha o tronco ereto; inclinar à frente tira trabalho das pernas.']},
+    'afundo_halteres': {'F': [KNEES_F], 'M': ['Mantenha o tronco ereto; inclinar à frente tira trabalho das pernas.']},
+    'agachamento_bulgaro': {'F': [KNEES_F], 'M': ['Comece sem carga: o equilíbrio é o primeiro limite.']},
+    'subida_banco': {'F': [KNEES_F], 'M': ['Use um banco na altura do joelho e suba sem impulso da perna de baixo.']},
+    'leg_press_45': {'F': [KNEES_F], 'M': ['Desça só até onde o quadril continua apoiado; carga demais encurta o '
+                                           'movimento.']},
+    'elevacao_pelvica': {'F': ['É um dos exercícios que mais ativam o glúteo; dá para progredir a carga com '
+                               'frequência.'],
+                         'M': ['Também vale para homens: glúteo forte melhora o agachamento e o terra e protege a '
+                               'lombar.']},
+    'cadeira_abdutora': {'F': ['Fortalece o glúteo médio, que ajuda a manter os joelhos alinhados nos agachamentos.'],
+                         'M': ['O glúteo médio estabiliza o joelho no agachamento e na corrida; não é exercício só '
+                               'para mulheres.']},
+    'stiff_halteres': {'F': ['Em média, mulheres têm mais flexibilidade; pare onde a coluna ainda está neutra, mesmo '
+                             'que alcance mais longe.'],
+                       'M': ['Se o posterior estiver encurtado, desça só até o joelho no começo.']},
+    'stiff_barra': {'F': ['Em média, mulheres têm mais flexibilidade; pare onde a coluna ainda está neutra.'],
+                    'M': ['Se o posterior estiver encurtado, desça só até o joelho no começo.']},
+    'levantamento_terra': {'F': ['Mulheres costumam ter boa força de quadril em relação ao peso do corpo; progrida '
+                                 'devagar e mantenha a técnica.'],
+                           'M': ['Não sacrifique a coluna neutra para levantar mais peso.']},
+    'flexao_braco': {'F': ['Em média, mulheres têm menos força na parte de cima em relação ao corpo; comece pela '
+                           'flexão inclinada ou com joelhos e progrida.'],
+                     'M': ['Se já faz 15 boas repetições, eleve os pés ou faça uma pausa embaixo.']},
+    'flexao_joelhos': {'F': ['Ótimo ponto de partida; quando fizer 15 boas repetições, passe para a flexão completa.'],
+                       'M': ['Use como aquecimento ou para completar séries depois da flexão completa.']},
+    'barra_fixa': {'F': ['Comece pela barra assistida; segurar no topo e descer devagar também constroem força.'],
+                   'M': ['Dorsais largas são a base do formato em V; priorize amplitude completa.']},
+    'barra_fixa_assistida': {'F': ['Diminua a assistência aos poucos, uma vez por semana.'],
+                             'M': ['Use até conseguir 6 repetições sem ajuda.']},
+    'puxada_frontal': {'F': ['Costas fortes melhoram a postura e afinam visualmente a cintura.'],
+                       'M': ['Dorsais largas são a base do formato em V.']},
+    'supino_reto_barra': {'F': ['Halteres costumam ser mais confortáveis para começar.'],
+                          'M': ['Sem parceiro, use os pinos de segurança e não leve a série até a falha.']},
+    'supino_reto_halteres': {'F': ['Bom para começar: o cotovelo encontra o ângulo mais confortável.'],
+                             'M': ['Permite mais amplitude que a barra; desça até sentir o peito alongar.']},
+    'elevacao_lateral': {'F': ['Ombros laterais desenvolvidos equilibram a silhueta de quem tem quadril mais largo.'],
+                         'M': ['O deltoide lateral é o que mais contribui para a largura dos ombros.']},
+    'desenvolvimento_halteres': {'F': ['Ótimo para dar contorno aos ombros sem precisar de carga alta.'],
+                                 'M': ['Evite arquear a lombar para subir mais peso.']},
+    'rosca_direta_halteres': {'F': ['Braços fortes ajudam em todos os exercícios de puxar.'],
+                              'M': ['Carga demais vira balanço de tronco; mantenha os cotovelos parados.']},
+    'triceps_corda': {'F': ['O tríceps é a maior parte do braço; trabalhá-lo deixa o braço mais firme.'],
+                      'M': ['O tríceps responde por boa parte do volume do braço.']},
+}
+
+
 def validate_and_export():
     pats = {p.id for p in PATTERNS}
     ids = set()
@@ -1030,7 +1208,13 @@ def validate_and_export():
         assert e['equipment'] in EQUIP, (e['id'], e['equipment'])
         assert e['level'] in LEVELS, e['id']
         assert len(e['steps']) >= 3, e['id']
+    for k in NOTES:
+        assert k in ids, ('nota de exercício inexistente', k)
+    for e in EX:
+        if e['id'] in NOTES:
+            e['notes'] = NOTES[e['id']]
     for pr in PRESETS:
+        assert pr['sex'] in ('F', 'M', 'both'), pr['id']
         for dd in pr['days']:
             for i in dd['items']:
                 assert i['exercise'] in ids, (pr['id'], i['exercise'])

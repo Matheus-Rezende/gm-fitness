@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/exercise.dart';
+import '../motion/figure_painter.dart';
 import '../motion/motion_clip.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
@@ -58,7 +59,7 @@ class _CustomExerciseScreenState extends State<CustomExerciseScreen> {
   Future<void> _pickAnim(AppState state) async {
     final res = await Navigator.push<_AnimChoice>(
       context,
-      MaterialPageRoute(builder: (_) => _AnimationPicker(library: state.motions, current: _anim)),
+      MaterialPageRoute(builder: (_) => _AnimationPicker(library: state.motions, current: _anim, male: state.isMale)),
     );
     if (res != null) setState(() => _anim = res.id);
   }
@@ -132,7 +133,7 @@ class _CustomExerciseScreenState extends State<CustomExerciseScreen> {
           if (clip != null) ...[
             Text(clip.name, style: Theme.of(context).textTheme.labelLarge),
             const SizedBox(height: 6),
-            MotionView(clip: clip, showControls: false),
+            MotionView(clip: clip, style: FigureStyle(male: state.isMale, primary: {_group}), showKeyPoses: false),
           ],
           const SizedBox(height: 16),
           TextField(
@@ -177,10 +178,11 @@ class _AnimChoice {
 }
 
 class _AnimationPicker extends StatefulWidget {
-  const _AnimationPicker({required this.library, this.current});
+  const _AnimationPicker({required this.library, this.current, this.male = false});
 
   final MotionLibrary library;
   final String? current;
+  final bool male;
 
   @override
   State<_AnimationPicker> createState() => _AnimationPickerState();
@@ -240,7 +242,7 @@ class _AnimationPickerState extends State<_AnimationPicker> {
               padding: const EdgeInsets.all(6),
               child: Column(
                 children: [
-                  Expanded(child: LayoutBuilder(builder: (context, box) => MotionThumb(clip: c, size: box.biggest.shortestSide))),
+                  Expanded(child: LayoutBuilder(builder: (context, box) => MotionThumb(clip: c, size: box.biggest.shortestSide, male: widget.male))),
                   const SizedBox(height: 6),
                   Text(c.name, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                 ],

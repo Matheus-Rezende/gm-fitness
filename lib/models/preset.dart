@@ -41,6 +41,7 @@ class BodyPreset {
   const BodyPreset({
     required this.id,
     required this.name,
+    required this.sex,
     required this.shape,
     required this.summary,
     required this.description,
@@ -52,7 +53,12 @@ class BodyPreset {
 
   final String id;
   final String name;
+
+  /// 'F', 'M' ou 'both'.
+  final String sex;
   final String shape;
+
+  bool fits(String userSex) => sex == 'both' || sex == userSex;
   final String summary;
   final String description;
   final List<String> goals;
@@ -63,6 +69,7 @@ class BodyPreset {
   factory BodyPreset.fromJson(Map<String, dynamic> j) => BodyPreset(
         id: j['id'] as String,
         name: j['name'] as String,
+        sex: (j['sex'] as String?) ?? 'both',
         shape: j['shape'] as String,
         summary: j['summary'] as String,
         description: j['description'] as String,

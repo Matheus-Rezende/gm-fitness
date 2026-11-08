@@ -23,6 +23,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   String? _group;
   String? _equipment;
   bool _onlyMine = false;
+  bool _forYou = false;
 
   @override
   void dispose() {
@@ -33,10 +34,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
   List<Exercise> _filter(AppState state) {
     final q = normalize(_query.trim());
     final words = q.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    final recommended = state.recommendedIds;
     return state.allExercises.where((e) {
       if (_group != null && e.group != _group && !e.secondary.contains(_group)) return false;
       if (_equipment != null && e.equipment != _equipment) return false;
       if (_onlyMine && !e.custom) return false;
+      if (_forYou && !recommended.contains(e.id)) return false;
       if (words.isEmpty) return true;
       final key = e.searchKey(state.meta.group(e.group), state.meta.equip(e.equipment));
       return words.every(key.contains);
@@ -140,11 +143,21 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   padding: const EdgeInsets.only(right: 6),
                   child: ChoiceChip(
                     label: const Text('Todos'),
-                    selected: _group == null && !_onlyMine,
+                    selected: _group == null && !_onlyMine && !_forYou,
                     onSelected: (_) => setState(() {
                       _group = null;
                       _onlyMine = false;
+                      _forYou = false;
                     }),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: FilterChip(
+                    avatar: Icon(state.isMale ? Icons.male_rounded : Icons.female_rounded, size: 18),
+                    label: const Text('Nos planos para você'),
+                    selected: _forYou,
+                    onSelected: (v) => setState(() => _forYou = v),
                   ),
                 ),
                 if (state.customExercises.isNotEmpty)
@@ -201,16 +214,16 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 : ListView.separated(
                     padding: const EdgeInsets.only(bottom: 96),
                     itemCount: list.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1, indent: 84),
+                    separatorBuilder: (_, _) => const Divider(height: 1, indent: 88),
                     itemBuilder: (context, i) {
                       final e = list[i];
                       final mine = inMyList.contains(e.id);
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        leading: MotionThumb(clip: state.clipFor(e), size: 60),
-                        title: Text(e.name),
+                        leading: MotionThumb(clip: state.clipFor(e), size: 64, male: state.isMale),
+                        title: Text(e.name, style: Theme.of(context).textTheme.titleMedium),
                         subtitle: Text(
-                          '${state.meta.group(e.group)} · ${state.meta.equip(e.equipment)} · ${state.meta.level(e.level)}',
+                          '${state.meta.group(e.group)}, ${state.meta.equip(e.equipment).toLowerCase()}, ${state.meta.level(e.level).toLowerCase()}',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/workout_entry.dart';
+import '../theme/gm_theme.dart';
 
 class SectionTitle extends StatelessWidget {
   const SectionTitle(this.text, {super.key, this.icon});
@@ -16,7 +17,7 @@ class SectionTitle extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[Icon(icon, size: 20, color: scheme.primary), const SizedBox(width: 8)],
-          Text(text, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+          Text(text, style: Theme.of(context).textTheme.titleLarge),
         ],
       ),
     );
@@ -96,10 +97,12 @@ class LoadStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final plate = GmColors.forLoad(kg);
+    final number = kg == kg.roundToDouble() ? kg.toStringAsFixed(0) : kg.toStringAsFixed(1).replaceAll('.', ',');
     return Container(
       decoration: BoxDecoration(
-        color: scheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(24),
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -108,22 +111,54 @@ class LoadStepper extends StatelessWidget {
             tooltip: 'Diminuir carga',
             visualDensity: VisualDensity.compact,
             onPressed: kg <= 0 ? null : () => onChanged((kg - step).clamp(0, 999).toDouble()),
-            icon: const Icon(Icons.remove),
+            icon: const Icon(Icons.remove_rounded),
           ),
-          InkWell(
-            borderRadius: BorderRadius.circular(8),
-            onTap: () async {
-              final v = await askLoad(context, kg);
-              if (v != null) onChanged(v);
-            },
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: compact ? 48 : 64),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Text(
-                  formatKg(kg),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w700, color: scheme.onSecondaryContainer),
+          Semantics(
+            button: true,
+            label: 'Carga ${formatKg(kg)}. Toque para digitar.',
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () async {
+                final v = await askLoad(context, kg);
+                if (v != null) onChanged(v);
+              },
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: compact ? 58 : 76),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 5,
+                        height: compact ? 22 : 28,
+                        decoration: BoxDecoration(color: plate, borderRadius: BorderRadius.circular(3)),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        number,
+                        style: TextStyle(
+                          fontFamily: display,
+                          fontWeight: FontWeight.w800,
+                          fontSize: compact ? 24 : 30,
+                          height: 1,
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Text('kg',
+                            style: TextStyle(
+                                fontFamily: display,
+                                fontWeight: FontWeight.w700,
+                                fontSize: compact ? 13 : 15,
+                                color: scheme.onSurfaceVariant)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -132,7 +167,7 @@ class LoadStepper extends StatelessWidget {
             tooltip: 'Aumentar carga',
             visualDensity: VisualDensity.compact,
             onPressed: () => onChanged(kg + step),
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add_rounded),
           ),
         ],
       ),

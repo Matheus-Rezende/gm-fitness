@@ -128,6 +128,97 @@ class MotionClip {
     return res;
   }
 
+  // ------------------------------------------------------------ ponto-chave
+
+  /// Índice (no vetor do quadro) do ponto que melhor mostra o percurso do
+  /// movimento: a carga, quando houver, ou a articulação que mais se move.
+  late final int _keyIndex = _pickKeyIndex();
+
+  /// Percurso do ponto-chave ao longo de todo o loop.
+  late final List<Offset> keyPath = [for (final f in frames) Offset(f[_keyIndex], f[_keyIndex + 1])];
+
+  /// Maior dimensão do percurso, para saber se vale desenhá-lo.
+  late final double keyPathExtent = _extent(keyPath);
+
+  Offset keyPointAt(double t) {
+    final s = sample(t);
+    return Offset(s[_keyIndex], s[_keyIndex + 1]);
+  }
+
+  /// Instantes das poses-chave: início, meio do caminho e ponto mais distante.
+  late final List<double> keyTimes = _computeKeyTimes();
+
+  static double _extent(List<Offset> pts) {
+    if (pts.isEmpty) return 0;
+    var minX = pts.first.dx, maxX = minX, minY = pts.first.dy, maxY = minY;
+    for (final p in pts) {
+      if (p.dx < minX) minX = p.dx;
+      if (p.dx > maxX) maxX = p.dx;
+      if (p.dy < minY) minY = p.dy;
+      if (p.dy > maxY) maxY = p.dy;
+    }
+    final w = maxX - minX, h = maxY - minY;
+    return w > h ? w : h;
+  }
+
+  int _pickKeyIndex() {
+    if (frames.isEmpty) return Jt.hip * 2;
+    double extentOf(int idx) => _extent([for (final f in frames) Offset(f[idx], f[idx + 1])]);
+    const loadTypes = {'plate', 'db_end', 'db_side', 'kb', 'seg'};
+    for (final p in props) {
+      if (p.track.isNotEmpty && loadTypes.contains(p.type)) {
+        final idx = Jt.trackedBase + p.track.first * 2;
+        if (idx + 1 < valuesPerFrame && extentOf(idx) > 6) return idx;
+      }
+    }
+    const candidates = [Jt.handN, Jt.ankN, Jt.kneeN, Jt.hip, Jt.head, Jt.handF, Jt.ankF];
+    var best = Jt.hip * 2;
+    var bestExt = -1.0;
+    for (final j in candidates) {
+      final e = extentOf(j * 2);
+      if (e > bestExt + 0.5) {
+        bestExt = e;
+        best = j * 2;
+      }
+    }
+    return best;
+  }
+
+  List<double> _computeKeyTimes() {
+    final n = frameCount;
+    if (n < 3) return const [0.0, 0.5, 0.5];
+    final first = frames.first;
+    double diff(Float32List f) {
+      var s = 0.0;
+      for (var i = 0; i < Jt.count * 2; i++) {
+        final d = f[i] - first[i];
+        s += d * d;
+      }
+      return s;
+    }
+
+    var far = 0;
+    var farD = -1.0;
+    for (var i = 0; i < n; i++) {
+      final d = diff(frames[i]);
+      if (d > farD) {
+        farD = d;
+        far = i;
+      }
+    }
+    // meio: quadro antes do mais distante cuja diferença é cerca de metade
+    var mid = far ~/ 2;
+    var bestGap = double.infinity;
+    for (var i = 0; i <= far; i++) {
+      final gap = (diff(frames[i]) - farD / 4).abs(); // distância ao quadrado: metade do caminho
+      if (gap < bestGap) {
+        bestGap = gap;
+        mid = i;
+      }
+    }
+    return [0.0, mid / n, far / n];
+  }
+
   static MotionClip fromJson(String id, Map<String, dynamic> j) {
     final vp = (j['vp'] as List).map((e) => (e as num).toDouble()).toList();
     final props = <MotionProp>[];

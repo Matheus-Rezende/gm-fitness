@@ -28,7 +28,7 @@ class HomeShell extends StatelessWidget {
           onDestinationSelected: (i) => homeTab.value = i,
           destinations: const [
             NavigationDestination(
-                icon: Icon(Icons.event_note_outlined), selectedIcon: Icon(Icons.event_note), label: 'Meus treinos'),
+                icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today_rounded), label: 'Treino'),
             NavigationDestination(
                 icon: Icon(Icons.fitness_center_outlined), selectedIcon: Icon(Icons.fitness_center), label: 'Exercícios'),
             NavigationDestination(

@@ -7,6 +7,8 @@ import '../motion/motion_view.dart';
 import '../state/app_state.dart';
 import '../widgets/common.dart';
 import '../widgets/entry_editor.dart';
+import '../theme/gm_theme.dart';
+import '../widgets/exercise_visuals.dart';
 import 'custom_exercise_screen.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
@@ -83,7 +85,7 @@ class ExerciseDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           if (clip != null)
-            MotionView(clip: clip)
+            MotionView(clip: clip, style: figureStyleFor(state, ex))
           else
             Container(
               height: 160,
@@ -110,6 +112,10 @@ class ExerciseDetailScreen extends StatelessWidget {
               Chip(avatar: const Icon(Icons.signal_cellular_alt, size: 18), label: Text(state.meta.level(ex.level))),
             ],
           ),
+          if (ex.notesFor(state.sex).isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _ForYou(notes: ex.notesFor(state.sex), male: state.isMale),
+          ],
           if (mine.isNotEmpty) ...[
             const SectionTitle('No meu treino', icon: Icons.event_note),
             for (final e in mine) _MyEntry(entry: e),
@@ -133,6 +139,52 @@ class ExerciseDetailScreen extends StatelessWidget {
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ForYou extends StatelessWidget {
+  const _ForYou({required this.notes, required this.male});
+
+  final List<String> notes;
+  final bool male;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        color: GmColors.yellow.withAlpha(40),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 5, color: GmColors.yellow),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(male ? Icons.male_rounded : Icons.female_rounded, size: 20),
+                          const SizedBox(width: 6),
+                          Text(male ? 'Para o corpo masculino' : 'Para o corpo feminino', style: text.titleMedium),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      for (final n in notes)
+                        Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(n, style: text.bodyMedium)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

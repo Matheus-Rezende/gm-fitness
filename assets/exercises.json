@@ -65,7 +65,15 @@
     "Deixar os joelhos caírem para dentro.",
     "Tirar o calcanhar do chão.",
     "Arredondar a lombar no fundo."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Em média, homens têm menos mobilidade de quadril e tornozelo. Se o calcanhar sair do chão ou a lombar arredondar, abra um pouco mais os pés e diminua a profundidade."
+    ]
+   }
   },
   {
    "id": "agachamento_goblet",
@@ -91,7 +99,15 @@
    "mistakes": [
     "Afastar o halter do peito.",
     "Inclinar demais o tronco à frente."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Em média, homens têm menos mobilidade de quadril e tornozelo. Se o calcanhar sair do chão ou a lombar arredondar, abra um pouco mais os pés e diminua a profundidade."
+    ]
+   }
   },
   {
    "id": "agachamento_goblet_kettlebell",
@@ -117,7 +133,15 @@
    "mistakes": [
     "Deixar o kettlebell puxar o tronco para frente.",
     "Joelhos caindo para dentro."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Em média, homens têm menos mobilidade de quadril e tornozelo. Se o calcanhar sair do chão ou a lombar arredondar, abra um pouco mais os pés e diminua a profundidade."
+    ]
+   }
   },
   {
    "id": "agachamento_barra",
@@ -147,7 +171,17 @@
     "Apoiar a barra no pescoço.",
     "Deixar os joelhos caírem para dentro.",
     "Arredondar a lombar."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés.",
+     "Mulheres costumam recuperar mais rápido entre séries; 90 segundos de descanso geralmente bastam."
+    ],
+    "M": [
+     "Em média, homens têm menos mobilidade de quadril e tornozelo. Se o calcanhar sair do chão ou a lombar arredondar, abra um pouco mais os pés e diminua a profundidade.",
+     "Suba a carga só quando todas as repetições saírem com a mesma técnica."
+    ]
+   }
   },
   {
    "id": "agachamento_smith",
@@ -173,7 +207,15 @@
    "mistakes": [
     "Pés muito à frente, que sobrecarregam a lombar.",
     "Esquecer de travar a barra no final."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Em média, homens têm menos mobilidade de quadril e tornozelo. Se o calcanhar sair do chão ou a lombar arredondar, abra um pouco mais os pés e diminua a profundidade."
+    ]
+   }
   },
   {
    "id": "agachamento_sumo",
@@ -199,7 +241,15 @@
    "mistakes": [
     "Joelhos indo para dentro.",
     "Inclinar o tronco à frente."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "A base larga aproveita bem o quadril mais largo e trabalha glúteos e adutores."
+    ],
+    "M": [
+     "Abra os pés só até onde os joelhos conseguem acompanhar a ponta dos pés."
+    ]
+   }
   },
   {
    "id": "agachamento_sumo_kettlebell",
@@ -250,7 +300,15 @@
    "mistakes": [
     "Joelho da frente caindo para dentro.",
     "Passo curto demais, que joga o joelho muito à frente."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Mantenha o tronco ereto; inclinar à frente tira trabalho das pernas."
+    ]
+   }
   },
   {
    "id": "afundo_halteres",
@@ -275,7 +333,15 @@
    "mistakes": [
     "Inclinar o tronco para frente.",
     "Bater o joelho de trás no chão."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Mantenha o tronco ereto; inclinar à frente tira trabalho das pernas."
+    ]
+   }
   },
   {
    "id": "agachamento_bulgaro",
@@ -302,7 +368,15 @@
    "mistakes": [
     "Pé da frente perto demais do banco.",
     "Empurrar com a perna de trás."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Comece sem carga: o equilíbrio é o primeiro limite."
+    ]
+   }
   },
   {
    "id": "subida_banco",
@@ -329,7 +403,15 @@
    "mistakes": [
     "Dar impulso com o pé de baixo.",
     "Joelho de cima caindo para dentro."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Use um banco na altura do joelho e suba sem impulso da perna de baixo."
+    ]
+   }
   },
   {
    "id": "leg_press_45",
@@ -356,7 +438,15 @@
     "Travar os joelhos no topo.",
     "Tirar o quadril do banco no fundo.",
     "Joelhos caindo para dentro."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, o quadril feminino é mais largo, o que favorece os joelhos caírem para dentro. Pense em empurrar os joelhos para fora, na direção dos pés."
+    ],
+    "M": [
+     "Desça só até onde o quadril continua apoiado; carga demais encurta o movimento."
+    ]
+   }
   },
   {
    "id": "cadeira_extensora",
@@ -453,7 +543,15 @@
     "Arredondar a lombar.",
     "Dobrar demais os joelhos, virando um agachamento.",
     "Afastar os halteres das pernas."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, mulheres têm mais flexibilidade; pare onde a coluna ainda está neutra, mesmo que alcance mais longe."
+    ],
+    "M": [
+     "Se o posterior estiver encurtado, desça só até o joelho no começo."
+    ]
+   }
   },
   {
    "id": "stiff_barra",
@@ -480,7 +578,15 @@
     "Arredondar as costas.",
     "Barra longe das pernas.",
     "Hiperestender a lombar no topo."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, mulheres têm mais flexibilidade; pare onde a coluna ainda está neutra."
+    ],
+    "M": [
+     "Se o posterior estiver encurtado, desça só até o joelho no começo."
+    ]
+   }
   },
   {
    "id": "levantamento_terra",
@@ -511,7 +617,15 @@
     "Arredondar a lombar.",
     "Puxar a barra com os braços.",
     "Afastar a barra das canelas."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Mulheres costumam ter boa força de quadril em relação ao peso do corpo; progrida devagar e mantenha a técnica."
+    ],
+    "M": [
+     "Não sacrifique a coluna neutra para levantar mais peso."
+    ]
+   }
   },
   {
    "id": "bom_dia",
@@ -587,7 +701,15 @@
    "mistakes": [
     "Arquear a lombar no topo em vez de contrair o glúteo.",
     "Pés longe demais ou perto demais."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "É um dos exercícios que mais ativam o glúteo; dá para progredir a carga com frequência."
+    ],
+    "M": [
+     "Também vale para homens: glúteo forte melhora o agachamento e o terra e protege a lombar."
+    ]
+   }
   },
   {
    "id": "ponte_gluteo",
@@ -733,7 +855,15 @@
    "mistakes": [
     "Fechar rápido demais.",
     "Tirar o quadril do banco."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Fortalece o glúteo médio, que ajuda a manter os joelhos alinhados nos agachamentos."
+    ],
+    "M": [
+     "O glúteo médio estabiliza o joelho no agachamento e na corrida; não é exercício só para mulheres."
+    ]
+   }
   },
   {
    "id": "cadeira_adutora",
@@ -928,7 +1058,15 @@
     "Cotovelos totalmente abertos, a 90 graus do tronco.",
     "Tirar o quadril do banco.",
     "Quicar a barra no peito."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Halteres costumam ser mais confortáveis para começar."
+    ],
+    "M": [
+     "Sem parceiro, use os pinos de segurança e não leve a série até a falha."
+    ]
+   }
   },
   {
    "id": "supino_reto_halteres",
@@ -953,7 +1091,15 @@
    "mistakes": [
     "Deixar os halteres caírem para os lados.",
     "Bater os halteres no topo."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Bom para começar: o cotovelo encontra o ângulo mais confortável."
+    ],
+    "M": [
+     "Permite mais amplitude que a barra; desça até sentir o peito alongar."
+    ]
+   }
   },
   {
    "id": "supino_inclinado_barra",
@@ -1102,7 +1248,15 @@
     "Quadril caindo ou empinado.",
     "Cotovelos totalmente abertos.",
     "Cabeça caindo à frente."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Em média, mulheres têm menos força na parte de cima em relação ao corpo; comece pela flexão inclinada ou com joelhos e progrida."
+    ],
+    "M": [
+     "Se já faz 15 boas repetições, eleve os pés ou faça uma pausa embaixo."
+    ]
+   }
   },
   {
    "id": "flexao_joelhos",
@@ -1126,7 +1280,15 @@
    ],
    "mistakes": [
     "Dobrar no quadril em vez de manter a linha reta."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Ótimo ponto de partida; quando fizer 15 boas repetições, passe para a flexão completa."
+    ],
+    "M": [
+     "Use como aquecimento ou para completar séries depois da flexão completa."
+    ]
+   }
   },
   {
    "id": "flexao_inclinada",
@@ -1202,7 +1364,15 @@
     "Puxar a barra atrás da nuca.",
     "Jogar o corpo para trás.",
     "Usar mais os braços que as costas."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Costas fortes melhoram a postura e afinam visualmente a cintura."
+    ],
+    "M": [
+     "Dorsais largas são a base do formato em V."
+    ]
+   }
   },
   {
    "id": "barra_fixa",
@@ -1227,7 +1397,15 @@
    "mistakes": [
     "Balançar o corpo.",
     "Meia repetição."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Comece pela barra assistida; segurar no topo e descer devagar também constroem força."
+    ],
+    "M": [
+     "Dorsais largas são a base do formato em V; priorize amplitude completa."
+    ]
+   }
   },
   {
    "id": "barra_fixa_assistida",
@@ -1251,7 +1429,15 @@
    "mistakes": [
     "Descer rápido.",
     "Encolher os ombros."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Diminua a assistência aos poucos, uma vez por semana."
+    ],
+    "M": [
+     "Use até conseguir 6 repetições sem ajuda."
+    ]
+   }
   },
   {
    "id": "remada_sentada",
@@ -1424,7 +1610,15 @@
    "mistakes": [
     "Arquear a lombar.",
     "Bater os halteres no topo."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Ótimo para dar contorno aos ombros sem precisar de carga alta."
+    ],
+    "M": [
+     "Evite arquear a lombar para subir mais peso."
+    ]
+   }
   },
   {
    "id": "elevacao_lateral",
@@ -1450,7 +1644,15 @@
     "Encolher os ombros.",
     "Balançar o corpo.",
     "Subir acima da linha dos ombros."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Ombros laterais desenvolvidos equilibram a silhueta de quem tem quadril mais largo."
+    ],
+    "M": [
+     "O deltoide lateral é o que mais contribui para a largura dos ombros."
+    ]
+   }
   },
   {
    "id": "elevacao_frontal",
@@ -1567,7 +1769,15 @@
    "mistakes": [
     "Balançar o tronco.",
     "Levar os cotovelos à frente."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "Braços fortes ajudam em todos os exercícios de puxar."
+    ],
+    "M": [
+     "Carga demais vira balanço de tronco; mantenha os cotovelos parados."
+    ]
+   }
   },
   {
    "id": "rosca_direta_barra",
@@ -1701,7 +1911,15 @@
    "mistakes": [
     "Mover os ombros.",
     "Inclinar demais o tronco."
-   ]
+   ],
+   "notes": {
+    "F": [
+     "O tríceps é a maior parte do braço; trabalhá-lo deixa o braço mais firme."
+    ],
+    "M": [
+     "O tríceps responde por boa parte do volume do braço."
+    ]
+   }
   },
   {
    "id": "triceps_frances",

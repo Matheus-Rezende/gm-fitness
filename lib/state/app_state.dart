@@ -19,6 +19,8 @@ class AppState extends ChangeNotifier {
 
   static const _kEntries = 'entries_v1';
   static const _kCustom = 'custom_exercises_v1';
+  static const _kProfile = 'profile_v1';
+  static const _kDone = 'done_v1';
 
   final SharedPreferences _prefs;
   final CatalogMeta meta;
@@ -29,6 +31,15 @@ class AppState extends ChangeNotifier {
   List<Exercise> _custom = [];
   List<WorkoutEntry> _entries = [];
   int _idSeq = 0;
+
+  // perfil
+  String _sex = 'F';
+  String _name = '';
+  String? _presetId;
+  bool _onboarded = false;
+
+  // exercícios marcados como feitos, por data (aaaa-mm-dd)
+  Map<String, Set<String>> _done = {};
 
   static Future<AppState> load() async {
     final results = await Future.wait([
@@ -64,6 +75,19 @@ class AppState extends ChangeNotifier {
       if (s != null) {
         _entries = [for (final e in (jsonDecode(s) as List)) WorkoutEntry.fromJson(Map<String, dynamic>.from(e as Map))];
       }
+      final pr = _prefs.getString(_kProfile);
+      if (pr != null) {
+        final m = Map<String, dynamic>.from(jsonDecode(pr) as Map);
+        _sex = m['sex'] == 'M' ? 'M' : 'F';
+        _name = (m['name'] as String?) ?? '';
+        _presetId = m['presetId'] as String?;
+        _onboarded = m['onboarded'] == true;
+      }
+      final dn = _prefs.getString(_kDone);
+      if (dn != null) {
+        final m = Map<String, dynamic>.from(jsonDecode(dn) as Map);
+        _done = {for (final e in m.entries) e.key: {for (final v in (e.value as List)) v.toString()}};
+      }
     } catch (e) {
       debugPrint('Falha ao ler dados salvos: $e');
     }
@@ -74,6 +98,74 @@ class AppState extends ChangeNotifier {
   Future<void> _save() async {
     await _prefs.setString(_kCustom, jsonEncode([for (final e in _custom) e.toJson()]));
     await _prefs.setString(_kEntries, jsonEncode([for (final e in _entries) e.toJson()]));
+    await _prefs.setString(
+        _kProfile, jsonEncode({'sex': _sex, 'name': _name, 'presetId': _presetId, 'onboarded': _onboarded}));
+    // guarda só as últimas 8 semanas de marcações
+    final keys = _done.keys.toList()..sort();
+    if (keys.length > 56) {
+      for (final k in keys.take(keys.length - 56)) {
+        _done.remove(k);
+      }
+    }
+    await _prefs.setString(_kDone, jsonEncode({for (final e in _done.entries) e.key: e.value.toList()}));
+  }
+
+  // ------------------------------------------------------------ perfil
+
+  /// 'F' (feminino) ou 'M' (masculino).
+  String get sex => _sex;
+  bool get isMale => _sex == 'M';
+  String get name => _name;
+  bool get onboarded => _onboarded;
+  BodyPreset? get currentPreset {
+    for (final p in presets) {
+      if (p.id == _presetId) return p;
+    }
+    return null;
+  }
+
+  Future<void> setProfile({String? sex, String? name, String? presetId, bool clearPreset = false, bool? onboarded}) async {
+    if (sex != null) _sex = sex == 'M' ? 'M' : 'F';
+    if (name != null) _name = name.trim();
+    if (clearPreset) _presetId = null;
+    if (presetId != null) _presetId = presetId;
+    if (onboarded != null) _onboarded = onboarded;
+    notifyListeners();
+    await _save();
+  }
+
+  /// Planos que servem para o gênero do perfil.
+  List<BodyPreset> get presetsForUser => presets.where((p) => p.fits(_sex)).toList();
+
+  /// Exercícios usados nos planos do gênero do perfil.
+  Set<String> get recommendedIds => {
+        for (final p in presetsForUser)
+          for (final d in p.days)
+            for (final i in d.items) i.exercise,
+      };
+
+  // ------------------------------------------------------------ feitos hoje
+
+  static String dayKey(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  bool isDone(String entryId, [DateTime? day]) => _done[dayKey(day ?? DateTime.now())]?.contains(entryId) ?? false;
+
+  Future<void> toggleDone(String entryId) async {
+    final k = dayKey(DateTime.now());
+    final set = _done.putIfAbsent(k, () => <String>{});
+    if (!set.remove(entryId)) set.add(entryId);
+    notifyListeners();
+    await _save();
+  }
+
+  /// Quantos dias da semana atual (segunda a domingo) tiveram algum exercício feito.
+  List<bool> weekActivity([DateTime? now]) {
+    final today = now ?? DateTime.now();
+    final monday = DateTime(today.year, today.month, today.day).subtract(Duration(days: today.weekday - 1));
+    return [
+      for (var i = 0; i < 7; i++) (_done[dayKey(monday.add(Duration(days: i)))]?.isNotEmpty ?? false),
+    ];
   }
 
   String _newId(String prefix) {
@@ -234,6 +326,7 @@ class AppState extends ChangeNotifier {
       if (e.loadKg > 0) knownLoads[e.exerciseId] = e.loadKg;
     }
     if (replace) _entries.clear();
+    _presetId = preset.id;
     var added = 0;
     for (final d in preset.days) {
       for (final it in d.items) {
@@ -260,6 +353,9 @@ class AppState extends ChangeNotifier {
   Future<void> clearAll() async {
     _entries.clear();
     _custom.clear();
+    _done.clear();
+    _presetId = null;
+    _onboarded = false;
     notifyListeners();
     await _save();
   }

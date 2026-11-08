@@ -13,6 +13,7 @@ class Exercise {
     this.tips = const [],
     this.mistakes = const [],
     this.custom = false,
+    this.notes = const {},
   });
 
   final String id;
@@ -27,6 +28,11 @@ class Exercise {
   final List<String> mistakes;
   final bool custom;
 
+  /// Observações por gênero: 'F' para mulheres, 'M' para homens.
+  final Map<String, List<String>> notes;
+
+  List<String> notesFor(String sex) => notes[sex] ?? const [];
+
   factory Exercise.fromJson(Map<String, dynamic> j, {bool custom = false}) => Exercise(
         id: j['id'] as String,
         name: j['name'] as String,
@@ -39,6 +45,10 @@ class Exercise {
         tips: _strings(j['tips']),
         mistakes: _strings(j['mistakes']),
         custom: custom || j['custom'] == true,
+        notes: {
+          if (j['notes'] is Map)
+            for (final e in (j['notes'] as Map).entries) e.key.toString(): _strings(e.value),
+        },
       );
 
   Map<String, dynamic> toJson() => {

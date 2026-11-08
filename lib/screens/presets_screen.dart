@@ -3,65 +3,97 @@ import 'package:flutter/material.dart';
 import '../models/preset.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
+import '../theme/gm_theme.dart';
 import '../widgets/body_shape_icon.dart';
 import '../widgets/common.dart';
 import 'exercise_detail_screen.dart';
 import 'home_shell.dart';
 
-class PresetsScreen extends StatelessWidget {
+class PresetsScreen extends StatefulWidget {
   const PresetsScreen({super.key});
+
+  @override
+  State<PresetsScreen> createState() => _PresetsScreenState();
+}
+
+class _PresetsScreenState extends State<PresetsScreen> {
+  String? _sex;
 
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
+    final sex = _sex ?? state.sex;
+    final list = state.presets.where((p) => p.fits(sex)).toList()
+      ..sort((a, b) => (a.sex == 'both' ? 0 : 1) - (b.sex == 'both' ? 0 : 1));
     return Scaffold(
-      appBar: AppBar(title: const Text('Planos por formato de corpo')),
+      appBar: AppBar(title: const Text('Planos')),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
-            child: Text(
-              'Escolha o formato mais parecido com o seu. Cada plano tem 5 dias de treino (ou 3, para quem está '
-              'começando) pensados para deixar o corpo mais proporcional.',
-              style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
-            ),
+          Text(
+            'Escolha o formato mais parecido com o seu corpo. Cada plano tem uma semana de treino pensada para '
+            'deixar o corpo mais proporcional.',
+            style: text.bodyMedium,
           ),
-          for (final p in state.presets)
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PresetDetailScreen(preset: p))),
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: scheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(14),
+          const SizedBox(height: 14),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(value: 'F', label: Text('Feminino'), icon: Icon(Icons.female_rounded)),
+              ButtonSegment(value: 'M', label: Text('Masculino'), icon: Icon(Icons.male_rounded)),
+            ],
+            selected: {sex},
+            onSelectionChanged: (s) => setState(() => _sex = s.first),
+          ),
+          const SizedBox(height: 16),
+          for (final (i, p) in list.indexed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Card(
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () =>
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => PresetDetailScreen(preset: p))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            color: GmColors.cycle[i % 4].withAlpha(36),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: BodyShapeIcon(shape: p.shape, color: GmColors.cycle[i % 4]),
                         ),
-                        padding: const EdgeInsets.all(6),
-                        child: BodyShapeIcon(shape: p.shape, color: scheme.onPrimaryContainer),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(p.name, style: text.titleMedium),
-                            const SizedBox(height: 2),
-                            Text(p.summary, style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
-                          ],
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(child: Text(p.name, style: text.titleLarge)),
+                                  if (state.currentPreset?.id == p.id) ...[
+                                    const SizedBox(width: 8),
+                                    const Icon(Icons.check_circle_rounded, color: GmColors.green, size: 20),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text(p.summary, style: text.bodySmall),
+                              const SizedBox(height: 6),
+                              Text('${p.days.length} dias por semana',
+                                  style: text.labelMedium?.copyWith(color: scheme.primary)),
+                            ],
+                          ),
                         ),
-                      ),
-                      const Icon(Icons.chevron_right),
-                    ],
+                        const Icon(Icons.chevron_right_rounded),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -85,12 +117,12 @@ class PresetDetailScreen extends StatelessWidget {
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('Usar este plano'),
-          content: const Text('Você já tem exercícios na sua lista. O que prefere fazer? '
-              'As cargas que você já registrou para os mesmos exercícios são mantidas.'),
+          content: const Text('Você já tem exercícios na sua lista. As cargas que já registrou para os mesmos '
+              'exercícios são mantidas.'),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Somar à lista')),
-            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Substituir')),
+            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Substituir lista')),
           ],
         ),
       );
@@ -103,7 +135,7 @@ class PresetDetailScreen extends StatelessWidget {
     Navigator.popUntil(context, (r) => r.isFirst);
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('$n exercícios do plano ${preset.name} na sua lista')));
+      ..showSnackBar(SnackBar(content: Text('$n exercícios do plano ${preset.name} na sua semana')));
   }
 
   @override
@@ -118,7 +150,7 @@ class PresetDetailScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           child: FilledButton.icon(
             onPressed: () => _apply(context),
-            icon: const Icon(Icons.playlist_add_check),
+            icon: const Icon(Icons.playlist_add_check_rounded),
             label: const Text('Usar este plano'),
           ),
         ),
@@ -129,50 +161,49 @@ class PresetDetailScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 84,
-                height: 84,
-                decoration: BoxDecoration(color: scheme.primaryContainer, borderRadius: BorderRadius.circular(18)),
-                padding: const EdgeInsets.all(8),
-                child: BodyShapeIcon(shape: preset.shape, color: scheme.onPrimaryContainer),
+                width: 92,
+                height: 92,
+                decoration: BoxDecoration(color: scheme.primary.withAlpha(30), borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.all(10),
+                child: BodyShapeIcon(shape: preset.shape, color: scheme.primary),
               ),
               const SizedBox(width: 16),
-              Expanded(child: Text(preset.summary, style: text.titleSmall)),
+              Expanded(child: Text(preset.summary, style: text.titleMedium)),
             ],
           ),
           const SizedBox(height: 16),
-          Text(preset.description, style: text.bodyMedium),
+          Text(preset.description, style: text.bodyLarge),
           const SectionTitle('Objetivos', icon: Icons.flag_outlined),
           BulletList(preset.goals),
           const SectionTitle('Foco do treino', icon: Icons.center_focus_strong_outlined),
           Wrap(spacing: 6, runSpacing: 6, children: [for (final f in preset.focus) Chip(label: Text(f))]),
           if (preset.caution.isNotEmpty) ...[
             const SectionTitle('Atenção', icon: Icons.info_outline),
-            BulletList(preset.caution, icon: Icons.info_outline, color: scheme.tertiary),
+            BulletList(preset.caution, icon: Icons.info_outline, color: GmColors.red),
           ],
           const SectionTitle('Semana de treino', icon: Icons.calendar_month_outlined),
-          for (final d in preset.days)
-            Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+          for (final (i, d) in preset.days.indexed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Card(
+                clipBehavior: Clip.antiAlias,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(height: 5, color: GmColors.cycle[i % 4]),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: scheme.secondaryContainer,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(weekdayNames[d.weekday],
-                                style: text.labelLarge?.copyWith(color: scheme.onSecondaryContainer)),
-                          ),
+                          Text(weekdayNames[d.weekday], style: text.headlineSmall),
                           const SizedBox(width: 10),
-                          Expanded(child: Text(d.title, style: text.titleSmall)),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              child: Text(d.title, style: text.titleSmall?.copyWith(color: scheme.onSurfaceVariant)),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -180,17 +211,18 @@ class PresetDetailScreen extends StatelessWidget {
                       Builder(builder: (context) {
                         final ex = state.exercise(it.exercise);
                         if (ex == null) return const SizedBox.shrink();
-                        final rest = it.rest > 0 ? ' · ${it.rest}s descanso' : '';
+                        final rest = it.rest > 0 ? ', descanso de ${it.rest}s' : '';
                         return ListTile(
-                          leading: MotionThumb(clip: state.clipFor(ex), size: 48),
-                          title: Text(ex.name),
-                          subtitle: Text('${it.sets} × ${it.reps}$rest'),
+                          leading: MotionThumb(clip: state.clipFor(ex), size: 52, male: preset.sex == 'M' || (preset.sex == 'both' && state.isMale)),
+                          title: Text(ex.name, style: text.titleSmall),
+                          subtitle: Text('${it.sets} séries de ${it.reps}$rest'),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (_) => ExerciseDetailScreen(exerciseId: ex.id)),
                           ),
                         );
                       }),
+                    const SizedBox(height: 6),
                   ],
                 ),
               ),

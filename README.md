@@ -2,15 +2,16 @@
 
 App Flutter para quem está começando na academia. Funciona **100% offline**: o catálogo, as animações e os seus treinos ficam no aparelho.
 
-## O que tem nesta primeira versão
+## O que tem no app
 
-- **Catálogo com 94 exercícios** (pernas, glúteos, peito, costas, ombros, braços, abdômen e cardio), com busca sem acento, filtro por grupo muscular e por equipamento.
-- **Animação de cada exercício**: um boneco desenhado no próprio app executa o movimento em loop, com o nome da fase atual ("Desça controlando", "Suba"...), pausa e velocidade 0,5x. São 88 movimentos diferentes.
-- **Passo a passo, dicas e erros comuns** de cada exercício.
-- **Planos por formato de corpo** (5 dias por semana): triângulo invertido, triângulo (pera), ampulheta, retângulo e oval (maçã), além de "Primeiros passos" (3 dias, corpo inteiro) para quem nunca treinou.
-- **Meus treinos**: lista por dia da semana, com séries, repetições, descanso e **carga** (botões de menos e mais ou toque para digitar). Cada mudança de carga entra no histórico.
-- **Exercícios personalizados**: crie os seus, escolha o grupo muscular, o equipamento e a animação mais parecida.
-- Tema claro e escuro automáticos.
+- **Perfil feminino ou masculino**, escolhido na primeira abertura. Ele muda o boneco das animações, os planos sugeridos e as observações de cada exercício para aquele corpo.
+- **Planos por formato de corpo**, 5 dias por semana. Feminino: triângulo invertido, triângulo (pera), ampulheta, retângulo e oval. Masculino: trapézio (V), triângulo invertido, retângulo, triângulo e oval. Além disso, "Primeiros passos" (3 dias, corpo inteiro) para quem nunca treinou.
+- **94 exercícios** com passo a passo, dicas, erros comuns e, nos principais, observações para o corpo feminino e masculino.
+- **Animações explicadas**: boneco com volume e roupas, músculos trabalhados em destaque, percurso do movimento com seta, posição inicial em transparência, fase atual, modo lento, tela cheia e as poses de início, meio e fim. São 88 movimentos.
+- **Treino de hoje**: semana com a quantidade de exercícios por dia, marcação do que já foi feito e barra de progresso.
+- **Carga** com números grandes e a cor da anilha correspondente (padrão olímpico), mais o histórico de cada mudança.
+- **Exercícios personalizados**, com a animação mais parecida.
+- Visual próprio: cores das anilhas, fontes Barlow e Barlow Condensed, ícone do app e tema claro e escuro.
 
 ## Como rodar
 
@@ -56,6 +57,7 @@ tools/
   patterns.py               poses-chave de cada movimento
   motion_studio.py          gera motions.json e prévias em PNG
   catalog.py                catálogo e planos, com validação
+  make_icons.py             gera os ícones de Android e iOS
 ```
 
 ### Como as animações funcionam

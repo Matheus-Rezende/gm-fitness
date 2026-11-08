@@ -4,6 +4,7 @@
    "id": "primeiros_passos",
    "name": "Primeiros passos",
    "shape": "iniciante",
+   "sex": "both",
    "summary": "Para quem nunca treinou ou está voltando. Corpo inteiro, 3 vezes por semana.",
    "description": "Antes de buscar um formato de corpo, o corpo precisa aprender os movimentos básicos. Este plano usa máquinas e exercícios simples para criar força, coordenação e o hábito de treinar.",
    "goals": [
@@ -169,6 +170,7 @@
   },
   {
    "id": "triangulo_invertido",
+   "sex": "F",
    "name": "Triângulo invertido",
    "shape": "triangulo_invertido",
    "summary": "Ombros e costas mais largos que o quadril. Foco em glúteos, quadril e pernas.",
@@ -398,6 +400,7 @@
   },
   {
    "id": "triangulo",
+   "sex": "F",
    "name": "Triângulo (pera)",
    "shape": "triangulo",
    "summary": "Quadril mais largo que os ombros. Foco em ombros e costas para equilibrar.",
@@ -620,6 +623,7 @@
   },
   {
    "id": "ampulheta",
+   "sex": "F",
    "name": "Ampulheta",
    "shape": "ampulheta",
    "summary": "Ombros e quadril alinhados, cintura marcada. Foco em manter o equilíbrio.",
@@ -834,6 +838,7 @@
   },
   {
    "id": "retangulo",
+   "sex": "F",
    "name": "Retângulo",
    "shape": "retangulo",
    "summary": "Ombros, cintura e quadril com larguras parecidas. Foco em criar curvas.",
@@ -1034,6 +1039,7 @@
   },
   {
    "id": "oval",
+   "sex": "F",
    "name": "Oval (maçã)",
    "shape": "oval",
    "summary": "Volume concentrado na região da cintura. Foco em perder gordura com baixo impacto.",
@@ -1219,6 +1225,1011 @@
        "exercise": "flexao_inclinada",
        "sets": 3,
        "reps": "10",
+       "rest": 30,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_fazendeiro",
+       "sets": 3,
+       "reps": "40s",
+       "rest": 30,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "20 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "m_trapezio",
+   "sex": "M",
+   "name": "Trapézio (V)",
+   "shape": "m_trapezio",
+   "summary": "Ombros largos e cintura mais estreita. Foco em manter o equilíbrio sem esquecer as pernas.",
+   "description": "O trapézio, ou V, é o formato que muitos homens buscam: ombros e costas largos e cintura mais estreita. Para manter essa proporção, o treino divide o volume entre parte de cima e pernas, e o core fica forte para sustentar as cargas.",
+   "goals": [
+    "Manter a proporção entre tronco e pernas",
+    "Ganhar força nos exercícios básicos",
+    "Manter a cintura definida"
+   ],
+   "focus": [
+    "Corpo inteiro",
+    "Pernas",
+    "Costas",
+    "Peito"
+   ],
+   "caution": [
+    "Não pule o treino de pernas: é ele que impede o visual de tronco grande e pernas finas."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Peito e tríceps",
+     "items": [
+      {
+       "exercise": "supino_reto_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "supino_inclinado_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "crossover",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "paralelas",
+       "sets": 3,
+       "reps": "8",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "triceps_corda",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Pernas (quadríceps)",
+     "items": [
+      {
+       "exercise": "agachamento_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "leg_press_45",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_extensora",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "panturrilha_em_pe",
+       "sets": 4,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Costas e bíceps",
+     "items": [
+      {
+       "exercise": "barra_fixa",
+       "sets": 4,
+       "reps": "6 a 8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "remada_curvada_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_sentada",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_direta_barra",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_martelo",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Ombros e core",
+     "items": [
+      {
+       "exercise": "desenvolvimento_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 4,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "face_pull",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha",
+       "sets": 3,
+       "reps": "45s",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_pernas_barra",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Posteriores e cardio",
+     "items": [
+      {
+       "exercise": "levantamento_terra",
+       "sets": 4,
+       "reps": "5",
+       "rest": 150,
+       "note": ""
+      },
+      {
+       "exercise": "mesa_flexora",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_pelvica",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remo_ergometro",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "m_triangulo_invertido",
+   "sex": "M",
+   "name": "Triângulo invertido",
+   "shape": "m_triangulo_invertido",
+   "summary": "Tronco grande e pernas finas. Foco em pernas e glúteos para equilibrar.",
+   "description": "Quando o peito e os ombros crescem muito mais que as pernas, o corpo fica com o tronco pesado. O plano coloca três dias de membros inferiores e mantém a parte de cima com volume moderado.",
+   "goals": [
+    "Aumentar coxas e glúteos",
+    "Fortalecer posterior de coxa",
+    "Manter o tronco sem exagerar no volume"
+   ],
+   "focus": [
+    "Quadríceps",
+    "Posterior de coxa",
+    "Glúteos",
+    "Panturrilha"
+   ],
+   "caution": [
+    "Pernas respondem bem a cargas altas e amplitude completa: priorize a técnica antes da carga."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Pernas pesado",
+     "items": [
+      {
+       "exercise": "agachamento_barra",
+       "sets": 5,
+       "reps": "6 a 8",
+       "rest": 150,
+       "note": ""
+      },
+      {
+       "exercise": "leg_press_45",
+       "sets": 4,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_extensora",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "panturrilha_em_pe",
+       "sets": 4,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Superiores",
+     "items": [
+      {
+       "exercise": "supino_inclinado_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "puxada_frontal",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_sentada",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Posteriores",
+     "items": [
+      {
+       "exercise": "stiff_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_pelvica",
+       "sets": 4,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "mesa_flexora",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "panturrilha_sentado",
+       "sets": 4,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Core e cardio",
+     "items": [
+      {
+       "exercise": "bicicleta_ergometrica",
+       "sets": 1,
+       "reps": "25 min",
+       "rest": 0,
+       "note": ""
+      },
+      {
+       "exercise": "prancha",
+       "sets": 3,
+       "reps": "45s",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "dead_bug",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "abdominal_bicicleta",
+       "sets": 3,
+       "reps": "15 cada",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Pernas volume",
+     "items": [
+      {
+       "exercise": "agachamento_bulgaro",
+       "sets": 4,
+       "reps": "10 cada",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "afundo_halteres",
+       "sets": 3,
+       "reps": "12 cada",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_flexora",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_abdutora",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "m_retangulo",
+   "sex": "M",
+   "name": "Retângulo",
+   "shape": "m_retangulo",
+   "summary": "Ombros e cintura com larguras parecidas. Foco em costas e ombros para criar o V.",
+   "description": "No retângulo, o tronco desce reto dos ombros à cintura. Dorsais largas e a parte lateral dos ombros desenvolvida criam o formato em V; o core forte e a gordura sob controle deixam a cintura mais estreita visualmente.",
+   "goals": [
+    "Alargar as costas",
+    "Desenvolver os ombros laterais",
+    "Afinar a cintura visualmente"
+   ],
+   "focus": [
+    "Costas",
+    "Ombros",
+    "Peito",
+    "Core"
+   ],
+   "caution": [
+    "Abdominais com carga pesada nos oblíquos podem engrossar a cintura; prefira core estático."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Costas (largura)",
+     "items": [
+      {
+       "exercise": "barra_fixa_assistida",
+       "sets": 4,
+       "reps": "8",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "puxada_frontal",
+       "sets": 4,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "pulldown_bracos_estendidos",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_direta_halteres",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Peito e ombros",
+     "items": [
+      {
+       "exercise": "supino_inclinado_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 4,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "desenvolvimento_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "triceps_polia",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Pernas",
+     "items": [
+      {
+       "exercise": "agachamento_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 120,
+       "note": ""
+      },
+      {
+       "exercise": "stiff_barra",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "leg_press_45",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "panturrilha_em_pe",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Costas (espessura)",
+     "items": [
+      {
+       "exercise": "remada_curvada_barra",
+       "sets": 4,
+       "reps": "8",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_unilateral",
+       "sets": 3,
+       "reps": "10 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "face_pull",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_martelo",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Ombros e core",
+     "items": [
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 4,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "voador_invertido",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha",
+       "sets": 3,
+       "reps": "45s",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "20 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "m_triangulo",
+   "sex": "M",
+   "name": "Triângulo",
+   "shape": "m_triangulo",
+   "summary": "Ombros mais estreitos que a cintura e o quadril. Foco em ombros, costas e peito.",
+   "description": "No triângulo, a parte de baixo é mais larga que os ombros. O plano dá prioridade a ombros, costas e peito para criar largura em cima, mantém as pernas com treino de força e inclui cardio para reduzir a gordura da cintura.",
+   "goals": [
+    "Alargar ombros e costas",
+    "Desenvolver o peito",
+    "Reduzir a gordura na cintura"
+   ],
+   "focus": [
+    "Ombros",
+    "Costas",
+    "Peito",
+    "Cardio"
+   ],
+   "caution": [
+    "Gordura localizada não sai com abdominal; o cardio e a alimentação fazem essa parte."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Ombros e peito",
+     "items": [
+      {
+       "exercise": "desenvolvimento_halteres",
+       "sets": 4,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 4,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "supino_reto_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "crucifixo_halteres",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Costas",
+     "items": [
+      {
+       "exercise": "puxada_frontal",
+       "sets": 4,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_sentada",
+       "sets": 4,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "pulldown_bracos_estendidos",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "encolhimento",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Pernas e cardio",
+     "items": [
+      {
+       "exercise": "leg_press_45",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "stiff_halteres",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_flexora",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "bicicleta_ergometrica",
+       "sets": 1,
+       "reps": "20 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Ombros e braços",
+     "items": [
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 4,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "face_pull",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_direta_barra",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "triceps_testa",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Corpo inteiro e cardio",
+     "items": [
+      {
+       "exercise": "supino_inclinado_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "remada_unilateral",
+       "sets": 3,
+       "reps": "10 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "agachamento_goblet",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "remo_ergometro",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "m_oval",
+   "sex": "M",
+   "name": "Oval",
+   "shape": "m_oval",
+   "summary": "Volume concentrado no abdômen. Foco em perder gordura com treino de força e cardio leve.",
+   "description": "No formato oval, a gordura se acumula na barriga. O caminho é treino de força para o corpo todo, cardio frequente de baixo impacto e core forte, que também protege a lombar. A alimentação com leve déficit calórico faz parte do resultado.",
+   "goals": [
+    "Reduzir a gordura corporal",
+    "Ganhar força no corpo todo",
+    "Proteger a lombar com core forte"
+   ],
+   "focus": [
+    "Corpo inteiro",
+    "Cardio de baixo impacto",
+    "Core"
+   ],
+   "caution": [
+    "Evite corrida e saltos no início para poupar joelhos e tornozelos.",
+    "Se tiver pressão alta ou outra condição, converse com seu médico antes."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Força A",
+     "items": [
+      {
+       "exercise": "leg_press_45",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "supino_reto_halteres",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "puxada_frontal",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha_joelhos",
+       "sets": 3,
+       "reps": "30s",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "20 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Cardio",
+     "items": [
+      {
+       "exercise": "bicicleta_ergometrica",
+       "sets": 1,
+       "reps": "35 min",
+       "rest": 0,
+       "note": ""
+      },
+      {
+       "exercise": "perdigueiro",
+       "sets": 3,
+       "reps": "10 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "dead_bug",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Força B",
+     "items": [
+      {
+       "exercise": "agachamento_goblet",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_sentada",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "desenvolvimento_halteres",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "ponte_gluteo",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_esteira",
+       "sets": 1,
+       "reps": "20 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Cardio e core",
+     "items": [
+      {
+       "exercise": "remo_ergometro",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      },
+      {
+       "exercise": "marcha_estacionaria",
+       "sets": 4,
+       "reps": "1 min",
+       "rest": 30,
+       "note": ""
+      },
+      {
+       "exercise": "prancha_lateral",
+       "sets": 3,
+       "reps": "15s cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "super_homem",
+       "sets": 3,
+       "reps": "10",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Circuito",
+     "items": [
+      {
+       "exercise": "subida_banco",
+       "sets": 3,
+       "reps": "10 cada",
+       "rest": 30,
+       "note": ""
+      },
+      {
+       "exercise": "flexao_inclinada",
+       "sets": 3,
+       "reps": "10",
+       "rest": 30,
+       "note": ""
+      },
+      {
+       "exercise": "remada_unilateral",
+       "sets": 3,
+       "reps": "12 cada",
        "rest": 30,
        "note": ""
       },
