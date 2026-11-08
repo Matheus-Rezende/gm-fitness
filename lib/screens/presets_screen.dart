@@ -96,7 +96,7 @@ class PresetDetailScreen extends StatelessWidget {
       );
       if (replace == null) return;
     }
-    final n = await state.applyPreset(preset, replace: replace ?? false);
+    final n = await state.applyPreset(preset, replace: replace);
     if (!context.mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     homeTab.value = 0;
