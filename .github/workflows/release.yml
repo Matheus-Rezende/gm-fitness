@@ -1,9 +1,12 @@
 name: Publicar versão
 
-# Ao enviar uma tag como v0.3.0, gera o APK e publica na página de Releases.
+# Quando o campo version do pubspec.yaml muda na main, gera o APK e publica
+# uma Release com a tag v<versão>. Também pode ser disparado à mão na aba Actions.
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+    paths: ['pubspec.yaml', '.github/workflows/release.yml']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,38 +19,55 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Versão
+        id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(grep -E '^version:' pubspec.yaml | sed -E 's/version: *([^+ ]+).*/\1/')
+          TAG="v${VERSION}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "A versão ${TAG} já foi publicada."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/setup-java@v4
+        if: steps.ver.outputs.exists == 'false'
         with:
           distribution: temurin
           java-version: '17'
 
       - uses: subosito/flutter-action@v2
+        if: steps.ver.outputs.exists == 'false'
         with:
           flutter-version: 3.47.9
           channel: stable
           cache: true
 
-      - name: Dependências
-        run: flutter pub get
-
       - name: APK
-        run: flutter build apk --release
+        if: steps.ver.outputs.exists == 'false'
+        run: |
+          flutter pub get
+          flutter build apk --release
 
       - name: Publicar
+        if: steps.ver.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
           APK="gm-fitness-${TAG}.apk"
           cp build/app/outputs/flutter-apk/app-release.apk "$APK"
-          cat > notas.md <<'EOF'
-          ## Como instalar no Android
-
-          1. No celular, toque em **gm-fitness-…apk** logo abaixo, em *Assets*, para baixar.
-          2. Abra o arquivo baixado. Se o Android pedir, permita **instalar apps desconhecidos** para o navegador ou o gerenciador de arquivos.
-          3. Toque em **Instalar**.
-
-          Se já tiver uma versão anterior instalada e o Android disser que o app não pode ser atualizado, desinstale a antiga primeiro. Isso apaga a lista de treinos salva no celular.
-          EOF
-          sed -i 's/^          //' notas.md
-          gh release create "$TAG" "$APK" --title "GM Fitness ${TAG}" --notes-file notas.md
+          {
+            echo "## Como instalar no Android"
+            echo
+            echo "1. No celular, toque em **${APK}** logo abaixo, em *Assets*, para baixar."
+            echo "2. Abra o arquivo baixado. Se o Android pedir, permita **instalar apps desconhecidos** para o navegador ou o gerenciador de arquivos."
+            echo "3. Toque em **Instalar**."
+            echo
+            echo "Se já tiver uma versão anterior e o Android disser que o app não pode ser atualizado, desinstale a antiga primeiro. Isso apaga a lista de treinos salva no celular."
+          } > notas.md
+          gh release create "$TAG" "$APK" --target "$GITHUB_SHA" --title "GM Fitness ${TAG}" --notes-file notas.md

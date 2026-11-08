@@ -34,14 +34,7 @@ flutter build apk --release
 
 Para instalar sem computador, abra a página de **Releases** do repositório no navegador do celular e baixe o APK da versão mais recente.
 
-Para publicar uma versão nova, atualize `version:` no `pubspec.yaml`, faça o commit e envie uma tag:
-
-```bash
-git tag v0.3.0
-git push origin v0.3.0
-```
-
-O GitHub gera o APK e cria a Release sozinho.
+Para publicar uma versão nova, aumente `version:` no `pubspec.yaml` (por exemplo, de `0.2.0+2` para `0.3.0+3`) e envie para a `main`. O GitHub gera o APK e cria a Release `v0.3.0` sozinho. Também dá para disparar à mão em **Actions → Publicar versão → Run workflow**.
 
 ### iOS
 
