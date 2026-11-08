@@ -36,9 +36,7 @@ jobs:
         run: flutter test
 
       - name: Prévias das animações
-        run: |
-          RENDER_PREVIEWS=1 flutter test test/render_preview_test.dart
-          for f in build/previews/*.png; do echo "PNGBEGIN $f"; base64 -w0 "$f"; echo; echo "PNGEND"; done
+        run: RENDER_PREVIEWS=1 flutter test test/render_preview_test.dart
 
       - uses: actions/upload-artifact@v4
         with:
