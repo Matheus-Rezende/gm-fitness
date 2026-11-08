@@ -35,6 +35,15 @@ jobs:
       - name: Testes
         run: flutter test
 
+      - name: Prévias das animações
+        run: RENDER_PREVIEWS=1 flutter test test/render_preview_test.dart
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: previas-animacoes
+          path: build/previews/
+          retention-days: 7
+
       - name: APK
         run: flutter build apk --release
 
