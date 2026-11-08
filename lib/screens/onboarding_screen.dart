@@ -270,10 +270,12 @@ class _ShapePage extends StatelessWidget {
     final state = AppScope.of(context);
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final shapes = state.presets.where((p) => p.sex == sex).toList();
-    BodyPreset? basics;
+    final shapes = state.presets.where((p) => p.sex == sex && p.shape != 'iniciante').toList();
+    BodyPreset? five;
+    BodyPreset? three;
     for (final p in state.presets) {
-      if (p.sex == 'both') basics = p;
+      if (p.shape == 'iniciante' && p.sex == sex) five = p;
+      if (p.shape == 'iniciante' && p.sex == 'both') three = p;
     }
     return ListView(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -324,11 +326,22 @@ class _ShapePage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        if (basics != null)
-          OutlinedButton.icon(
-            onPressed: saving ? null : () => onPick(basics),
+        if (five != null)
+          FilledButton.icon(
+            onPressed: saving ? null : () => onPick(five),
             icon: const Icon(Icons.directions_walk_rounded),
-            label: const Text('Nunca treinei: começar pelo básico'),
+            label: const Text('Nunca treinei ou não sei meu formato'),
+          ),
+        if (five != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, bottom: 4),
+            child: Text('Começa com o plano Primeiros passos: 5 dias por semana, de segunda a sexta.',
+                style: text.bodySmall, textAlign: TextAlign.center),
+          ),
+        if (three != null)
+          OutlinedButton(
+            onPressed: saving ? null : () => onPick(three),
+            child: const Text('Prefiro começar com 3 dias por semana'),
           ),
         const SizedBox(height: 8),
         TextButton(

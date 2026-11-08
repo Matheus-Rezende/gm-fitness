@@ -5,7 +5,7 @@ App Flutter para quem está começando na academia. Funciona **100% offline**: o
 ## O que tem no app
 
 - **Perfil feminino ou masculino**, escolhido na primeira abertura. Ele muda o boneco das animações, os planos sugeridos e as observações de cada exercício para aquele corpo.
-- **Planos por formato de corpo**, 5 dias por semana. Feminino: triângulo invertido, triângulo (pera), ampulheta, retângulo e oval. Masculino: trapézio (V), triângulo invertido, retângulo, triângulo e oval. Além disso, "Primeiros passos" (3 dias, corpo inteiro) para quem nunca treinou.
+- **Planos por formato de corpo**, 5 dias por semana. Feminino: triângulo invertido, triângulo (pera), ampulheta, retângulo e oval. Masculino: trapézio (V), triângulo invertido, retângulo, triângulo e oval. Para quem nunca treinou ou não sabe o formato do corpo, "Primeiros passos" em 5 dias (um feminino e um masculino) ou em 3 dias.
 - **94 exercícios** com passo a passo, dicas, erros comuns e, nos principais, observações para o corpo feminino e masculino.
 - **Animações explicadas**: boneco com volume e roupas, músculos trabalhados em destaque, percurso do movimento com seta, posição inicial em transparência, fase atual, modo lento, tela cheia e as poses de início, meio e fim. São 88 movimentos.
 - **Treino de hoje**: semana com a quantidade de exercícios por dia, marcação do que já foi feito e barra de progresso.

@@ -19,6 +19,12 @@ class PresetsScreen extends StatefulWidget {
 class _PresetsScreenState extends State<PresetsScreen> {
   String? _sex;
 
+  /// Iniciantes primeiro (5 dias antes de 3), depois os formatos de corpo.
+  static int _rank(BodyPreset p) {
+    if (p.shape != 'iniciante') return 2;
+    return p.sex == 'both' ? 1 : 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
@@ -26,7 +32,7 @@ class _PresetsScreenState extends State<PresetsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final sex = _sex ?? state.sex;
     final list = state.presets.where((p) => p.fits(sex)).toList()
-      ..sort((a, b) => (a.sex == 'both' ? 0 : 1) - (b.sex == 'both' ? 0 : 1));
+      ..sort((a, b) => _rank(a) - _rank(b));
     return Scaffold(
       appBar: AppBar(title: const Text('Planos')),
       body: ListView(

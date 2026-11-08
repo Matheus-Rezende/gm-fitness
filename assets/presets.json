@@ -1,8 +1,513 @@
 {
  "presets": [
   {
+   "id": "iniciante_5_f",
+   "sex": "F",
+   "name": "Primeiros passos (5 dias)",
+   "shape": "iniciante",
+   "summary": "Para quem nunca treinou e ainda não sabe o formato do corpo. Segunda a sexta.",
+   "description": "Uma semana completa para começar do zero, sem precisar saber o formato do corpo. Cada grupo muscular é treinado duas vezes por semana, com máquinas e exercícios simples, poucas séries e um dia dedicado a cardio e abdômen. Depois de 6 a 8 semanas, vale escolher um plano pelo formato do corpo.",
+   "goals": [
+    "Aprender a técnica dos exercícios básicos",
+    "Criar o hábito de treinar 5 dias por semana",
+    "Ganhar força e condicionamento no corpo todo"
+   ],
+   "focus": [
+    "Corpo inteiro",
+    "Glúteos e pernas",
+    "Postura",
+    "Cardio leve"
+   ],
+   "caution": [
+    "Nas duas primeiras semanas, use cargas leves e termine cada série com 2 a 3 repetições de folga.",
+    "Quando conseguir fazer todas as séries e repetições com boa técnica, aumente um pouco a carga.",
+    "Sábado e domingo são de descanso. Dor muscular leve nos primeiros dias é normal; dor nas articulações não."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Pernas e glúteos",
+     "items": [
+      {
+       "exercise": "leg_press_45",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "agachamento_goblet",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_extensora",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_abdutora",
+       "sets": 3,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "ponte_gluteo",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Peito, ombros e tríceps",
+     "items": [
+      {
+       "exercise": "supino_reto_halteres",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "desenvolvimento_halteres",
+       "sets": 2,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "flexao_inclinada",
+       "sets": 2,
+       "reps": "8",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "triceps_corda",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha_joelhos",
+       "sets": 3,
+       "reps": "20s",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "bicicleta_ergometrica",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Cardio e abdômen",
+     "items": [
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "25 min",
+       "rest": 0,
+       "note": ""
+      },
+      {
+       "exercise": "dead_bug",
+       "sets": 3,
+       "reps": "8",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "perdigueiro",
+       "sets": 3,
+       "reps": "8 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "abdominal_supra",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Posterior e glúteos",
+     "items": [
+      {
+       "exercise": "cadeira_flexora",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "stiff_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "subida_banco",
+       "sets": 2,
+       "reps": "10 cada",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "coice_quatro_apoios",
+       "sets": 2,
+       "reps": "12 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "abducao_em_pe_elastico",
+       "sets": 2,
+       "reps": "15 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "panturrilha_em_pe",
+       "sets": 2,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Costas e bíceps",
+     "items": [
+      {
+       "exercise": "puxada_frontal",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_sentada",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_unilateral",
+       "sets": 2,
+       "reps": "10 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_direta_halteres",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha",
+       "sets": 2,
+       "reps": "20s",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "bicicleta_ergometrica",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iniciante_5_m",
+   "sex": "M",
+   "name": "Primeiros passos (5 dias)",
+   "shape": "iniciante",
+   "summary": "Para quem nunca treinou e ainda não sabe o formato do corpo. Segunda a sexta.",
+   "description": "Uma semana completa para começar do zero, sem precisar saber o formato do corpo. Cada grupo muscular é treinado duas vezes por semana, com máquinas e halteres, poucas séries e um dia dedicado a cardio e abdômen. Depois de 6 a 8 semanas, vale escolher um plano pelo formato do corpo.",
+   "goals": [
+    "Aprender a técnica dos exercícios básicos",
+    "Criar o hábito de treinar 5 dias por semana",
+    "Ganhar força de forma equilibrada entre tronco e pernas"
+   ],
+   "focus": [
+    "Corpo inteiro",
+    "Peito e costas",
+    "Pernas",
+    "Cardio leve"
+   ],
+   "caution": [
+    "Nas duas primeiras semanas, use cargas leves e termine cada série com 2 a 3 repetições de folga.",
+    "Quando conseguir fazer todas as séries e repetições com boa técnica, aumente um pouco a carga.",
+    "Sábado e domingo são de descanso. Dor muscular leve nos primeiros dias é normal; dor nas articulações não.",
+    "Não pule os dias de perna: eles equilibram o corpo e ajudam a ganhar força em todos os outros exercícios."
+   ],
+   "days": [
+    {
+     "weekday": 0,
+     "title": "Peito, ombros e tríceps",
+     "items": [
+      {
+       "exercise": "supino_reto_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "supino_inclinado_halteres",
+       "sets": 2,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "desenvolvimento_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "elevacao_lateral",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "triceps_polia",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha",
+       "sets": 2,
+       "reps": "20s",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 1,
+     "title": "Pernas",
+     "items": [
+      {
+       "exercise": "leg_press_45",
+       "sets": 3,
+       "reps": "12",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "agachamento_goblet",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_extensora",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "cadeira_flexora",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "panturrilha_em_pe",
+       "sets": 2,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "bicicleta_ergometrica",
+       "sets": 1,
+       "reps": "10 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 2,
+     "title": "Costas e bíceps",
+     "items": [
+      {
+       "exercise": "puxada_frontal",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_sentada",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "remada_unilateral",
+       "sets": 2,
+       "reps": "10 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_direta_halteres",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "rosca_martelo",
+       "sets": 2,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "dead_bug",
+       "sets": 2,
+       "reps": "8",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 3,
+     "title": "Cardio e abdômen",
+     "items": [
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "20 min",
+       "rest": 0,
+       "note": ""
+      },
+      {
+       "exercise": "perdigueiro",
+       "sets": 3,
+       "reps": "8 cada",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "abdominal_supra",
+       "sets": 2,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "prancha_lateral",
+       "sets": 2,
+       "reps": "15s cada",
+       "rest": 60,
+       "note": ""
+      }
+     ]
+    },
+    {
+     "weekday": 4,
+     "title": "Posterior e corpo inteiro",
+     "items": [
+      {
+       "exercise": "stiff_halteres",
+       "sets": 3,
+       "reps": "10",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "subida_banco",
+       "sets": 2,
+       "reps": "10 cada",
+       "rest": 90,
+       "note": ""
+      },
+      {
+       "exercise": "ponte_gluteo",
+       "sets": 3,
+       "reps": "12",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "flexao_inclinada",
+       "sets": 2,
+       "reps": "8",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "face_pull",
+       "sets": 2,
+       "reps": "15",
+       "rest": 60,
+       "note": ""
+      },
+      {
+       "exercise": "caminhada_inclinada",
+       "sets": 1,
+       "reps": "15 min",
+       "rest": 0,
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
    "id": "primeiros_passos",
-   "name": "Primeiros passos",
+   "name": "Primeiros passos (3 dias)",
    "shape": "iniciante",
    "sex": "both",
    "summary": "Para quem nunca treinou ou está voltando. Corpo inteiro, 3 vezes por semana.",

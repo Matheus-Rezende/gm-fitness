@@ -55,12 +55,14 @@ void main() {
 
     await state.setProfile(sex: 'M');
     final male = state.presetsForUser;
-    expect(male.where((p) => p.sex == 'M').length, 5);
+    expect(male.where((p) => p.sex == 'M' && p.shape != 'iniciante').length, 5);
+    expect(male.where((p) => p.shape == 'iniciante' && p.sex == 'M' && p.days.length == 5).length, 1);
     expect(male.any((p) => p.sex == 'F'), isFalse);
     expect(state.recommendedIds, isNotEmpty);
 
     await state.setProfile(sex: 'F');
-    expect(state.presetsForUser.where((p) => p.sex == 'F').length, 5);
+    expect(state.presetsForUser.where((p) => p.sex == 'F' && p.shape != 'iniciante').length, 5);
+    expect(state.presetsForUser.where((p) => p.shape == 'iniciante' && p.sex == 'F' && p.days.length == 5).length, 1);
 
     final preset = state.presets.firstWhere((p) => p.id == 'triangulo_invertido');
     final n = await state.applyPreset(preset, replace: true);

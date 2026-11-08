@@ -869,7 +869,7 @@ def day(weekday, title, items):
 
 PRESETS = [
     dict(
-        id='primeiros_passos', name='Primeiros passos', shape='iniciante', sex='both',
+        id='primeiros_passos', name='Primeiros passos (3 dias)', shape='iniciante', sex='both',
         summary='Para quem nunca treinou ou está voltando. Corpo inteiro, 3 vezes por semana.',
         description='Antes de buscar um formato de corpo, o corpo precisa aprender os movimentos básicos. '
                     'Este plano usa máquinas e exercícios simples para criar força, coordenação e o hábito '
@@ -1129,6 +1129,74 @@ PRESETS += [
             day(4, 'Circuito', [it('subida_banco', 3, '10 cada', 30), it('flexao_inclinada', 3, '10', 30),
                                 it('remada_unilateral', 3, '12 cada', 30), it('caminhada_fazendeiro', 3, '40s', 30),
                                 it('caminhada_inclinada', 1, '20 min', 0)]),
+        ]),
+]
+
+
+BEGINNER_CAUTION = [
+    'Nas duas primeiras semanas, use cargas leves e termine cada série com 2 a 3 repetições de folga.',
+    'Quando conseguir fazer todas as séries e repetições com boa técnica, aumente um pouco a carga.',
+    'Sábado e domingo são de descanso. Dor muscular leve nos primeiros dias é normal; dor nas articulações não.',
+]
+
+PRESETS[0:0] = [
+    dict(
+        id='iniciante_5_f', sex='F', name='Primeiros passos (5 dias)', shape='iniciante',
+        summary='Para quem nunca treinou e ainda não sabe o formato do corpo. Segunda a sexta.',
+        description='Uma semana completa para começar do zero, sem precisar saber o formato do corpo. Cada '
+                    'grupo muscular é treinado duas vezes por semana, com máquinas e exercícios simples, poucas '
+                    'séries e um dia dedicado a cardio e abdômen. Depois de 6 a 8 semanas, vale escolher um '
+                    'plano pelo formato do corpo.',
+        goals=['Aprender a técnica dos exercícios básicos', 'Criar o hábito de treinar 5 dias por semana',
+               'Ganhar força e condicionamento no corpo todo'],
+        focus=['Corpo inteiro', 'Glúteos e pernas', 'Postura', 'Cardio leve'],
+        caution=BEGINNER_CAUTION,
+        days=[
+            day(0, 'Pernas e glúteos', [it('leg_press_45', 3, '12', 90), it('agachamento_goblet', 3, '10', 90),
+                                        it('cadeira_extensora', 2, '12'), it('cadeira_abdutora', 3, '15'),
+                                        it('ponte_gluteo', 3, '12'), it('caminhada_inclinada', 1, '15 min', 0)]),
+            day(1, 'Peito, ombros e tríceps', [it('supino_reto_halteres', 3, '12', 90),
+                                               it('desenvolvimento_halteres', 2, '12', 90),
+                                               it('flexao_inclinada', 2, '8'), it('triceps_corda', 2, '12'),
+                                               it('prancha_joelhos', 3, '20s'),
+                                               it('bicicleta_ergometrica', 1, '15 min', 0)]),
+            day(2, 'Cardio e abdômen', [it('caminhada_inclinada', 1, '25 min', 0), it('dead_bug', 3, '8'),
+                                        it('perdigueiro', 3, '8 cada'), it('abdominal_supra', 2, '12')]),
+            day(3, 'Posterior e glúteos', [it('cadeira_flexora', 3, '12'), it('stiff_halteres', 3, '10', 90),
+                                           it('subida_banco', 2, '10 cada', 90), it('coice_quatro_apoios', 2, '12 cada'),
+                                           it('abducao_em_pe_elastico', 2, '15 cada'), it('panturrilha_em_pe', 2, '15')]),
+            day(4, 'Costas e bíceps', [it('puxada_frontal', 3, '12', 90), it('remada_sentada', 3, '12', 90),
+                                       it('remada_unilateral', 2, '10 cada'), it('rosca_direta_halteres', 2, '12'),
+                                       it('prancha', 2, '20s'), it('bicicleta_ergometrica', 1, '15 min', 0)]),
+        ]),
+    dict(
+        id='iniciante_5_m', sex='M', name='Primeiros passos (5 dias)', shape='iniciante',
+        summary='Para quem nunca treinou e ainda não sabe o formato do corpo. Segunda a sexta.',
+        description='Uma semana completa para começar do zero, sem precisar saber o formato do corpo. Cada '
+                    'grupo muscular é treinado duas vezes por semana, com máquinas e halteres, poucas séries e um '
+                    'dia dedicado a cardio e abdômen. Depois de 6 a 8 semanas, vale escolher um plano pelo '
+                    'formato do corpo.',
+        goals=['Aprender a técnica dos exercícios básicos', 'Criar o hábito de treinar 5 dias por semana',
+               'Ganhar força de forma equilibrada entre tronco e pernas'],
+        focus=['Corpo inteiro', 'Peito e costas', 'Pernas', 'Cardio leve'],
+        caution=BEGINNER_CAUTION + ['Não pule os dias de perna: eles equilibram o corpo e ajudam a ganhar força em '
+                                    'todos os outros exercícios.'],
+        days=[
+            day(0, 'Peito, ombros e tríceps', [it('supino_reto_halteres', 3, '10', 90),
+                                               it('supino_inclinado_halteres', 2, '10', 90),
+                                               it('desenvolvimento_halteres', 3, '10', 90), it('elevacao_lateral', 2, '12'),
+                                               it('triceps_polia', 2, '12'), it('prancha', 2, '20s')]),
+            day(1, 'Pernas', [it('leg_press_45', 3, '12', 90), it('agachamento_goblet', 3, '10', 90),
+                              it('cadeira_extensora', 2, '12'), it('cadeira_flexora', 2, '12'),
+                              it('panturrilha_em_pe', 2, '15'), it('bicicleta_ergometrica', 1, '10 min', 0)]),
+            day(2, 'Costas e bíceps', [it('puxada_frontal', 3, '10', 90), it('remada_sentada', 3, '10', 90),
+                                       it('remada_unilateral', 2, '10 cada'), it('rosca_direta_halteres', 2, '12'),
+                                       it('rosca_martelo', 2, '12'), it('dead_bug', 2, '8')]),
+            day(3, 'Cardio e abdômen', [it('caminhada_inclinada', 1, '20 min', 0), it('perdigueiro', 3, '8 cada'),
+                                        it('abdominal_supra', 2, '15'), it('prancha_lateral', 2, '15s cada')]),
+            day(4, 'Posterior e corpo inteiro', [it('stiff_halteres', 3, '10', 90), it('subida_banco', 2, '10 cada', 90),
+                                                 it('ponte_gluteo', 3, '12'), it('flexao_inclinada', 2, '8'),
+                                                 it('face_pull', 2, '15'), it('caminhada_inclinada', 1, '15 min', 0)]),
         ]),
 ]
 
