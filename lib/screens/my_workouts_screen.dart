@@ -129,7 +129,7 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                     : ReorderableListView.builder(
                         padding: const EdgeInsets.fromLTRB(12, 4, 12, 96),
                         itemCount: items.length,
-                        onReorder: (a, b) => state.reorderDay(_day, a, b),
+                        onReorderItem: (a, b) => state.reorderDay(_day, a, b),
                         itemBuilder: (context, i) => _EntryCard(key: ValueKey(items[i].id), entry: items[i]),
                       ),
           ),

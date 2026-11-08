@@ -214,10 +214,10 @@ class AppState extends ChangeNotifier {
     await _save();
   }
 
+  /// Move um item dentro do dia. [newIndex] já é a posição final do item.
   Future<void> reorderDay(int weekday, int oldIndex, int newIndex) async {
     final day = entriesOnDay(weekday);
     if (oldIndex < 0 || oldIndex >= day.length) return;
-    if (newIndex > oldIndex) newIndex -= 1;
     final moved = day.removeAt(oldIndex);
     day.insert(newIndex.clamp(0, day.length), moved);
     final others = _entries.where((e) => e.weekday != weekday).toList();

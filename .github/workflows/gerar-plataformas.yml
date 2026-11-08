@@ -1,0 +1,41 @@
+name: Gerar pastas de Android e iOS
+
+# Usado uma vez para criar android/ e ios/ com a versão fixa do Flutter.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/gerar-plataformas.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.9
+          channel: stable
+
+      - name: flutter create
+        run: |
+          flutter --version
+          flutter create . --project-name gm_fitness --org com.gmfitness --platforms=android,ios
+          sed -i 's/android:label="gm_fitness"/android:label="GM Fitness"/' android/app/src/main/AndroidManifest.xml
+          sed -i 's#<string>Gm Fitness</string>#<string>GM Fitness</string>#; s#<string>gm_fitness</string>#<string>GM Fitness</string>#' ios/Runner/Info.plist
+          grep -n 'android:label' android/app/src/main/AndroidManifest.xml
+          grep -n -A1 'CFBundleDisplayName\|CFBundleName' ios/Runner/Info.plist
+          flutter pub get
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android ios .metadata pubspec.lock
+          git status --short | head -80
+          git commit -m "Gera pastas de Android e iOS com Flutter 3.47.9"
+          git push

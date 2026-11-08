@@ -6,15 +6,11 @@
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
-pubspec.lock
 *.iml
 .idea/
 .vscode/
-.metadata
 
-# Plataformas geradas com `flutter create .`
-android/
-ios/
+# Plataformas que o app não usa
 linux/
 macos/
 windows/
