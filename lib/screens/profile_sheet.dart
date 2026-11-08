@@ -109,7 +109,7 @@ class _ProfileSheetState extends State<_ProfileSheet> {
               onTap: () => showAboutDialog(
                 context: context,
                 applicationName: 'GM Fitness',
-                applicationVersion: '0.3.0',
+                applicationVersion: '0.4.0',
                 applicationIcon: const GmLogo(size: 44),
                 children: const [
                   Text('Treinos para quem está começando na academia. Funciona sem internet: nada sai do seu '

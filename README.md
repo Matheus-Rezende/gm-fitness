@@ -7,8 +7,9 @@ App Flutter para quem está começando na academia. Funciona **100% offline**: o
 - **Perfil feminino ou masculino**, escolhido na primeira abertura. Ele muda o boneco das animações, os planos sugeridos e as observações de cada exercício para aquele corpo.
 - **Planos por formato de corpo**, 5 dias por semana. Feminino: triângulo invertido, triângulo (pera), ampulheta, retângulo e oval. Masculino: trapézio (V), triângulo invertido, retângulo, triângulo e oval. Para quem nunca treinou ou não sabe o formato do corpo, "Primeiros passos" em 5 dias (um feminino e um masculino) ou em 3 dias.
 - **94 exercícios** com passo a passo, dicas, erros comuns e, nos principais, observações para o corpo feminino e masculino.
-- **Animações explicadas**: boneco com volume e roupas, músculos trabalhados em destaque, percurso do movimento com seta, posição inicial em transparência, fase atual, modo lento, tela cheia e as poses de início, meio e fim. São 88 movimentos.
+- **Animações em 3D com troca de perspectiva**: veja o exercício de lado, em ¾, de frente ou de costas, ou arraste o boneco para girá-lo. Boneco com volume, roupas, rosto e articulações, músculos trabalhados em destaque, percurso do movimento com seta, posição inicial em transparência, fase atual, modo lento, tela cheia e as poses de início, meio e fim. São 88 movimentos.
 - **Treino de hoje**: semana com a quantidade de exercícios por dia, marcação do que já foi feito e barra de progresso.
+- **Treino cronometrado**: "Iniciar treino" liga o cronômetro do dia, marca cada série, conta o descanso e, ao finalizar, pede o esforço percebido (0 a 10). O resumo mostra tempo, séries, volume levantado, a intensidade (leve, moderada, alta ou muito alta), a carga da sessão comparada com a sua média e sugestões de carga para o próximo treino. Tudo fica no histórico.
 - **Carga** com números grandes e a cor da anilha correspondente (padrão olímpico), mais o histórico de cada mudança.
 - **Exercícios personalizados**, com a animação mais parecida.
 - Visual próprio: cores das anilhas, fontes Barlow e Barlow Condensed, ícone do app e tema claro e escuro.
@@ -34,7 +35,7 @@ flutter build apk --release
 
 Para instalar sem computador, abra a página de **Releases** do repositório no navegador do celular e baixe o APK da versão mais recente.
 
-Para publicar uma versão nova, aumente `version:` no `pubspec.yaml` (por exemplo, de `0.2.0+2` para `0.3.0+3`) e envie para a `main`. O GitHub gera o APK e cria a Release `v0.3.0` sozinho. Também dá para disparar à mão em **Actions → Publicar versão → Run workflow**.
+Para publicar uma versão nova, aumente `version:` no `pubspec.yaml` (por exemplo, de `0.3.0+3` para `0.4.0+4`) e envie para a `main`. O GitHub gera o APK e cria a Release `v0.4.0` sozinho. Também dá para disparar à mão em **Actions → Publicar versão → Run workflow**.
 
 ### iOS
 
