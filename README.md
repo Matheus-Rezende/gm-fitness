@@ -32,7 +32,16 @@ Com um emulador aberto ou um celular conectado com a depuração USB ativa, `flu
 flutter build apk --release
 ```
 
-O APK de cada versão também fica disponível na aba **Actions** do GitHub, na execução mais recente, em "gm-fitness-apk".
+Para instalar sem computador, abra a página de **Releases** do repositório no navegador do celular e baixe o APK da versão mais recente.
+
+Para publicar uma versão nova, atualize `version:` no `pubspec.yaml`, faça o commit e envie uma tag:
+
+```bash
+git tag v0.3.0
+git push origin v0.3.0
+```
+
+O GitHub gera o APK e cria a Release sozinho.
 
 ### iOS
 
