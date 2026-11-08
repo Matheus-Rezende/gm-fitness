@@ -1,0 +1,26 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+*.iml
+.idea/
+.vscode/
+.metadata
+
+# Plataformas geradas com `flutter create .`
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+# Ferramentas
+tools/preview/
+__pycache__/
+*.pyc

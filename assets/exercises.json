@@ -1,0 +1,2350 @@
+{
+ "meta": {
+  "groups": {
+   "peito": "Peito",
+   "costas": "Costas",
+   "ombros": "Ombros",
+   "biceps": "Bíceps",
+   "triceps": "Tríceps",
+   "trapezio": "Trapézio",
+   "antebraco": "Antebraço",
+   "abdomen": "Abdômen",
+   "lombar": "Lombar",
+   "gluteos": "Glúteos",
+   "quadriceps": "Quadríceps",
+   "posterior": "Posterior de coxa",
+   "adutores": "Adutores",
+   "abdutores": "Abdutores",
+   "panturrilha": "Panturrilha",
+   "cardio": "Cardio",
+   "corpo_inteiro": "Corpo inteiro"
+  },
+  "equipment": {
+   "peso_corporal": "Peso corporal",
+   "halter": "Halteres",
+   "barra": "Barra",
+   "maquina": "Máquina",
+   "polia": "Polia / cabo",
+   "kettlebell": "Kettlebell",
+   "elastico": "Elástico",
+   "smith": "Smith",
+   "barra_fixa": "Barra fixa / paralelas",
+   "cardio": "Aparelho de cardio"
+  },
+  "levels": {
+   "iniciante": "Iniciante",
+   "intermediario": "Intermediário",
+   "avancado": "Avançado"
+  }
+ },
+ "exercises": [
+  {
+   "id": "agachamento_livre",
+   "name": "Agachamento livre",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior",
+    "abdomen"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "squat_bw",
+   "steps": [
+    "Fique em pé com os pés entre a largura do quadril e dos ombros, pontas levemente para fora.",
+    "Contraia o abdômen e leve o quadril para trás e para baixo, como quem vai sentar.",
+    "Desça mantendo o calcanhar no chão e os joelhos apontando na mesma direção dos pés.",
+    "Vá até as coxas ficarem perto da paralela ao chão, ou até onde mantiver a coluna neutra.",
+    "Empurre o chão com o pé inteiro para subir, contraindo os glúteos no final."
+   ],
+   "tips": [
+    "Estenda os braços à frente para ajudar no equilíbrio.",
+    "Se o calcanhar sair do chão, diminua a profundidade e trabalhe a mobilidade do tornozelo."
+   ],
+   "mistakes": [
+    "Deixar os joelhos caírem para dentro.",
+    "Tirar o calcanhar do chão.",
+    "Arredondar a lombar no fundo."
+   ]
+  },
+  {
+   "id": "agachamento_goblet",
+   "name": "Agachamento goblet com halter",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "abdomen"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "squat_goblet",
+   "steps": [
+    "Segure um halter na vertical junto ao peito, com as duas mãos sob a cabeça do halter.",
+    "Pés na largura dos ombros, pontas levemente para fora.",
+    "Desça com o tronco firme, cotovelos indo para dentro dos joelhos.",
+    "Mantenha o peito aberto e o halter colado ao corpo durante toda a descida.",
+    "Suba empurrando o chão e estendendo quadril e joelhos juntos."
+   ],
+   "tips": [
+    "É uma ótima forma de aprender o agachamento: o peso à frente ajuda a manter o tronco ereto."
+   ],
+   "mistakes": [
+    "Afastar o halter do peito.",
+    "Inclinar demais o tronco à frente."
+   ]
+  },
+  {
+   "id": "agachamento_goblet_kettlebell",
+   "name": "Agachamento goblet com kettlebell",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "abdomen"
+   ],
+   "equipment": "kettlebell",
+   "level": "iniciante",
+   "anim": "squat_goblet",
+   "steps": [
+    "Segure o kettlebell pelas laterais da alça, junto ao peito.",
+    "Pés na largura dos ombros e abdômen contraído.",
+    "Desça levando o quadril para trás e para baixo, joelhos acompanhando os pés.",
+    "Pare quando as coxas chegarem perto da paralela, sem perder a coluna neutra.",
+    "Suba empurrando o chão com o pé inteiro."
+   ],
+   "tips": [
+    "Mantenha os cotovelos apontando para baixo."
+   ],
+   "mistakes": [
+    "Deixar o kettlebell puxar o tronco para frente.",
+    "Joelhos caindo para dentro."
+   ]
+  },
+  {
+   "id": "agachamento_barra",
+   "name": "Agachamento com barra",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior",
+    "lombar",
+    "abdomen"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "squat_bb",
+   "steps": [
+    "Apoie a barra no trapézio, atrás do pescoço, com as mãos firmes um pouco além dos ombros.",
+    "Tire a barra do suporte, dê dois passos para trás e posicione os pés na largura dos ombros.",
+    "Inspire, contraia o abdômen e desça levando o quadril para trás e para baixo.",
+    "Mantenha joelhos alinhados com os pés e a barra sobre o meio do pé.",
+    "Suba empurrando o chão e soltando o ar no final."
+   ],
+   "tips": [
+    "Use os pinos de segurança do rack.",
+    "Comece com a barra vazia para aprender o movimento."
+   ],
+   "mistakes": [
+    "Apoiar a barra no pescoço.",
+    "Deixar os joelhos caírem para dentro.",
+    "Arredondar a lombar."
+   ]
+  },
+  {
+   "id": "agachamento_smith",
+   "name": "Agachamento no Smith",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior"
+   ],
+   "equipment": "smith",
+   "level": "iniciante",
+   "anim": "squat_smith",
+   "steps": [
+    "Apoie a barra do Smith no trapézio e destrave girando os punhos.",
+    "Posicione os pés levemente à frente da linha da barra, na largura dos ombros.",
+    "Desça controlando, com o tronco firme e os joelhos acompanhando os pés.",
+    "Suba empurrando o chão até estender quase totalmente os joelhos.",
+    "Ao terminar, trave a barra girando os punhos de volta."
+   ],
+   "tips": [
+    "O trilho guia a barra, o que dá segurança para quem está começando."
+   ],
+   "mistakes": [
+    "Pés muito à frente, que sobrecarregam a lombar.",
+    "Esquecer de travar a barra no final."
+   ]
+  },
+  {
+   "id": "agachamento_sumo",
+   "name": "Agachamento sumô com halter",
+   "group": "gluteos",
+   "secondary": [
+    "adutores",
+    "quadriceps"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "sumo_squat",
+   "steps": [
+    "Afaste bem os pés, mais que a largura dos ombros, com as pontas abertas.",
+    "Segure um halter na vertical com as duas mãos, braços estendidos entre as pernas.",
+    "Desça mantendo o tronco ereto e empurrando os joelhos para fora, na direção dos pés.",
+    "Vá até as coxas ficarem perto da paralela ao chão.",
+    "Suba apertando os glúteos e a parte interna das coxas."
+   ],
+   "tips": [
+    "Quanto mais afastados os pés, mais trabalho para glúteos e adutores."
+   ],
+   "mistakes": [
+    "Joelhos indo para dentro.",
+    "Inclinar o tronco à frente."
+   ]
+  },
+  {
+   "id": "agachamento_sumo_kettlebell",
+   "name": "Agachamento sumô com kettlebell",
+   "group": "gluteos",
+   "secondary": [
+    "adutores",
+    "quadriceps"
+   ],
+   "equipment": "kettlebell",
+   "level": "iniciante",
+   "anim": "sumo_squat",
+   "steps": [
+    "Pés bem afastados e pontas abertas, kettlebell seguro pela alça entre as pernas.",
+    "Tronco ereto e abdômen contraído.",
+    "Desça empurrando os joelhos para fora, alinhados aos pés.",
+    "Suba apertando glúteos e adutores, sem balançar o kettlebell."
+   ],
+   "tips": [
+    "Mantenha os braços relaxados; quem trabalha são as pernas."
+   ],
+   "mistakes": [
+    "Arredondar as costas para alcançar o chão."
+   ]
+  },
+  {
+   "id": "afundo",
+   "name": "Afundo (passo para trás)",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "lunge",
+   "steps": [
+    "Em pé, pés na largura do quadril, mãos na cintura ou ao lado do corpo.",
+    "Dê um passo largo para trás, apoiando a ponta do pé de trás.",
+    "Desça até o joelho de trás quase tocar o chão, com a canela da frente na vertical.",
+    "Empurre pelo calcanhar da perna da frente para voltar à posição inicial.",
+    "Alterne as pernas ou complete as repetições de um lado."
+   ],
+   "tips": [
+    "O passo para trás protege mais o joelho que o passo à frente.",
+    "Use uma parede para apoio no início."
+   ],
+   "mistakes": [
+    "Joelho da frente caindo para dentro.",
+    "Passo curto demais, que joga o joelho muito à frente."
+   ]
+  },
+  {
+   "id": "afundo_halteres",
+   "name": "Afundo com halteres",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior"
+   ],
+   "equipment": "halter",
+   "level": "intermediario",
+   "anim": "lunge_db",
+   "steps": [
+    "Segure um halter em cada mão, braços estendidos ao lado do corpo.",
+    "Dê um passo largo para trás e apoie a ponta do pé.",
+    "Desça com o tronco ereto até o joelho de trás quase tocar o chão.",
+    "Empurre pelo calcanhar da frente para voltar."
+   ],
+   "tips": [
+    "Mantenha os ombros para trás e o olhar à frente."
+   ],
+   "mistakes": [
+    "Inclinar o tronco para frente.",
+    "Bater o joelho de trás no chão."
+   ]
+  },
+  {
+   "id": "agachamento_bulgaro",
+   "name": "Agachamento búlgaro",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior"
+   ],
+   "equipment": "halter",
+   "level": "intermediario",
+   "anim": "bulgarian",
+   "steps": [
+    "Apoie o peito do pé de trás em um banco, a cerca de um passo e meio de distância.",
+    "Segure halteres ao lado do corpo (ou faça sem peso no começo).",
+    "Desça reto, com o tronco levemente inclinado e o joelho da frente alinhado ao pé.",
+    "Pare quando a coxa da frente ficar perto da paralela.",
+    "Suba empurrando pelo calcanhar da perna da frente. Complete as repetições e troque de perna."
+   ],
+   "tips": [
+    "Inclinar levemente o tronco aumenta o trabalho de glúteo.",
+    "Faça perto de uma parede para equilíbrio."
+   ],
+   "mistakes": [
+    "Pé da frente perto demais do banco.",
+    "Empurrar com a perna de trás."
+   ]
+  },
+  {
+   "id": "subida_banco",
+   "name": "Subida no banco (step-up)",
+   "group": "gluteos",
+   "secondary": [
+    "quadriceps",
+    "posterior"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "step_up",
+   "steps": [
+    "Fique de frente para um banco ou caixa firme, na altura do joelho ou mais baixo.",
+    "Apoie o pé inteiro em cima do banco.",
+    "Empurre pelo calcanhar do pé de cima e suba até ficar em pé sobre o banco.",
+    "Desça devagar, controlando com a perna de cima.",
+    "Complete as repetições e troque de perna."
+   ],
+   "tips": [
+    "Comece com um banco baixo.",
+    "Para mais intensidade, segure halteres."
+   ],
+   "mistakes": [
+    "Dar impulso com o pé de baixo.",
+    "Joelho de cima caindo para dentro."
+   ]
+  },
+  {
+   "id": "leg_press_45",
+   "name": "Leg press 45°",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos",
+    "posterior"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "leg_press",
+   "steps": [
+    "Sente-se com as costas e o quadril bem apoiados no encosto.",
+    "Pés na plataforma na largura do quadril, no meio da placa.",
+    "Destrave e flexione os joelhos levando a plataforma em direção ao peito.",
+    "Desça até onde o quadril continuar apoiado no banco.",
+    "Empurre com o pé inteiro até quase estender os joelhos, sem travar."
+   ],
+   "tips": [
+    "Pés mais altos trabalham mais glúteo e posterior; mais baixos, mais quadríceps."
+   ],
+   "mistakes": [
+    "Travar os joelhos no topo.",
+    "Tirar o quadril do banco no fundo.",
+    "Joelhos caindo para dentro."
+   ]
+  },
+  {
+   "id": "cadeira_extensora",
+   "name": "Cadeira extensora",
+   "group": "quadriceps",
+   "secondary": [],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "leg_extension",
+   "steps": [
+    "Ajuste o encosto para o joelho ficar alinhado ao eixo da máquina.",
+    "Posicione o rolo logo acima do tornozelo e segure as alças laterais.",
+    "Estenda os joelhos até as pernas ficarem quase retas.",
+    "Segure um instante contraindo a coxa.",
+    "Volte devagar, sem deixar o peso bater."
+   ],
+   "tips": [
+    "Controle a descida em 2 a 3 segundos."
+   ],
+   "mistakes": [
+    "Dar tranco para subir.",
+    "Tirar o quadril do banco."
+   ]
+  },
+  {
+   "id": "mesa_flexora",
+   "name": "Mesa flexora",
+   "group": "posterior",
+   "secondary": [
+    "panturrilha"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "leg_curl_lying",
+   "steps": [
+    "Deite de bruços com os joelhos logo após a borda do banco.",
+    "Ajuste o rolo logo acima dos calcanhares e segure as alças.",
+    "Flexione os joelhos trazendo os calcanhares em direção ao glúteo.",
+    "Mantenha o quadril colado no banco.",
+    "Volte devagar até quase estender as pernas."
+   ],
+   "tips": [
+    "Pense em puxar com a parte de trás da coxa, não com a lombar."
+   ],
+   "mistakes": [
+    "Tirar o quadril do banco.",
+    "Soltar o peso na volta."
+   ]
+  },
+  {
+   "id": "cadeira_flexora",
+   "name": "Cadeira flexora",
+   "group": "posterior",
+   "secondary": [],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "leg_curl_seated",
+   "steps": [
+    "Sente-se com o joelho alinhado ao eixo da máquina.",
+    "Ajuste o apoio por cima das coxas e o rolo atrás dos tornozelos.",
+    "Puxe os calcanhares para baixo e para trás, flexionando os joelhos.",
+    "Segure um instante e volte devagar."
+   ],
+   "tips": [
+    "O apoio firme sobre as coxas evita que o quadril saia do banco."
+   ],
+   "mistakes": [
+    "Usar balanço do tronco.",
+    "Voltar rápido demais."
+   ]
+  },
+  {
+   "id": "stiff_halteres",
+   "name": "Stiff com halteres",
+   "group": "posterior",
+   "secondary": [
+    "gluteos",
+    "lombar"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "rdl_db",
+   "steps": [
+    "Em pé, pés na largura do quadril, halteres à frente das coxas.",
+    "Flexione levemente os joelhos e mantenha esse ângulo durante todo o movimento.",
+    "Empurre o quadril para trás, descendo os halteres rente às pernas.",
+    "Desça até sentir o alongamento atrás da coxa, por volta do meio da canela, com a coluna neutra.",
+    "Suba levando o quadril à frente e contraindo os glúteos."
+   ],
+   "tips": [
+    "O movimento é de quadril: pense em fechar uma porta com o bumbum."
+   ],
+   "mistakes": [
+    "Arredondar a lombar.",
+    "Dobrar demais os joelhos, virando um agachamento.",
+    "Afastar os halteres das pernas."
+   ]
+  },
+  {
+   "id": "stiff_barra",
+   "name": "Stiff com barra (terra romeno)",
+   "group": "posterior",
+   "secondary": [
+    "gluteos",
+    "lombar"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "rdl_bb",
+   "steps": [
+    "Segure a barra na altura das coxas, mãos um pouco além da largura dos ombros.",
+    "Ombros para trás, coluna neutra e joelhos levemente flexionados.",
+    "Leve o quadril para trás deslizando a barra rente às coxas e canelas.",
+    "Desça até o meio da canela ou até onde a coluna continuar neutra.",
+    "Suba empurrando o quadril à frente, sem jogar o tronco para trás no final."
+   ],
+   "tips": [
+    "Mantenha a barra perto do corpo o tempo todo."
+   ],
+   "mistakes": [
+    "Arredondar as costas.",
+    "Barra longe das pernas.",
+    "Hiperestender a lombar no topo."
+   ]
+  },
+  {
+   "id": "levantamento_terra",
+   "name": "Levantamento terra",
+   "group": "posterior",
+   "secondary": [
+    "gluteos",
+    "lombar",
+    "costas",
+    "quadriceps",
+    "trapezio"
+   ],
+   "equipment": "barra",
+   "level": "avancado",
+   "anim": "deadlift",
+   "steps": [
+    "Pés na largura do quadril com a barra sobre o meio do pé.",
+    "Desça o quadril e segure a barra logo por fora das pernas, canelas encostando na barra.",
+    "Peito aberto, coluna neutra e braços estendidos.",
+    "Empurre o chão com as pernas e estenda o quadril, mantendo a barra colada ao corpo.",
+    "Fique ereto no topo e desça levando o quadril para trás."
+   ],
+   "tips": [
+    "Aprenda o stiff e a elevação pélvica antes.",
+    "Comece leve e priorize a técnica."
+   ],
+   "mistakes": [
+    "Arredondar a lombar.",
+    "Puxar a barra com os braços.",
+    "Afastar a barra das canelas."
+   ]
+  },
+  {
+   "id": "bom_dia",
+   "name": "Bom dia (good morning)",
+   "group": "posterior",
+   "secondary": [
+    "lombar",
+    "gluteos"
+   ],
+   "equipment": "barra",
+   "level": "avancado",
+   "anim": "good_morning",
+   "steps": [
+    "Apoie a barra no trapézio como no agachamento.",
+    "Pés na largura do quadril e joelhos levemente flexionados.",
+    "Leve o quadril para trás inclinando o tronco, coluna sempre neutra.",
+    "Desça até sentir o alongamento atrás das coxas.",
+    "Suba empurrando o quadril à frente."
+   ],
+   "tips": [
+    "Use carga bem leve; é um exercício de técnica."
+   ],
+   "mistakes": [
+    "Arredondar as costas.",
+    "Descer além da sua mobilidade."
+   ]
+  },
+  {
+   "id": "pull_through",
+   "name": "Pull through na polia",
+   "group": "gluteos",
+   "secondary": [
+    "posterior"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "pull_through",
+   "steps": [
+    "De costas para a polia baixa, segure a corda entre as pernas.",
+    "Dê alguns passos à frente até o cabo ficar tenso.",
+    "Leve o quadril para trás deixando a corda passar entre as pernas, coluna neutra.",
+    "Estenda o quadril com força, contraindo os glúteos no final."
+   ],
+   "tips": [
+    "Os braços só seguram; o movimento vem do quadril."
+   ],
+   "mistakes": [
+    "Puxar com os braços.",
+    "Agachar em vez de levar o quadril para trás."
+   ]
+  },
+  {
+   "id": "elevacao_pelvica",
+   "name": "Elevação pélvica (hip thrust)",
+   "group": "gluteos",
+   "secondary": [
+    "posterior"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "hip_thrust",
+   "steps": [
+    "Apoie a parte alta das costas na borda de um banco, barra sobre o quadril com proteção.",
+    "Pés no chão na largura do quadril, joelhos dobrados.",
+    "Empurre pelos calcanhares e suba o quadril até ombros, quadril e joelhos ficarem em linha.",
+    "No topo, a canela fica vertical, o queixo recolhido e o glúteo contraído por 1 segundo.",
+    "Desça o quadril controlando."
+   ],
+   "tips": [
+    "Pode ser feito com halter ou anilha no lugar da barra.",
+    "Olhe para frente, não para o teto."
+   ],
+   "mistakes": [
+    "Arquear a lombar no topo em vez de contrair o glúteo.",
+    "Pés longe demais ou perto demais."
+   ]
+  },
+  {
+   "id": "ponte_gluteo",
+   "name": "Ponte de glúteo",
+   "group": "gluteos",
+   "secondary": [
+    "posterior",
+    "abdomen"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "glute_bridge",
+   "steps": [
+    "Deite de costas, joelhos dobrados e pés no chão na largura do quadril.",
+    "Braços ao lado do corpo e abdômen levemente contraído.",
+    "Empurre pelos calcanhares e suba o quadril até formar uma linha dos ombros aos joelhos.",
+    "Contraia o glúteo por 1 a 2 segundos e desça devagar."
+   ],
+   "tips": [
+    "Para dificultar, apoie um halter sobre o quadril ou faça com uma perna só."
+   ],
+   "mistakes": [
+    "Arquear a lombar no topo.",
+    "Empurrar com a ponta dos pés."
+   ]
+  },
+  {
+   "id": "coice_quatro_apoios",
+   "name": "Coice em quatro apoios",
+   "group": "gluteos",
+   "secondary": [
+    "posterior"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "donkey_kick",
+   "steps": [
+    "Apoie mãos sob os ombros e joelhos sob o quadril.",
+    "Contraia o abdômen para manter as costas retas.",
+    "Com o joelho dobrado, leve a sola do pé em direção ao teto.",
+    "Suba até a coxa ficar alinhada ao tronco, sem arquear a lombar.",
+    "Volte sem encostar o joelho no chão e troque de lado no final."
+   ],
+   "tips": [
+    "Pode usar caneleira para aumentar a carga."
+   ],
+   "mistakes": [
+    "Arquear a lombar para subir mais.",
+    "Girar o quadril."
+   ]
+  },
+  {
+   "id": "coice_polia",
+   "name": "Coice na polia",
+   "group": "gluteos",
+   "secondary": [
+    "posterior"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "cable_kickback",
+   "steps": [
+    "Prenda a caneleira da polia baixa no tornozelo.",
+    "Segure na máquina e incline levemente o tronco à frente.",
+    "Leve a perna para trás estendendo o quadril, joelho quase reto.",
+    "Contraia o glúteo no fim e volte controlando."
+   ],
+   "tips": [
+    "O movimento é curto: pare antes de arquear as costas."
+   ],
+   "mistakes": [
+    "Balançar o corpo.",
+    "Arquear a lombar."
+   ]
+  },
+  {
+   "id": "abducao_em_pe_elastico",
+   "name": "Abdução de quadril em pé com elástico",
+   "group": "abdutores",
+   "secondary": [
+    "gluteos"
+   ],
+   "equipment": "elastico",
+   "level": "iniciante",
+   "anim": "hip_abduction_standing",
+   "steps": [
+    "Coloque o elástico acima dos joelhos e fique de pé perto de um apoio.",
+    "Tronco ereto e abdômen firme, peso na perna de apoio.",
+    "Afaste a perna de fora para o lado sem inclinar o tronco.",
+    "Volte devagar sem deixar as pernas baterem. Troque de lado."
+   ],
+   "tips": [
+    "Mantenha a ponta do pé apontando para frente."
+   ],
+   "mistakes": [
+    "Inclinar o tronco para o lado.",
+    "Girar o pé para fora."
+   ]
+  },
+  {
+   "id": "abducao_polia",
+   "name": "Abdução de quadril na polia",
+   "group": "abdutores",
+   "secondary": [
+    "gluteos"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "hip_abduction_cable",
+   "steps": [
+    "Prenda a caneleira da polia baixa no tornozelo da perna de fora.",
+    "Fique de lado para a máquina segurando no apoio.",
+    "Afaste a perna para o lado, cruzando o cabo à frente da perna de apoio.",
+    "Volte devagar e complete as repetições antes de trocar."
+   ],
+   "tips": [
+    "Movimento controlado vale mais que amplitude grande."
+   ],
+   "mistakes": [
+    "Inclinar o tronco.",
+    "Usar impulso."
+   ]
+  },
+  {
+   "id": "cadeira_abdutora",
+   "name": "Cadeira abdutora",
+   "group": "abdutores",
+   "secondary": [
+    "gluteos"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "abductor_machine",
+   "steps": [
+    "Sente-se com as costas apoiadas e as almofadas por fora dos joelhos.",
+    "Segure as alças laterais.",
+    "Abra as pernas empurrando as almofadas para fora.",
+    "Segure um instante e feche devagar, sem deixar o peso bater."
+   ],
+   "tips": [
+    "Inclinar levemente o tronco à frente aumenta o trabalho do glúteo."
+   ],
+   "mistakes": [
+    "Fechar rápido demais.",
+    "Tirar o quadril do banco."
+   ]
+  },
+  {
+   "id": "cadeira_adutora",
+   "name": "Cadeira adutora",
+   "group": "adutores",
+   "secondary": [],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "adductor_machine",
+   "steps": [
+    "Sente-se com as almofadas por dentro dos joelhos.",
+    "Comece com as pernas numa abertura confortável.",
+    "Feche as pernas apertando as almofadas.",
+    "Volte devagar até a abertura inicial."
+   ],
+   "tips": [
+    "Não abra além do que for confortável."
+   ],
+   "mistakes": [
+    "Abrir demais na volta.",
+    "Dar tranco."
+   ]
+  },
+  {
+   "id": "abducao_deitada",
+   "name": "Abdução deitada de lado",
+   "group": "abdutores",
+   "secondary": [
+    "gluteos"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "side_lying_abduction",
+   "steps": [
+    "Deite de lado com as pernas estendidas e a cabeça apoiada no braço de baixo.",
+    "Alinhe ombros, quadril e tornozelos.",
+    "Eleve a perna de cima mantendo o joelho reto e o pé apontando para frente.",
+    "Desça devagar e complete as repetições antes de trocar de lado."
+   ],
+   "tips": [
+    "Pode usar caneleira ou elástico para progredir."
+   ],
+   "mistakes": [
+    "Girar o quadril para trás.",
+    "Subir a perna com impulso."
+   ]
+  },
+  {
+   "id": "panturrilha_em_pe",
+   "name": "Panturrilha em pé",
+   "group": "panturrilha",
+   "secondary": [],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "calf_raise",
+   "steps": [
+    "Fique em pé com os pés na largura do quadril, mão apoiada na parede.",
+    "Suba na ponta dos pés o mais alto que conseguir.",
+    "Segure 1 segundo no topo.",
+    "Desça devagar até o calcanhar voltar ao chão."
+   ],
+   "tips": [
+    "Na ponta de um degrau, deixe o calcanhar descer abaixo do nível para alongar mais.",
+    "Segure halteres para aumentar a carga."
+   ],
+   "mistakes": [
+    "Fazer rápido, quicando.",
+    "Dobrar os joelhos."
+   ]
+  },
+  {
+   "id": "panturrilha_sentado",
+   "name": "Panturrilha sentado",
+   "group": "panturrilha",
+   "secondary": [],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "calf_seated",
+   "steps": [
+    "Sente-se com a almofada sobre a parte baixa das coxas.",
+    "Apoie a ponta dos pés na plataforma.",
+    "Eleve os calcanhares o máximo possível.",
+    "Segure 1 segundo e desça devagar alongando."
+   ],
+   "tips": [
+    "Trabalha mais o sóleo, músculo profundo da panturrilha."
+   ],
+   "mistakes": [
+    "Amplitude curta.",
+    "Movimento rápido."
+   ]
+  },
+  {
+   "id": "agachamento_isometrico",
+   "name": "Agachamento isométrico na parede",
+   "group": "quadriceps",
+   "secondary": [
+    "gluteos"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "wall_sit",
+   "steps": [
+    "Encoste as costas na parede e afaste os pés cerca de um passo à frente.",
+    "Deslize para baixo até os joelhos formarem um ângulo próximo de 90 graus.",
+    "Mantenha os joelhos sobre os tornozelos e as costas apoiadas.",
+    "Segure o tempo indicado respirando normalmente."
+   ],
+   "tips": [
+    "Comece com 20 a 30 segundos e aumente aos poucos."
+   ],
+   "mistakes": [
+    "Joelhos à frente da ponta dos pés.",
+    "Prender a respiração."
+   ]
+  },
+  {
+   "id": "hiperextensao_lombar",
+   "name": "Hiperextensão lombar (banco 45°)",
+   "group": "lombar",
+   "secondary": [
+    "gluteos",
+    "posterior"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "hyperextension",
+   "steps": [
+    "Ajuste o apoio para ficar logo abaixo do quadril, pés presos no suporte.",
+    "Cruze os braços no peito e alinhe o corpo com as pernas.",
+    "Desça o tronco dobrando no quadril, mantendo a coluna neutra.",
+    "Suba até o corpo ficar alinhado com as pernas, sem passar disso."
+   ],
+   "tips": [
+    "Contrair os glúteos na subida protege a lombar."
+   ],
+   "mistakes": [
+    "Subir além da linha do corpo, arqueando a lombar.",
+    "Movimentos rápidos."
+   ]
+  },
+  {
+   "id": "swing_kettlebell",
+   "name": "Swing com kettlebell",
+   "group": "gluteos",
+   "secondary": [
+    "posterior",
+    "lombar",
+    "corpo_inteiro"
+   ],
+   "equipment": "kettlebell",
+   "level": "intermediario",
+   "anim": "kb_swing",
+   "steps": [
+    "Pés um pouco além da largura do quadril, kettlebell à frente no chão.",
+    "Leve o quadril para trás e passe o kettlebell entre as pernas, como num passe de futebol americano.",
+    "Estenda o quadril com força para jogar o kettlebell até a altura do peito.",
+    "Os braços só guiam; no topo, glúteos contraídos e corpo reto.",
+    "Deixe o kettlebell descer e repita levando o quadril para trás."
+   ],
+   "tips": [
+    "É um movimento de quadril, não de agachamento."
+   ],
+   "mistakes": [
+    "Levantar o peso com os braços.",
+    "Arredondar a lombar.",
+    "Agachar em vez de dobrar no quadril."
+   ]
+  },
+  {
+   "id": "supino_reto_barra",
+   "name": "Supino reto com barra",
+   "group": "peito",
+   "secondary": [
+    "triceps",
+    "ombros"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "bench_press",
+   "steps": [
+    "Deite no banco com os olhos logo abaixo da barra e os pés firmes no chão.",
+    "Junte as escápulas e puxe-as para baixo, criando uma base firme nas costas.",
+    "Segure a barra um pouco além da largura dos ombros, punhos retos.",
+    "Desça a barra em diagonal até o meio do peito, cotovelos de 45 graus do tronco.",
+    "Empurre de volta até os braços estenderem sobre os ombros."
+   ],
+   "tips": [
+    "Treine com alguém para ajudar ou use os pinos de segurança."
+   ],
+   "mistakes": [
+    "Cotovelos totalmente abertos, a 90 graus do tronco.",
+    "Tirar o quadril do banco.",
+    "Quicar a barra no peito."
+   ]
+  },
+  {
+   "id": "supino_reto_halteres",
+   "name": "Supino reto com halteres",
+   "group": "peito",
+   "secondary": [
+    "triceps",
+    "ombros"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "bench_press_db",
+   "steps": [
+    "Deite no banco com um halter em cada mão, apoiados nas coxas.",
+    "Leve os halteres para cima do peito com os braços estendidos.",
+    "Junte as escápulas e desça os halteres ao lado do peito, cotovelos a 45 graus.",
+    "Empurre de volta aproximando levemente os halteres no topo."
+   ],
+   "tips": [
+    "Os halteres permitem um movimento mais natural para os ombros."
+   ],
+   "mistakes": [
+    "Deixar os halteres caírem para os lados.",
+    "Bater os halteres no topo."
+   ]
+  },
+  {
+   "id": "supino_inclinado_barra",
+   "name": "Supino inclinado com barra",
+   "group": "peito",
+   "secondary": [
+    "ombros",
+    "triceps"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "incline_press",
+   "steps": [
+    "Ajuste o banco entre 30 e 45 graus.",
+    "Deite com as escápulas juntas e pés firmes no chão.",
+    "Desça a barra até a parte alta do peito, abaixo da clavícula.",
+    "Empurre de volta até estender os braços."
+   ],
+   "tips": [
+    "Inclinação alta demais transfere o trabalho para os ombros."
+   ],
+   "mistakes": [
+    "Descer a barra no pescoço.",
+    "Perder o apoio das escápulas."
+   ]
+  },
+  {
+   "id": "supino_inclinado_halteres",
+   "name": "Supino inclinado com halteres",
+   "group": "peito",
+   "secondary": [
+    "ombros",
+    "triceps"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "incline_press_db",
+   "steps": [
+    "Banco entre 30 e 45 graus, um halter em cada mão.",
+    "Comece com os braços estendidos sobre a parte alta do peito.",
+    "Desça os halteres ao lado do peito com controle.",
+    "Empurre de volta até estender os braços."
+   ],
+   "tips": [
+    "Trabalha principalmente a parte de cima do peito."
+   ],
+   "mistakes": [
+    "Arquear demais a lombar.",
+    "Descer sem controle."
+   ]
+  },
+  {
+   "id": "crucifixo_halteres",
+   "name": "Crucifixo com halteres",
+   "group": "peito",
+   "secondary": [
+    "ombros"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "fly_db",
+   "steps": [
+    "Deite no banco com os halteres sobre o peito, palmas viradas uma para a outra.",
+    "Mantenha uma leve flexão nos cotovelos durante todo o movimento.",
+    "Abra os braços em arco até sentir o peito alongar, sem passar da linha do corpo.",
+    "Feche em arco, como se abraçasse uma árvore."
+   ],
+   "tips": [
+    "Use carga menor que no supino."
+   ],
+   "mistakes": [
+    "Dobrar e estender os cotovelos, virando um supino.",
+    "Descer demais os braços."
+   ]
+  },
+  {
+   "id": "voador",
+   "name": "Voador (peck deck)",
+   "group": "peito",
+   "secondary": [
+    "ombros"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "pec_deck",
+   "steps": [
+    "Ajuste o banco para as alças ficarem na altura do peito.",
+    "Costas apoiadas e braços abertos com leve flexão.",
+    "Feche os braços à frente contraindo o peito.",
+    "Volte devagar até sentir o peito alongar."
+   ],
+   "tips": [
+    "Mantenha os ombros para trás e para baixo."
+   ],
+   "mistakes": [
+    "Projetar os ombros à frente.",
+    "Abrir demais na volta."
+   ]
+  },
+  {
+   "id": "crossover",
+   "name": "Crossover na polia",
+   "group": "peito",
+   "secondary": [
+    "ombros"
+   ],
+   "equipment": "polia",
+   "level": "intermediario",
+   "anim": "cable_crossover",
+   "steps": [
+    "Segure as alças das polias altas e dê um passo à frente.",
+    "Incline levemente o tronco e mantenha uma leve flexão nos cotovelos.",
+    "Traga as mãos para baixo e ao centro, à frente do quadril.",
+    "Volte em arco controlando até os braços abrirem."
+   ],
+   "tips": [
+    "Variar a altura das polias muda a região do peito trabalhada."
+   ],
+   "mistakes": [
+    "Dobrar e estender os cotovelos.",
+    "Deixar os cabos puxarem rápido na volta."
+   ]
+  },
+  {
+   "id": "flexao_braco",
+   "name": "Flexão de braço",
+   "group": "peito",
+   "secondary": [
+    "triceps",
+    "ombros",
+    "abdomen"
+   ],
+   "equipment": "peso_corporal",
+   "level": "intermediario",
+   "anim": "push_up",
+   "steps": [
+    "Mãos no chão um pouco além da largura dos ombros, corpo em linha reta da cabeça aos pés.",
+    "Contraia abdômen e glúteos.",
+    "Desça o peito em direção ao chão com os cotovelos a cerca de 45 graus do tronco.",
+    "Empurre o chão até estender os braços, sem deixar o quadril cair."
+   ],
+   "tips": [
+    "Se ainda não consegue, comece pela flexão inclinada ou com joelhos."
+   ],
+   "mistakes": [
+    "Quadril caindo ou empinado.",
+    "Cotovelos totalmente abertos.",
+    "Cabeça caindo à frente."
+   ]
+  },
+  {
+   "id": "flexao_joelhos",
+   "name": "Flexão com joelhos",
+   "group": "peito",
+   "secondary": [
+    "triceps",
+    "ombros"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "push_up_knee",
+   "steps": [
+    "Apoie as mãos e os joelhos no chão, com os pés elevados.",
+    "Mantenha uma linha reta dos joelhos à cabeça.",
+    "Desça o peito em direção ao chão.",
+    "Empurre até estender os braços."
+   ],
+   "tips": [
+    "Use um colchonete para proteger os joelhos."
+   ],
+   "mistakes": [
+    "Dobrar no quadril em vez de manter a linha reta."
+   ]
+  },
+  {
+   "id": "flexao_inclinada",
+   "name": "Flexão inclinada no banco",
+   "group": "peito",
+   "secondary": [
+    "triceps",
+    "ombros"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "push_up_incline",
+   "steps": [
+    "Apoie as mãos num banco firme, na largura dos ombros.",
+    "Corpo em linha reta, pés apoiados no chão.",
+    "Leve o peito até o banco dobrando os cotovelos.",
+    "Empurre o banco até estender os braços."
+   ],
+   "tips": [
+    "Quanto mais alto o apoio, mais fácil."
+   ],
+   "mistakes": [
+    "Quadril caindo.",
+    "Banco instável."
+   ]
+  },
+  {
+   "id": "paralelas",
+   "name": "Mergulho nas paralelas",
+   "group": "triceps",
+   "secondary": [
+    "peito",
+    "ombros"
+   ],
+   "equipment": "barra_fixa",
+   "level": "avancado",
+   "anim": "dips",
+   "steps": [
+    "Segure as barras e suba com os braços estendidos.",
+    "Incline levemente o tronco à frente e dobre os joelhos.",
+    "Desça dobrando os cotovelos até cerca de 90 graus.",
+    "Empurre para cima até estender os braços."
+   ],
+   "tips": [
+    "Use a máquina de paralela assistida para começar."
+   ],
+   "mistakes": [
+    "Descer demais forçando os ombros.",
+    "Balançar o corpo."
+   ]
+  },
+  {
+   "id": "puxada_frontal",
+   "name": "Puxada frontal",
+   "group": "costas",
+   "secondary": [
+    "biceps",
+    "ombros"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "lat_pulldown",
+   "steps": [
+    "Ajuste o apoio das coxas e segure a barra com pegada pronada, um pouco além dos ombros.",
+    "Incline o tronco levemente para trás, cerca de 15 graus, com o peito aberto.",
+    "Puxe a barra até a parte alta do peito, levando os cotovelos para baixo e para os lados.",
+    "Suba controlando até estender os braços."
+   ],
+   "tips": [
+    "Pense em puxar com os cotovelos, não com as mãos."
+   ],
+   "mistakes": [
+    "Puxar a barra atrás da nuca.",
+    "Jogar o corpo para trás.",
+    "Usar mais os braços que as costas."
+   ]
+  },
+  {
+   "id": "barra_fixa",
+   "name": "Barra fixa",
+   "group": "costas",
+   "secondary": [
+    "biceps",
+    "abdomen"
+   ],
+   "equipment": "barra_fixa",
+   "level": "avancado",
+   "anim": "pull_up",
+   "steps": [
+    "Segure a barra com pegada pronada, um pouco além da largura dos ombros.",
+    "Pendure com os braços estendidos e o abdômen firme.",
+    "Puxe levando o peito em direção à barra até o queixo passar dela.",
+    "Desça controlando até estender os braços."
+   ],
+   "tips": [
+    "Comece com a barra assistida ou com elástico."
+   ],
+   "mistakes": [
+    "Balançar o corpo.",
+    "Meia repetição."
+   ]
+  },
+  {
+   "id": "barra_fixa_assistida",
+   "name": "Barra fixa assistida",
+   "group": "costas",
+   "secondary": [
+    "biceps"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "pull_up",
+   "steps": [
+    "Ajuste o contrapeso da máquina (gravitron) ou prenda um elástico na barra.",
+    "Apoie os joelhos ou pés na plataforma e segure a barra.",
+    "Puxe levando o peito à barra.",
+    "Desça devagar até estender os braços."
+   ],
+   "tips": [
+    "Diminua a assistência aos poucos."
+   ],
+   "mistakes": [
+    "Descer rápido.",
+    "Encolher os ombros."
+   ]
+  },
+  {
+   "id": "remada_sentada",
+   "name": "Remada sentada na polia",
+   "group": "costas",
+   "secondary": [
+    "biceps",
+    "trapezio"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "seated_row",
+   "steps": [
+    "Sente-se com os pés no apoio e os joelhos levemente dobrados.",
+    "Segure o triângulo com os braços estendidos e a coluna ereta.",
+    "Puxe levando os cotovelos para trás, rente ao corpo, até as mãos chegarem ao abdômen.",
+    "Junte as escápulas e volte estendendo os braços devagar."
+   ],
+   "tips": [
+    "O tronco fica praticamente parado."
+   ],
+   "mistakes": [
+    "Balançar o tronco para frente e para trás.",
+    "Encolher os ombros."
+   ]
+  },
+  {
+   "id": "remada_curvada_barra",
+   "name": "Remada curvada com barra",
+   "group": "costas",
+   "secondary": [
+    "biceps",
+    "lombar",
+    "trapezio"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "bent_row",
+   "steps": [
+    "Segure a barra, flexione os joelhos e incline o tronco à frente com a coluna neutra.",
+    "Braços estendidos abaixo dos ombros.",
+    "Puxe a barra em direção ao abdômen levando os cotovelos para trás.",
+    "Junte as escápulas e desça devagar."
+   ],
+   "tips": [
+    "Mantenha o tronco parado durante as repetições."
+   ],
+   "mistakes": [
+    "Arredondar a lombar.",
+    "Levantar o tronco para ajudar."
+   ]
+  },
+  {
+   "id": "remada_curvada_halteres",
+   "name": "Remada curvada com halteres",
+   "group": "costas",
+   "secondary": [
+    "biceps",
+    "trapezio"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "bent_row_db",
+   "steps": [
+    "Halteres nas mãos, joelhos flexionados e tronco inclinado à frente.",
+    "Coluna neutra e abdômen firme.",
+    "Puxe os halteres em direção ao abdômen.",
+    "Desça devagar até estender os braços."
+   ],
+   "tips": [
+    "Palmas viradas uma para a outra deixam o movimento mais confortável."
+   ],
+   "mistakes": [
+    "Arredondar as costas.",
+    "Puxar com os punhos dobrados."
+   ]
+  },
+  {
+   "id": "remada_unilateral",
+   "name": "Remada unilateral (serrote)",
+   "group": "costas",
+   "secondary": [
+    "biceps"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "one_arm_row",
+   "steps": [
+    "Apoie o joelho e a mão do mesmo lado no banco, a outra perna no chão.",
+    "Costas retas, paralelas ao chão.",
+    "Puxe o halter em direção ao quadril levando o cotovelo para trás.",
+    "Desça devagar até estender o braço. Troque de lado."
+   ],
+   "tips": [
+    "Pense em levar o cotovelo ao bolso de trás."
+   ],
+   "mistakes": [
+    "Girar o tronco para subir o peso.",
+    "Puxar com o bíceps."
+   ]
+  },
+  {
+   "id": "pulldown_bracos_estendidos",
+   "name": "Pulldown com braços estendidos",
+   "group": "costas",
+   "secondary": [
+    "abdomen"
+   ],
+   "equipment": "polia",
+   "level": "intermediario",
+   "anim": "straight_arm_pulldown",
+   "steps": [
+    "De frente para a polia alta, segure a barra com braços estendidos.",
+    "Incline levemente o tronco à frente.",
+    "Leve a barra até as coxas em arco, com os cotovelos quase retos.",
+    "Suba devagar até a altura dos ombros."
+   ],
+   "tips": [
+    "Ótimo para sentir o dorsal trabalhando."
+   ],
+   "mistakes": [
+    "Dobrar os cotovelos.",
+    "Balançar o tronco."
+   ]
+  },
+  {
+   "id": "desenvolvimento_barra",
+   "name": "Desenvolvimento em pé com barra",
+   "group": "ombros",
+   "secondary": [
+    "triceps",
+    "abdomen"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "overhead_press",
+   "steps": [
+    "Segure a barra na altura dos ombros, mãos um pouco além da largura deles.",
+    "Contraia glúteos e abdômen.",
+    "Empurre a barra para cima, afastando levemente a cabeça para ela passar.",
+    "Termine com os braços estendidos e a barra sobre o meio do pé.",
+    "Desça controlando até os ombros."
+   ],
+   "tips": [
+    "Não arqueie a lombar: mantenha o abdômen firme."
+   ],
+   "mistakes": [
+    "Inclinar o tronco para trás.",
+    "Empurrar a barra à frente do corpo."
+   ]
+  },
+  {
+   "id": "desenvolvimento_halteres",
+   "name": "Desenvolvimento com halteres sentado",
+   "group": "ombros",
+   "secondary": [
+    "triceps"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "overhead_press_db",
+   "steps": [
+    "Sente-se com as costas apoiadas, halteres na altura dos ombros.",
+    "Empurre os halteres para cima até quase estender os braços.",
+    "Desça controlando até a altura das orelhas."
+   ],
+   "tips": [
+    "Encosto vertical ou levemente inclinado dá mais segurança."
+   ],
+   "mistakes": [
+    "Arquear a lombar.",
+    "Bater os halteres no topo."
+   ]
+  },
+  {
+   "id": "elevacao_lateral",
+   "name": "Elevação lateral",
+   "group": "ombros",
+   "secondary": [
+    "trapezio"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "lateral_raise",
+   "steps": [
+    "Em pé, halteres ao lado do corpo, cotovelos levemente dobrados.",
+    "Eleve os braços para os lados conduzindo pelos cotovelos.",
+    "Pare na altura dos ombros, com as palmas viradas para o chão.",
+    "Desça em 2 a 3 segundos até os halteres voltarem ao lado do corpo."
+   ],
+   "tips": [
+    "Use carga leve; é um músculo pequeno.",
+    "Mantenha a mesma flexão de cotovelo durante toda a série."
+   ],
+   "mistakes": [
+    "Encolher os ombros.",
+    "Balançar o corpo.",
+    "Subir acima da linha dos ombros."
+   ]
+  },
+  {
+   "id": "elevacao_frontal",
+   "name": "Elevação frontal",
+   "group": "ombros",
+   "secondary": [],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "front_raise",
+   "steps": [
+    "Em pé, halteres à frente das coxas.",
+    "Eleve um ou os dois braços à frente até a altura dos ombros.",
+    "Mantenha os cotovelos levemente dobrados.",
+    "Desça devagar."
+   ],
+   "tips": [
+    "Pode alternar os braços."
+   ],
+   "mistakes": [
+    "Balançar o tronco.",
+    "Subir acima da cabeça."
+   ]
+  },
+  {
+   "id": "voador_invertido",
+   "name": "Voador invertido",
+   "group": "ombros",
+   "secondary": [
+    "costas",
+    "trapezio"
+   ],
+   "equipment": "maquina",
+   "level": "iniciante",
+   "anim": "reverse_fly",
+   "steps": [
+    "Sente-se de frente para o encosto e segure as alças à frente.",
+    "Abra os braços para trás com leve flexão nos cotovelos.",
+    "Junte as escápulas no final.",
+    "Volte devagar."
+   ],
+   "tips": [
+    "Trabalha a parte de trás do ombro e melhora a postura."
+   ],
+   "mistakes": [
+    "Encolher os ombros.",
+    "Usar impulso."
+   ]
+  },
+  {
+   "id": "face_pull",
+   "name": "Face pull",
+   "group": "ombros",
+   "secondary": [
+    "trapezio",
+    "costas"
+   ],
+   "equipment": "polia",
+   "level": "intermediario",
+   "anim": "face_pull",
+   "steps": [
+    "Ajuste a polia na altura do rosto e segure a corda com as palmas para baixo.",
+    "Puxe a corda em direção ao rosto, abrindo os cotovelos para os lados e para cima.",
+    "Termine com as mãos ao lado das orelhas.",
+    "Volte devagar estendendo os braços."
+   ],
+   "tips": [
+    "Excelente para a saúde dos ombros e a postura."
+   ],
+   "mistakes": [
+    "Puxar baixo, em direção ao peito.",
+    "Jogar o corpo para trás."
+   ]
+  },
+  {
+   "id": "encolhimento",
+   "name": "Encolhimento com halteres",
+   "group": "trapezio",
+   "secondary": [],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "shrug",
+   "steps": [
+    "Em pé, halteres ao lado do corpo.",
+    "Eleve os ombros em direção às orelhas, sem dobrar os cotovelos.",
+    "Segure 1 segundo e desça devagar."
+   ],
+   "tips": [
+    "Não gire os ombros; o movimento é para cima e para baixo."
+   ],
+   "mistakes": [
+    "Girar os ombros.",
+    "Dobrar os cotovelos."
+   ]
+  },
+  {
+   "id": "rosca_direta_halteres",
+   "name": "Rosca direta com halteres",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "curl",
+   "steps": [
+    "Em pé, halteres ao lado do corpo com as palmas para frente.",
+    "Cotovelos colados ao tronco.",
+    "Flexione os cotovelos levando os halteres em direção aos ombros.",
+    "Desça devagar até estender os braços."
+   ],
+   "tips": [
+    "Pode alternar os braços."
+   ],
+   "mistakes": [
+    "Balançar o tronco.",
+    "Levar os cotovelos à frente."
+   ]
+  },
+  {
+   "id": "rosca_direta_barra",
+   "name": "Rosca direta com barra",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "barra",
+   "level": "iniciante",
+   "anim": "curl_bb",
+   "steps": [
+    "Segure a barra com as palmas para frente, na largura dos ombros.",
+    "Cotovelos junto ao corpo.",
+    "Suba a barra flexionando os cotovelos.",
+    "Desça devagar."
+   ],
+   "tips": [
+    "A barra W deixa o punho mais confortável."
+   ],
+   "mistakes": [
+    "Jogar o corpo para trás.",
+    "Descer sem controle."
+   ]
+  },
+  {
+   "id": "rosca_martelo",
+   "name": "Rosca martelo",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "hammer_curl",
+   "steps": [
+    "Segure os halteres com as palmas viradas para o corpo.",
+    "Cotovelos colados ao tronco.",
+    "Flexione os cotovelos mantendo a pegada neutra.",
+    "Desça devagar."
+   ],
+   "tips": [
+    "Trabalha também o antebraço."
+   ],
+   "mistakes": [
+    "Balançar o tronco."
+   ]
+  },
+  {
+   "id": "rosca_polia",
+   "name": "Rosca na polia",
+   "group": "biceps",
+   "secondary": [],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "curl_cable",
+   "steps": [
+    "Segure a barra da polia baixa com as palmas para cima.",
+    "Cotovelos junto ao corpo.",
+    "Flexione os cotovelos até a barra chegar perto dos ombros.",
+    "Volte devagar."
+   ],
+   "tips": [
+    "O cabo mantém tensão durante todo o movimento."
+   ],
+   "mistakes": [
+    "Inclinar o tronco para trás."
+   ]
+  },
+  {
+   "id": "rosca_scott",
+   "name": "Rosca Scott",
+   "group": "biceps",
+   "secondary": [],
+   "equipment": "barra",
+   "level": "iniciante",
+   "anim": "preacher_curl",
+   "steps": [
+    "Sente-se no banco Scott com a parte de trás dos braços apoiada.",
+    "Segure a barra com as palmas para cima.",
+    "Flexione os cotovelos subindo a barra.",
+    "Desça devagar até quase estender os braços."
+   ],
+   "tips": [
+    "Não estenda os cotovelos completamente com carga alta."
+   ],
+   "mistakes": [
+    "Tirar os braços do apoio.",
+    "Descer de uma vez."
+   ]
+  },
+  {
+   "id": "triceps_polia",
+   "name": "Tríceps na polia (barra)",
+   "group": "triceps",
+   "secondary": [],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "triceps_pushdown",
+   "steps": [
+    "De frente para a polia alta, segure a barra com as palmas para baixo.",
+    "Cotovelos colados ao corpo, a 90 graus.",
+    "Estenda os cotovelos levando a barra até as coxas.",
+    "Volte devagar até 90 graus."
+   ],
+   "tips": [
+    "Só o antebraço se move."
+   ],
+   "mistakes": [
+    "Abrir os cotovelos.",
+    "Usar o peso do corpo."
+   ]
+  },
+  {
+   "id": "triceps_corda",
+   "name": "Tríceps na polia com corda",
+   "group": "triceps",
+   "secondary": [],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "triceps_pushdown",
+   "steps": [
+    "Segure a corda na polia alta com as palmas voltadas uma para a outra.",
+    "Cotovelos fixos ao lado do corpo.",
+    "Estenda os cotovelos e abra levemente a corda no final.",
+    "Volte devagar."
+   ],
+   "tips": [
+    "Abrir a corda no final aumenta a contração."
+   ],
+   "mistakes": [
+    "Mover os ombros.",
+    "Inclinar demais o tronco."
+   ]
+  },
+  {
+   "id": "triceps_frances",
+   "name": "Tríceps francês com halter",
+   "group": "triceps",
+   "secondary": [],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "overhead_triceps",
+   "steps": [
+    "Em pé ou sentado, segure um halter com as duas mãos acima da cabeça.",
+    "Cotovelos apontando para cima, perto da cabeça.",
+    "Desça o halter atrás da cabeça dobrando só os cotovelos.",
+    "Estenda os braços de volta."
+   ],
+   "tips": [
+    "Mantenha o abdômen firme para não arquear a lombar."
+   ],
+   "mistakes": [
+    "Abrir muito os cotovelos.",
+    "Arquear as costas."
+   ]
+  },
+  {
+   "id": "triceps_testa",
+   "name": "Tríceps testa",
+   "group": "triceps",
+   "secondary": [],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "skull_crusher",
+   "steps": [
+    "Deite no banco com a barra acima do peito, braços estendidos.",
+    "Incline levemente os braços em direção à cabeça.",
+    "Dobre só os cotovelos levando a barra em direção à testa.",
+    "Estenda os braços de volta."
+   ],
+   "tips": [
+    "A barra W é mais confortável para os punhos."
+   ],
+   "mistakes": [
+    "Mover os ombros.",
+    "Abrir os cotovelos."
+   ]
+  },
+  {
+   "id": "triceps_coice",
+   "name": "Tríceps coice",
+   "group": "triceps",
+   "secondary": [],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "triceps_kickback",
+   "steps": [
+    "Incline o tronco à frente apoiando uma mão num banco.",
+    "Braço de trabalho junto ao corpo, cotovelo dobrado a 90 graus.",
+    "Estenda o cotovelo levando o halter para trás.",
+    "Volte devagar sem mover o braço."
+   ],
+   "tips": [
+    "Use carga leve e foque na contração."
+   ],
+   "mistakes": [
+    "Balançar o braço.",
+    "Deixar o cotovelo cair."
+   ]
+  },
+  {
+   "id": "triceps_banco",
+   "name": "Tríceps no banco",
+   "group": "triceps",
+   "secondary": [
+    "peito",
+    "ombros"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "bench_dip",
+   "steps": [
+    "Apoie as mãos na borda de um banco atrás do corpo, pernas à frente.",
+    "Tire o quadril do banco com os braços estendidos.",
+    "Dobre os cotovelos para trás até cerca de 90 graus.",
+    "Estenda os braços para subir, quadril perto do banco."
+   ],
+   "tips": [
+    "Joelhos dobrados facilitam; pernas estendidas dificultam."
+   ],
+   "mistakes": [
+    "Descer demais, forçando os ombros.",
+    "Afastar o quadril do banco."
+   ]
+  },
+  {
+   "id": "prancha",
+   "name": "Prancha",
+   "group": "abdomen",
+   "secondary": [
+    "ombros",
+    "gluteos"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "plank",
+   "steps": [
+    "Apoie os antebraços no chão com os cotovelos sob os ombros.",
+    "Estenda as pernas apoiando nas pontas dos pés.",
+    "Corpo em linha reta, abdômen e glúteos contraídos.",
+    "Respire normalmente e segure o tempo indicado."
+   ],
+   "tips": [
+    "Melhor 20 segundos bem feitos que 1 minuto com o quadril caindo."
+   ],
+   "mistakes": [
+    "Quadril caindo.",
+    "Quadril empinado.",
+    "Prender a respiração."
+   ]
+  },
+  {
+   "id": "prancha_joelhos",
+   "name": "Prancha com joelhos",
+   "group": "abdomen",
+   "secondary": [],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "plank_knee",
+   "steps": [
+    "Apoie antebraços e joelhos no chão, cotovelos sob os ombros.",
+    "Mantenha uma linha reta dos joelhos à cabeça.",
+    "Contraia abdômen e glúteos e respire normalmente."
+   ],
+   "tips": [
+    "Versão de entrada para a prancha."
+   ],
+   "mistakes": [
+    "Dobrar o quadril."
+   ]
+  },
+  {
+   "id": "prancha_lateral",
+   "name": "Prancha lateral",
+   "group": "abdomen",
+   "secondary": [
+    "abdutores"
+   ],
+   "equipment": "peso_corporal",
+   "level": "intermediario",
+   "anim": "side_plank",
+   "steps": [
+    "Deite de lado e apoie o antebraço com o cotovelo sob o ombro.",
+    "Pernas estendidas, uma sobre a outra.",
+    "Eleve o quadril até o corpo formar uma linha reta.",
+    "Segure o tempo indicado e troque de lado."
+   ],
+   "tips": [
+    "Para facilitar, apoie o joelho de baixo no chão."
+   ],
+   "mistakes": [
+    "Quadril caindo.",
+    "Ombro longe do cotovelo."
+   ]
+  },
+  {
+   "id": "abdominal_supra",
+   "name": "Abdominal supra",
+   "group": "abdomen",
+   "secondary": [],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "crunch",
+   "steps": [
+    "Deite de costas com os joelhos dobrados e os pés no chão.",
+    "Cruze os braços no peito.",
+    "Contraia o abdômen e tire as escápulas do chão, sem puxar o pescoço.",
+    "Desça devagar."
+   ],
+   "tips": [
+    "O movimento é curto: a lombar continua no chão."
+   ],
+   "mistakes": [
+    "Puxar a cabeça com as mãos.",
+    "Subir com impulso."
+   ]
+  },
+  {
+   "id": "elevacao_pernas",
+   "name": "Elevação de pernas deitado",
+   "group": "abdomen",
+   "secondary": [],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "leg_raise",
+   "steps": [
+    "Deite de costas com as pernas estendidas e as mãos ao lado do corpo.",
+    "Pressione a lombar no chão.",
+    "Suba as pernas até a vertical.",
+    "Desça devagar, parando antes de os pés tocarem o chão."
+   ],
+   "tips": [
+    "Se a lombar sair do chão, dobre os joelhos."
+   ],
+   "mistakes": [
+    "Arquear a lombar.",
+    "Descer de uma vez."
+   ]
+  },
+  {
+   "id": "abdominal_bicicleta",
+   "name": "Abdominal bicicleta",
+   "group": "abdomen",
+   "secondary": [],
+   "equipment": "peso_corporal",
+   "level": "intermediario",
+   "anim": "bicycle_crunch",
+   "steps": [
+    "Deite de costas com as mãos atrás da cabeça, sem puxar o pescoço.",
+    "Tire os ombros do chão e flexione um joelho em direção ao peito.",
+    "Gire o tronco levando o cotovelo ao joelho oposto enquanto estende a outra perna.",
+    "Troque de lado de forma controlada."
+   ],
+   "tips": [
+    "Devagar e controlado funciona melhor que rápido."
+   ],
+   "mistakes": [
+    "Puxar o pescoço.",
+    "Movimento rápido e sem rotação."
+   ]
+  },
+  {
+   "id": "dead_bug",
+   "name": "Dead bug",
+   "group": "abdomen",
+   "secondary": [
+    "lombar"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "dead_bug",
+   "steps": [
+    "Deite de costas com os braços para cima e os joelhos a 90 graus sobre o quadril.",
+    "Pressione a lombar no chão.",
+    "Estenda um braço para trás e a perna oposta à frente, sem tocar o chão.",
+    "Volte ao centro e alterne os lados."
+   ],
+   "tips": [
+    "Ótimo para quem sente a lombar em outros abdominais."
+   ],
+   "mistakes": [
+    "Deixar a lombar sair do chão.",
+    "Mover braço e perna do mesmo lado."
+   ]
+  },
+  {
+   "id": "escalador",
+   "name": "Escalador (mountain climber)",
+   "group": "abdomen",
+   "secondary": [
+    "cardio",
+    "ombros"
+   ],
+   "equipment": "peso_corporal",
+   "level": "intermediario",
+   "anim": "mountain_climber",
+   "steps": [
+    "Posição de prancha alta, mãos sob os ombros.",
+    "Corpo reto e abdômen contraído.",
+    "Traga um joelho em direção ao peito e volte.",
+    "Alterne as pernas em ritmo constante, sem levantar o quadril."
+   ],
+   "tips": [
+    "Faça devagar para uma versão de baixo impacto."
+   ],
+   "mistakes": [
+    "Quadril alto.",
+    "Ombros à frente das mãos."
+   ]
+  },
+  {
+   "id": "giro_russo",
+   "name": "Giro russo",
+   "group": "abdomen",
+   "secondary": [],
+   "equipment": "peso_corporal",
+   "level": "intermediario",
+   "anim": "russian_twist",
+   "steps": [
+    "Sente-se com os joelhos dobrados e os calcanhares no chão.",
+    "Incline o tronco para trás com a coluna reta.",
+    "Junte as mãos à frente e gire o tronco para um lado.",
+    "Gire para o outro lado de forma controlada."
+   ],
+   "tips": [
+    "Segure uma anilha ou halter para aumentar a dificuldade."
+   ],
+   "mistakes": [
+    "Arredondar as costas.",
+    "Girar só os braços."
+   ]
+  },
+  {
+   "id": "elevacao_pernas_barra",
+   "name": "Elevação de pernas na barra",
+   "group": "abdomen",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "barra_fixa",
+   "level": "avancado",
+   "anim": "hanging_leg_raise",
+   "steps": [
+    "Pendure na barra com os braços estendidos.",
+    "Contraia o abdômen para evitar balanço.",
+    "Suba as pernas até a altura do quadril.",
+    "Desça devagar."
+   ],
+   "tips": [
+    "Comece com os joelhos dobrados."
+   ],
+   "mistakes": [
+    "Balançar o corpo.",
+    "Descer de uma vez."
+   ]
+  },
+  {
+   "id": "super_homem",
+   "name": "Super-homem",
+   "group": "lombar",
+   "secondary": [
+    "gluteos"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "superman",
+   "steps": [
+    "Deite de bruços com braços e pernas estendidos.",
+    "Eleve braços, peito e pernas alguns centímetros do chão.",
+    "Segure 2 segundos.",
+    "Desça devagar."
+   ],
+   "tips": [
+    "Olhe para o chão para manter o pescoço neutro."
+   ],
+   "mistakes": [
+    "Subir demais, forçando a lombar.",
+    "Levantar a cabeça."
+   ]
+  },
+  {
+   "id": "perdigueiro",
+   "name": "Perdigueiro (bird dog)",
+   "group": "abdomen",
+   "secondary": [
+    "lombar",
+    "gluteos"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "bird_dog",
+   "steps": [
+    "Fique em quatro apoios: mãos sob os ombros e joelhos sob o quadril.",
+    "Estenda um braço à frente e a perna oposta para trás.",
+    "Mantenha o quadril parado e as costas retas.",
+    "Volte e alterne os lados."
+   ],
+   "tips": [
+    "Imagine um copo de água sobre a lombar."
+   ],
+   "mistakes": [
+    "Girar o quadril.",
+    "Arquear as costas."
+   ]
+  },
+  {
+   "id": "caminhada_esteira",
+   "name": "Caminhada na esteira",
+   "group": "cardio",
+   "secondary": [
+    "panturrilha",
+    "gluteos"
+   ],
+   "equipment": "cardio",
+   "level": "iniciante",
+   "anim": "walk",
+   "steps": [
+    "Comece em ritmo leve por 3 a 5 minutos.",
+    "Tronco ereto, olhar à frente e braços balançando naturalmente.",
+    "Ajuste uma velocidade em que ainda consiga conversar.",
+    "Desacelere aos poucos no final."
+   ],
+   "tips": [
+    "Evite se apoiar nas barras laterais."
+   ],
+   "mistakes": [
+    "Olhar para os pés o tempo todo.",
+    "Segurar nas barras."
+   ]
+  },
+  {
+   "id": "caminhada_inclinada",
+   "name": "Caminhada inclinada",
+   "group": "cardio",
+   "secondary": [
+    "gluteos",
+    "posterior",
+    "panturrilha"
+   ],
+   "equipment": "cardio",
+   "level": "iniciante",
+   "anim": "walk",
+   "steps": [
+    "Ajuste a esteira entre 5% e 12% de inclinação.",
+    "Tronco ereto, sem segurar nas barras.",
+    "Passos firmes, empurrando o chão com o glúteo.",
+    "Velocidade em que ainda seja possível falar frases curtas."
+   ],
+   "tips": [
+    "Cardio de baixo impacto, ótimo para quem está acima do peso."
+   ],
+   "mistakes": [
+    "Inclinar o tronco e segurar no painel."
+   ]
+  },
+  {
+   "id": "corrida_esteira",
+   "name": "Corrida na esteira",
+   "group": "cardio",
+   "secondary": [
+    "quadriceps",
+    "panturrilha"
+   ],
+   "equipment": "cardio",
+   "level": "intermediario",
+   "anim": "run",
+   "steps": [
+    "Aqueça caminhando por 5 minutos.",
+    "Corra com passos curtos e leves, pisando sob o corpo.",
+    "Braços dobrados a 90 graus, balançando para frente e para trás.",
+    "Desacelere caminhando no final."
+   ],
+   "tips": [
+    "Para começar, alterne 1 minuto correndo e 2 caminhando."
+   ],
+   "mistakes": [
+    "Passadas longas demais.",
+    "Correr na ponta dos pés o tempo todo."
+   ]
+  },
+  {
+   "id": "corrida_intervalada",
+   "name": "Corrida intervalada (HIIT)",
+   "group": "cardio",
+   "secondary": [
+    "corpo_inteiro"
+   ],
+   "equipment": "cardio",
+   "level": "avancado",
+   "anim": "run",
+   "steps": [
+    "Aqueça por 5 minutos em ritmo leve.",
+    "Corra em ritmo forte por 20 a 30 segundos.",
+    "Recupere caminhando ou trotando por 60 a 90 segundos.",
+    "Repita de 6 a 10 vezes e desaqueça."
+   ],
+   "tips": [
+    "Para quem tem excesso de peso, prefira intervalos na bicicleta."
+   ],
+   "mistakes": [
+    "Pular o aquecimento.",
+    "Recuperação curta demais."
+   ]
+  },
+  {
+   "id": "bicicleta_ergometrica",
+   "name": "Bicicleta ergométrica",
+   "group": "cardio",
+   "secondary": [
+    "quadriceps",
+    "gluteos"
+   ],
+   "equipment": "cardio",
+   "level": "iniciante",
+   "anim": "bike",
+   "steps": [
+    "Ajuste o banco: com o pedal embaixo, o joelho fica levemente dobrado.",
+    "Pedale em ritmo confortável para aquecer.",
+    "Ajuste a carga para manter um esforço moderado.",
+    "Mantenha o tronco estável e os ombros relaxados."
+   ],
+   "tips": [
+    "Excelente cardio de baixo impacto para os joelhos."
+   ],
+   "mistakes": [
+    "Banco baixo demais.",
+    "Balançar o quadril."
+   ]
+  },
+  {
+   "id": "remo_ergometro",
+   "name": "Remo ergômetro",
+   "group": "cardio",
+   "secondary": [
+    "costas",
+    "quadriceps",
+    "corpo_inteiro"
+   ],
+   "equipment": "cardio",
+   "level": "intermediario",
+   "anim": "rower",
+   "steps": [
+    "Sente-se com os pés presos e segure o puxador com os braços estendidos.",
+    "Empurre com as pernas primeiro.",
+    "Depois incline levemente o tronco para trás e puxe o puxador até a parte baixa das costelas.",
+    "Volte na ordem inversa: braços, tronco e, por fim, joelhos."
+   ],
+   "tips": [
+    "A força vem principalmente das pernas."
+   ],
+   "mistakes": [
+    "Puxar com os braços antes de empurrar com as pernas.",
+    "Arredondar as costas."
+   ]
+  },
+  {
+   "id": "marcha_estacionaria",
+   "name": "Marcha estacionária",
+   "group": "cardio",
+   "secondary": [
+    "quadriceps",
+    "abdomen"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "march",
+   "steps": [
+    "Em pé, postura ereta e braços dobrados.",
+    "Eleve um joelho até a altura do quadril, sem pular.",
+    "Troque de perna em ritmo constante, balançando os braços."
+   ],
+   "tips": [
+    "Cardio de baixo impacto para fazer em qualquer lugar."
+   ],
+   "mistakes": [
+    "Inclinar o tronco para trás."
+   ]
+  },
+  {
+   "id": "polichinelo",
+   "name": "Polichinelo",
+   "group": "cardio",
+   "secondary": [
+    "corpo_inteiro"
+   ],
+   "equipment": "peso_corporal",
+   "level": "iniciante",
+   "anim": "jumping_jack",
+   "steps": [
+    "Em pé, pernas juntas e braços ao lado do corpo.",
+    "Abra as pernas e leve os braços acima da cabeça.",
+    "Volte à posição inicial.",
+    "Mantenha um ritmo constante."
+   ],
+   "tips": [
+    "Versão sem salto: abra uma perna de cada vez."
+   ],
+   "mistakes": [
+    "Aterrissar com os joelhos travados."
+   ]
+  },
+  {
+   "id": "pular_corda",
+   "name": "Pular corda",
+   "group": "cardio",
+   "secondary": [
+    "panturrilha"
+   ],
+   "equipment": "peso_corporal",
+   "level": "intermediario",
+   "anim": "jump_rope",
+   "steps": [
+    "Segure as alças com os cotovelos perto do corpo.",
+    "Gire a corda com os punhos, não com os braços.",
+    "Faça saltos baixos aterrissando na ponta dos pés.",
+    "Mantenha o olhar à frente."
+   ],
+   "tips": [
+    "Comece com séries curtas de 30 segundos."
+   ],
+   "mistakes": [
+    "Saltar alto demais.",
+    "Girar a corda com os ombros."
+   ]
+  },
+  {
+   "id": "burpee",
+   "name": "Burpee",
+   "group": "corpo_inteiro",
+   "secondary": [
+    "cardio",
+    "peito",
+    "quadriceps"
+   ],
+   "equipment": "peso_corporal",
+   "level": "avancado",
+   "anim": "burpee",
+   "steps": [
+    "Em pé, agache e apoie as mãos no chão.",
+    "Leve os pés para trás até a posição de prancha.",
+    "Traga os pés de volta para perto das mãos.",
+    "Salte com os braços para cima e aterrisse suave."
+   ],
+   "tips": [
+    "Sem salto e sem jogar os pés, vira uma versão de baixo impacto."
+   ],
+   "mistakes": [
+    "Quadril caindo na prancha.",
+    "Aterrissar com os joelhos travados."
+   ]
+  },
+  {
+   "id": "caminhada_fazendeiro",
+   "name": "Caminhada do fazendeiro",
+   "group": "corpo_inteiro",
+   "secondary": [
+    "antebraco",
+    "trapezio",
+    "abdomen"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "farmer_walk",
+   "steps": [
+    "Segure halteres pesados ao lado do corpo.",
+    "Fique bem ereto, ombros para trás e abdômen firme.",
+    "Caminhe com passos curtos pelo tempo ou distância indicados.",
+    "Apoie os halteres no chão agachando, sem curvar as costas."
+   ],
+   "tips": [
+    "Ótimo para pegada e postura."
+   ],
+   "mistakes": [
+    "Deixar os ombros caírem à frente.",
+    "Inclinar o corpo para um lado."
+   ]
+  }
+ ]
+}
