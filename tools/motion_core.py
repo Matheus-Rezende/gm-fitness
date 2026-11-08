@@ -213,6 +213,7 @@ def solve(p, view, warn):
              shF=shF, elbF=elbF, handF=handF, hipN=hipN, kneeN=kneeN, ankN=ankN, toeN=toeN,
              hipF=hipF, kneeF=kneeF, ankF=ankF, toeF=toeF)
     J['_torso'] = p['torso'] % 360
+    J['_sc'] = {k: p[k] for k in SCALE_KEYS}
     J['_head'] = hd % 360
     return J
 
@@ -262,8 +263,11 @@ def ease(u):
 
 
 class Pattern:
-    def __init__(self, pid, name, view, keys, seq, props=None, vp=(0, 0, 160, 130), fps=20, linear=False):
+    def __init__(self, pid, name, view, keys, seq, props=None, vp=(0, 0, 160, 130), fps=20, linear=False,
+                 plane=None):
         self.id = pid
+        # plano em que o movimento foi desenhado: 'side' (sagital), 'front' (frontal) ou 'top' (visto de cima)
+        self.plane = plane or view
         self.name = name
         self.view = view
         self.keys = keys

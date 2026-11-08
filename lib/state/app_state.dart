@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/exercise.dart';
 import '../models/preset.dart';
+import '../models/session.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_clip.dart';
 
@@ -21,6 +22,8 @@ class AppState extends ChangeNotifier {
   static const _kCustom = 'custom_exercises_v1';
   static const _kProfile = 'profile_v1';
   static const _kDone = 'done_v1';
+  static const _kActive = 'active_session_v1';
+  static const _kSessions = 'sessions_v1';
 
   final SharedPreferences _prefs;
   final CatalogMeta meta;
@@ -40,6 +43,10 @@ class AppState extends ChangeNotifier {
 
   // exercícios marcados como feitos, por data (aaaa-mm-dd)
   Map<String, Set<String>> _done = {};
+
+  // treino em andamento e histórico de treinos concluídos
+  ActiveSession? _active;
+  List<WorkoutSession> _sessions = [];
 
   static Future<AppState> load() async {
     final results = await Future.wait([
@@ -83,6 +90,14 @@ class AppState extends ChangeNotifier {
         _presetId = m['presetId'] as String?;
         _onboarded = m['onboarded'] == true;
       }
+      final ac = _prefs.getString(_kActive);
+      if (ac != null) _active = ActiveSession.fromJson(Map<String, dynamic>.from(jsonDecode(ac) as Map));
+      final ss = _prefs.getString(_kSessions);
+      if (ss != null) {
+        _sessions = [
+          for (final e in (jsonDecode(ss) as List)) WorkoutSession.fromJson(Map<String, dynamic>.from(e as Map)),
+        ];
+      }
       final dn = _prefs.getString(_kDone);
       if (dn != null) {
         final m = Map<String, dynamic>.from(jsonDecode(dn) as Map);
@@ -108,6 +123,110 @@ class AppState extends ChangeNotifier {
       }
     }
     await _prefs.setString(_kDone, jsonEncode({for (final e in _done.entries) e.key: e.value.toList()}));
+    if (_active == null) {
+      await _prefs.remove(_kActive);
+    } else {
+      await _prefs.setString(_kActive, jsonEncode(_active!.toJson()));
+    }
+    if (_sessions.length > 120) _sessions = _sessions.sublist(_sessions.length - 120);
+    await _prefs.setString(_kSessions, jsonEncode([for (final x in _sessions) x.toJson()]));
+  }
+
+  // ------------------------------------------------------------ treino cronometrado
+
+  ActiveSession? get activeSession => _active;
+
+  /// Treinos concluídos, do mais recente para o mais antigo.
+  List<WorkoutSession> get sessions => _sessions.reversed.toList();
+
+  Future<void> startSession(int weekday) async {
+    _active = ActiveSession(weekday: weekday, startedAt: DateTime.now());
+    notifyListeners();
+    await _save();
+  }
+
+  int setsDoneFor(String entryId) => _active?.sets[entryId] ?? 0;
+
+  Future<void> markSet(String entryId, int count) async {
+    final a = _active;
+    final e = entry(entryId);
+    if (a == null || e == null) return;
+    a.sets[entryId] = count.clamp(0, e.sets);
+    final today = _done.putIfAbsent(dayKey(DateTime.now()), () => <String>{});
+    if (a.sets[entryId]! >= e.sets) {
+      today.add(entryId);
+    } else {
+      today.remove(entryId);
+    }
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> setFeel(String entryId, Feel? feel) async {
+    final a = _active;
+    if (a == null) return;
+    if (feel == null) {
+      a.feel.remove(entryId);
+    } else {
+      a.feel[entryId] = feel;
+    }
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> cancelSession() async {
+    _active = null;
+    notifyListeners();
+    await _save();
+  }
+
+  /// Encerra o treino em andamento com a percepção de esforço [rpe] (0 a 10).
+  Future<WorkoutSession?> finishSession(int rpe) async {
+    final a = _active;
+    if (a == null) return null;
+    final items = <SessionItem>[];
+    for (final e in entriesOnDay(a.weekday)) {
+      final ex = exercise(e.exerciseId);
+      if (ex == null) continue;
+      items.add(SessionItem(
+        entryId: e.id,
+        exerciseId: e.exerciseId,
+        name: ex.name,
+        setsDone: a.sets[e.id] ?? 0,
+        setsPlanned: e.sets,
+        reps: e.reps,
+        loadKg: e.loadKg,
+        feel: a.feel[e.id],
+      ));
+    }
+    final s = WorkoutSession(
+      id: _newId('s'),
+      weekday: a.weekday,
+      startedAt: a.startedAt,
+      duration: a.elapsed,
+      rpe: rpe.clamp(0, 10),
+      items: items,
+    );
+    _sessions.add(s);
+    _active = null;
+    notifyListeners();
+    await _save();
+    return s;
+  }
+
+  /// Média da carga das últimas sessões antes de [s] (para comparar).
+  double? averageLoadBefore(WorkoutSession s, {int count = 5}) {
+    final prev = _sessions.where((x) => x.id != s.id && x.startedAt.isBefore(s.startedAt)).toList();
+    if (prev.isEmpty) return null;
+    final last = prev.sublist(prev.length > count ? prev.length - count : 0);
+    return last.map((x) => x.sessionLoad).reduce((a, b) => a + b) / last.length;
+  }
+
+  Future<void> applyLoads(Map<String, double> loads) async {
+    for (final e in loads.entries) {
+      final cur = entry(e.key);
+      if (cur != null && cur.loadKg != e.value) await updateEntry(cur.copyWith(loadKg: e.value));
+    }
   }
 
   // ------------------------------------------------------------ perfil
@@ -354,6 +473,8 @@ class AppState extends ChangeNotifier {
     _entries.clear();
     _custom.clear();
     _done.clear();
+    _active = null;
+    _sessions.clear();
     _presetId = null;
     _onboarded = false;
     notifyListeners();

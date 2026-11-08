@@ -38,11 +38,14 @@ void main() {
             primary: g == null ? const {} : {g.$1},
             secondary: g == null ? const {} : g.$2.toSet(),
           );
-          final times = [0.0, clip.keyTimes[1], clip.keyTimes[2], 0.5];
+          final far = clip.keyTimes[2];
+          final y0 = clip.defaultYaw;
+          final shots = [(0.0, y0), (far, y0), (far, y0 + 45), (far, y0 == 0 ? 90.0 : 0.0)];
           for (var c = 0; c < cols; c++) {
             canvas.save();
             canvas.translate(c * tileW, r * tileH);
-            FigurePainter(clip: clip, time: times[c], palette: FigurePalette.light, style: style)
+            FigurePainter(
+                    clip: clip, time: shots[c].$1, palette: FigurePalette.light, style: style, yaw: shots[c].$2)
                 .paint(canvas, const Size(tileW, tileH));
             canvas.restore();
           }

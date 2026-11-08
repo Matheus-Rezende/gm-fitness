@@ -69,7 +69,9 @@ def rep_seq(down=1.3, up=1.1, top=0.5, bottom=0.35, l0='Posição inicial', l1='
 
 
 def J_(name):
-    return lambda J: J[name]
+    f = lambda J: J[name]  # noqa: E731
+    f.joint = name
+    return f
 
 
 # Equipamentos móveis
@@ -103,7 +105,7 @@ def add_pattern(p):
 
 def variant(base, pid, name, props, keys=None):
     return add_pattern(Pattern(pid, name, base.view, keys or base.keys, base.seq, props, base.vp, base.fps,
-                               base.linear))
+                               base.linear, plane=base.plane))
 
 
 # =========================================================== MEMBROS INFERIORES
@@ -529,7 +531,7 @@ def _fly_keys():
 fly_db = add_pattern(Pattern('fly_db', 'Crucifixo com halteres', 'front', _fly_keys(),
                              rep_seq(l1='Abra os braços em arco', l3='Feche em arco', down=1.3, up=1.2),
                              props=[dict(type='rect', x=40, y=56, w=96, h=18, op=0.55), db_end('handN'),
-                                    db_end('handF')]))
+                                    db_end('handF')], plane='top'))
 
 # Voador (peck deck) e voador invertido, sentado de frente
 def _pecdeck_keys(open_first=True):

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/preset.dart';
+import '../models/session.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
@@ -12,6 +13,8 @@ import 'catalog_screen.dart';
 import 'exercise_detail_screen.dart';
 import 'home_shell.dart';
 import 'profile_sheet.dart';
+import 'sessions_history_screen.dart';
+import 'workout_session_screen.dart';
 
 /// Treino por dia da semana, abrindo no dia de hoje.
 class MyWorkoutsScreen extends StatefulWidget {
@@ -77,6 +80,12 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                   children: [
                     const GmWordmark(size: 30),
                     const Spacer(),
+                    IconButton(
+                      tooltip: 'Histórico de treinos',
+                      onPressed: () => Navigator.push(
+                          context, MaterialPageRoute(builder: (_) => const SessionsHistoryScreen())),
+                      icon: const Icon(Icons.history_rounded),
+                    ),
                     IconButton(
                       tooltip: 'Meu perfil',
                       onPressed: () => showProfileSheet(context),
@@ -145,6 +154,13 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                   ),
                 ),
               ),
+            if (state.activeSession != null || (_day >= 0 && items.isNotEmpty))
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: _SessionBar(day: _day, hasItems: items.isNotEmpty),
+                ),
+              ),
             if (isToday && items.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
@@ -190,6 +206,82 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Botão para iniciar o treino do dia, ou faixa do treino em andamento.
+class _SessionBar extends StatelessWidget {
+  const _SessionBar({required this.day, required this.hasItems});
+
+  final int day;
+  final bool hasItems;
+
+  void _open(BuildContext context) =>
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkoutSessionScreen()));
+
+  @override
+  Widget build(BuildContext context) {
+    final state = AppScope.of(context);
+    final active = state.activeSession;
+    final text = Theme.of(context).textTheme;
+    if (active == null) {
+      return FilledButton.icon(
+        style: FilledButton.styleFrom(
+          backgroundColor: GmColors.ink,
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(54),
+        ),
+        onPressed: hasItems
+            ? () async {
+                await state.startSession(day);
+                if (context.mounted) _open(context);
+              }
+            : null,
+        icon: const Icon(Icons.play_arrow_rounded, color: GmColors.yellow, size: 28),
+        label: Text('Iniciar treino de ${weekdayLabel(day).toLowerCase()}'),
+      );
+    }
+    return Material(
+      color: GmColors.yellow,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _open(context),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+          child: Row(
+            children: [
+              const Icon(Icons.timer_rounded, color: GmColors.ink),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Treino em andamento',
+                        style: text.titleMedium?.copyWith(color: GmColors.ink)),
+                    Text(weekdayLabel(active.weekday), style: text.bodySmall?.copyWith(color: GmColors.ink)),
+                  ],
+                ),
+              ),
+              StreamBuilder<int>(
+                stream: Stream.periodic(const Duration(seconds: 1), (i) => i),
+                builder: (_, _) => Text(
+                  formatDuration(active.elapsed),
+                  style: const TextStyle(
+                    fontFamily: display,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 26,
+                    color: GmColors.ink,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, color: GmColors.ink),
+            ],
+          ),
         ),
       ),
     );

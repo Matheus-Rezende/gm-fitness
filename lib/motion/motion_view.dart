@@ -16,6 +16,7 @@ class MotionView extends StatefulWidget {
     this.showControls = true,
     this.showKeyPoses = true,
     this.fullscreen = false,
+    this.initialYaw,
   });
 
   final MotionClip clip;
@@ -23,6 +24,7 @@ class MotionView extends StatefulWidget {
   final bool showControls;
   final bool showKeyPoses;
   final bool fullscreen;
+  final double? initialYaw;
 
   @override
   State<MotionView> createState() => _MotionViewState();
@@ -34,6 +36,14 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   bool _playing = true;
   late bool _muscles = widget.style.showMuscles;
   late bool _path = widget.style.showPath;
+  late double _yaw = widget.initialYaw ?? widget.clip.defaultYaw;
+
+  static const _views = <(String, double)>[('Lado', 0), ('¾', 45), ('Frente', 90), ('Costas', 270)];
+
+  bool _isView(double y) {
+    final d = ((_yaw - y) % 360 + 360) % 360;
+    return d < 4 || d > 356;
+  }
 
   Duration _period() {
     final ms = widget.clip.duration.inMilliseconds / _speed;
@@ -56,6 +66,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   void didUpdateWidget(MotionView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.clip != widget.clip) {
+      _yaw = widget.initialYaw ?? widget.clip.defaultYaw;
       _ctrl.duration = _period();
       _ctrl.value = 0;
       if (_playing) _ctrl.repeat();
@@ -106,7 +117,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   void _openFullscreen() {
     Navigator.of(context).push(MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (_) => _FullscreenMotion(clip: widget.clip, style: _style),
+      builder: (_) => _FullscreenMotion(clip: widget.clip, style: _style, yaw: _yaw),
     ));
   }
 
@@ -124,11 +135,14 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
         aspectRatio: clip.aspectRatio,
         child: GestureDetector(
           onTap: widget.showControls ? _toggle : null,
+          onHorizontalDragUpdate: widget.showControls
+              ? (d) => setState(() => _yaw = ((_yaw - d.delta.dx * 0.7) % 360 + 360) % 360)
+              : null,
           child: RepaintBoundary(
             child: AnimatedBuilder(
               animation: _ctrl,
               builder: (context, _) => CustomPaint(
-                painter: FigurePainter(clip: clip, time: _ctrl.value, palette: palette, style: _style),
+                painter: FigurePainter(clip: clip, time: _ctrl.value, palette: palette, style: _style, yaw: _yaw),
                 child: const SizedBox.expand(),
               ),
             ),
@@ -183,6 +197,35 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
           ],
         ),
         const SizedBox(height: 8),
+        Row(
+          children: [
+            Icon(Icons.threesixty_rounded, size: 20, color: scheme.onSurfaceVariant),
+            const SizedBox(width: 6),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final v in _views)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 6),
+                        child: ChoiceChip(
+                          label: Text(v.$1),
+                          selected: _isView(v.$2),
+                          onSelected: (_) => setState(() => _yaw = v.$2),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 4),
+          child: Text('Arraste o boneco para os lados para girar.', style: theme.textTheme.bodySmall),
+        ),
         Row(
           children: [
             IconButton.filled(
@@ -252,6 +295,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
                 Expanded(
                   child: _KeyPose(
                     clip: clip,
+                    yaw: _yaw,
                     time: clip.keyTimes[i],
                     label: const ['Início', 'Meio', 'Fim do movimento'][i],
                     style: _style,
@@ -278,9 +322,11 @@ class _Dot extends StatelessWidget {
 }
 
 class _KeyPose extends StatelessWidget {
-  const _KeyPose({required this.clip, required this.time, required this.label, required this.style, required this.onTap});
+  const _KeyPose(
+      {required this.clip, required this.yaw, required this.time, required this.label, required this.style, required this.onTap});
 
   final MotionClip clip;
+  final double yaw;
   final double time;
   final String label;
   final FigureStyle style;
@@ -305,6 +351,7 @@ class _KeyPose extends StatelessWidget {
                   palette: paletteOf(context),
                   style: FigureStyle(male: style.male, primary: style.primary, secondary: style.secondary, showPath: false),
                   ghost: false,
+                  yaw: yaw,
                 ),
                 child: const SizedBox.expand(),
               ),
@@ -319,10 +366,11 @@ class _KeyPose extends StatelessWidget {
 }
 
 class _FullscreenMotion extends StatelessWidget {
-  const _FullscreenMotion({required this.clip, required this.style});
+  const _FullscreenMotion({required this.clip, required this.style, required this.yaw});
 
   final MotionClip clip;
   final FigureStyle style;
+  final double yaw;
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +382,7 @@ class _FullscreenMotion extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 900),
-              child: MotionView(clip: clip, style: style, fullscreen: true),
+              child: MotionView(clip: clip, style: style, fullscreen: true, initialYaw: yaw),
             ),
           ),
         ),

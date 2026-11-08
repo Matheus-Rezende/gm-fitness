@@ -233,11 +233,133 @@ def export():
     print(f'{len(out["patterns"])} padrões, {os.path.getsize(path) / 1024:.0f} KB, padrões com aviso: {total_warn}')
 
 
+# ------------------------------------------------------------------ 3D
+
+def build3d(pattern, warn):
+    import motion3d as m3
+    frames = pattern.frames(warn)
+    plane = pattern.plane
+    cx, cy = frames[0]['hip']
+    symmetric = all(abs(J['handN'][0] - J['handF'][0]) < 0.01 and abs(J['handN'][1] - J['handF'][1]) < 0.01
+                    for J in frames)
+    prims = []
+    tracked = []
+    props_out = []
+    for prop in pattern.props:
+        if 'track' not in prop:
+            prims += m3.static_prims(prop, plane, cx, cy)
+            continue
+        for kind, params, fns in m3.tracked_specs(prop, plane, symmetric):
+            idx = []
+            for fn in fns:
+                idx.append(len(tracked))
+                tracked.append(fn)
+            q = dict(type=kind, track=idx)
+            q.update(params)
+            props_out.append(q)
+    rows = []
+    for J in frames:
+        F = m3.convert(J, plane, cx, cy)
+        row = []
+        for name in JOINTS:
+            row += [round(v, 1) for v in F.pts[name]]
+        for vec in (F.torso_f, F.head_up, F.head_face):
+            row += [round(v, 3) for v in vec]
+        for fn in tracked:
+            row += [round(v, 1) for v in fn(J, F, cx, cy)]
+        rows.append(row)
+
+    def r3(p):
+        return [round(v, 2) for v in p]
+
+    prims_out = []
+    for pr in prims:
+        q = dict(pr)
+        for k in ('a', 'b', 'c', 'n', 'ext'):
+            if k in q and isinstance(q[k], (list, tuple)):
+                q[k] = r3(q[k])
+        if 'face' in q:
+            q['face'] = [r3(p) for p in q['face']]
+        prims_out.append(q)
+    yaw = 0 if plane == 'side' else 90
+    return dict(name=pattern.name, plane=plane, yaw=yaw, fps=pattern.fps, phases=pattern.phases(),
+                prims=prims_out, props=props_out, frames=rows)
+
+
+def export3d():
+    out = dict(version=2, joints=JOINTS, patterns={})
+    for pat in PATTERNS:
+        warn = []
+        out['patterns'][pat.id] = build3d(pat, warn)
+    path = os.path.join(ROOT, 'assets', 'motions.json')
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
+    print(f'3D: {len(out["patterns"])} padrões, {os.path.getsize(path) / 1024:.0f} KB')
+
+
+def preview3d(ids, yaws=(0, 45, 90, 180)):
+    """Prévia simples em 3D (cápsulas ordenadas por profundidade) em vários ângulos."""
+    import motion3d as m3  # noqa: F401
+    out_dir = os.path.join(ROOT, 'tools', 'preview3d')
+    os.makedirs(out_dir, exist_ok=True)
+    for pat in PATTERNS:
+        if ids and pat.id not in ids:
+            continue
+        data = build3d(pat, [])
+        rows = data['frames']
+        n = len(rows)
+        fr = [rows[0], rows[n // 3]]
+        S = 2.0
+        W, H = 220, 200
+        img = Image.new('RGB', (W * len(yaws) * len(fr), H), (240, 242, 245))
+        dr = ImageDraw.Draw(img)
+        col = 0
+        for f in fr:
+            for yaw in yaws:
+                th = math.radians(yaw)
+                ph = math.radians(10)
+                t = (math.sin(th) * math.cos(ph), math.sin(ph), math.cos(th) * math.cos(ph))
+                r = (math.cos(th), 0.0, -math.sin(th))
+                up = (t[1] * r[2] - t[2] * r[1], t[2] * r[0] - t[0] * r[2], t[0] * r[1] - t[1] * r[0])
+
+                def proj(p):
+                    sx = p[0] * r[0] + p[1] * r[1] + p[2] * r[2]
+                    sy = p[0] * up[0] + p[1] * up[1] + p[2] * up[2]
+                    dz = p[0] * t[0] + p[1] * t[1] + p[2] * t[2]
+                    return (col * W + W / 2 + sx * S * 0.8, H * 0.55 - sy * S * 0.8 - 40), dz
+
+                pts = {name: tuple(f[3 * i:3 * i + 3]) for i, name in enumerate(JOINTS)}
+                segs = [('hip', 'neck', 9, (210, 80, 120)), ('neck', 'head', 4, (225, 170, 130)),
+                        ('shN', 'elbN', 3, (225, 170, 130)), ('elbN', 'handN', 2.5, (225, 170, 130)),
+                        ('shF', 'elbF', 3, (190, 140, 105)), ('elbF', 'handF', 2.5, (190, 140, 105)),
+                        ('hipN', 'kneeN', 5, (70, 70, 110)), ('kneeN', 'ankN', 3.5, (70, 70, 110)),
+                        ('hipF', 'kneeF', 5, (45, 45, 70)), ('kneeF', 'ankF', 3.5, (45, 45, 70)),
+                        ('shN', 'shF', 3, (225, 170, 130)), ('hipN', 'hipF', 5, (70, 70, 110))]
+                items = []
+                for a, b, rad, c in segs:
+                    (pa, da), (pb, db) = proj(pts[a]), proj(pts[b])
+                    items.append(((da + db) / 2, pa, pb, rad, c))
+                ground = [proj((x, -122, z))[0] for x, z in ((-80, -40), (80, -40), (80, 40), (-80, 40))]
+                dr.polygon(ground, fill=(215, 220, 228))
+                for _, pa, pb, rad, c in sorted(items, key=lambda x: x[0]):
+                    dr.line([pa, pb], fill=c, width=int(rad * S * 0.8 * 2))
+                hp, _ = proj(pts['head'])
+                dr.ellipse([hp[0] - 11, hp[1] - 11, hp[0] + 11, hp[1] + 11], fill=(225, 170, 130))
+                dr.text((col * W + 4, 4), f'{yaw}°', fill=(0, 0, 0))
+                col += 1
+        dr.text((4, H - 14), pat.id, fill=(0, 0, 0))
+        img.save(os.path.join(out_dir, pat.id + '.png'))
+
+
 if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else 'export'
-    if cmd == 'export':
+    if cmd in ('export', 'export3d'):
+        export3d()
+    elif cmd == 'export2d':
         export()
     elif cmd == 'preview':
         preview(set(sys.argv[2:]))
+    elif cmd == 'preview3d':
+        preview3d(set(sys.argv[2:]))
     elif cmd == 'sheet':
         sheet(sys.argv[3:], sys.argv[2])
