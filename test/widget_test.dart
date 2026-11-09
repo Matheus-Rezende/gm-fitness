@@ -277,6 +277,9 @@ void main() {
     await _pumpUntil(tester, find.text('Começar'));
 
     Future<void> tap(Finder f) async {
+      if (f.evaluate().isEmpty) {
+        await tester.dragUntilVisible(f, find.byType(ListView).last, const Offset(0, -250));
+      }
       await tester.ensureVisible(f);
       await tester.pump();
       await tester.tap(f);
