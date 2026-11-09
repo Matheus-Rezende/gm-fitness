@@ -339,8 +339,8 @@ class FigurePainter extends CustomPainter {
 
   /// Intensidade do destaque do grupo [g] (0 se não estiver em destaque).
   double _mw(String g) {
-    if (style.primary.contains(g)) return 0.40 + 0.26 * _pulse;
-    if (style.secondary.contains(g)) return 0.22 + 0.08 * _pulse;
+    if (style.primary.contains(g)) return 0.62 + 0.26 * _pulse;
+    if (style.secondary.contains(g)) return 0.36 + 0.10 * _pulse;
     return 0;
   }
 

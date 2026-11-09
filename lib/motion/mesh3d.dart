@@ -71,12 +71,17 @@ class Mesh {
       final a = (argb >> 24) & 0xFF;
       var r = ((argb >> 16) & 0xFF).toDouble(), g = ((argb >> 8) & 0xFF).toDouble(), b = (argb & 0xFF).toDouble();
       final m = _m[i];
+      r *= lum;
+      g *= lum;
+      b *= lum;
       if (m > 0) {
-        r += (hr - r) * m;
-        g += (hg - g) * m;
-        b += (hb - b) * m;
+        // o destaque quase não escurece com a sombra, para aparecer sempre
+        final hl = math.max(lum, 0.82);
+        r += (hr * hl - r) * m;
+        g += (hg * hl - g) * m;
+        b += (hb * hl - b) * m;
       }
-      int ch(double v) => (v * lum + 255 * spec).round().clamp(0, 255);
+      int ch(double v) => (v + 255 * spec).round().clamp(0, 255);
       cols[i] = (a << 24) | (ch(r) << 16) | (ch(g) << 8) | ch(b);
     }
     final tc = triangleCount;
