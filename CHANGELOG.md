@@ -2,6 +2,13 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.7.0
+
+- **Boneco em 3D de verdade**: corpo, cabeça, roupas e aparelhos agora são modelos 3D com luz e sombra. Ao girar a câmera (lado, ¾, frente, costas ou arrastando), a figura não deforma mais.
+- Corpo com mais detalhes: ombros, bíceps, panturrilha e coxas com volume, mãos, rosto (olhos, sobrancelhas, nariz, boca e orelhas), cabelo e tênis com solado.
+- Barras com anilhas, halteres hexagonais, kettlebell, bancos e máquinas também em 3D.
+- Destaque dos músculos mais visível: laranja para o principal e amarelo claro para os auxiliares.
+
 ## 0.6.0
 
 - **Configurações** (no perfil, pelo ícone de engrenagem): tema automático, claro ou escuro, cor de destaque (azul, vermelho, verde ou roxo) e tamanho do texto.

@@ -1,2 +1,2 @@
 /// Versão do app. Precisa ser igual à do pubspec.yaml (um teste confere).
-const kAppVersion = '0.6.0';
+const kAppVersion = '0.7.0';
