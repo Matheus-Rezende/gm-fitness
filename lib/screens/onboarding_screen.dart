@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../models/body.dart';
 import '../models/preset.dart';
+import '../models/workout_entry.dart';
 import '../motion/figure_painter.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
 import '../theme/gm_theme.dart';
 import '../widgets/body_shape_icon.dart';
+import '../widgets/body_widgets.dart';
 import '../widgets/brand.dart';
+import 'body_edit_screen.dart';
 
 /// Primeira abertura: escolhe para quem é o treino e o formato do corpo.
 class OnboardingScreen extends StatefulWidget {
@@ -19,6 +23,9 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pages = PageController();
   final _name = TextEditingController();
+  final _body = BodyFormData();
+  final _bodyForm = GlobalKey<FormState>();
+  final _goalForm = GlobalKey<FormState>();
   int _page = 0;
   String? _sex;
   bool _saving = false;
@@ -27,6 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void dispose() {
     _pages.dispose();
     _name.dispose();
+    _body.dispose();
     super.dispose();
   }
 
@@ -40,6 +48,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     setState(() => _saving = true);
     final state = AppScope.read(context);
     await state.setProfile(sex: _sex ?? 'F', name: _name.text);
+    if (_body.basicsValid) {
+      if (_body.targetCheck(_body.target.text) != null) _body.target.clear();
+      await _body.save(state);
+    } else {
+      await state.setBody(state.body.copyWith(goal: _body.goal, activity: _body.activity));
+    }
     if (preset != null) await state.applyPreset(preset, replace: true);
     await state.setProfile(onboarded: true);
   }
@@ -63,14 +77,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   else
                     const GmLogo(size: 36),
                   const Spacer(),
-                  for (var i = 0; i < 3; i++)
+                  for (var i = 0; i < _pageCount; i++)
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       margin: const EdgeInsets.only(left: 6),
-                      width: i == _page ? 22 : 8,
+                      width: i == _page ? 22 : 7,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: i == _page ? GmColors.cycle[i] : Theme.of(context).colorScheme.outlineVariant,
+                        color: i == _page
+                            ? GmColors.cycle[i % GmColors.cycle.length]
+                            : Theme.of(context).colorScheme.outlineVariant,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -90,6 +106,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPick: (s) => setState(() => _sex = s),
                     onNext: _sex == null ? null : () => _go(2),
                   ),
+                  _AboutPage(
+                    formKey: _bodyForm,
+                    data: _body,
+                    onChanged: () => setState(() {}),
+                    onNext: _body.basicsValid ? () => _go(3) : null,
+                    onSkip: () => _go(3),
+                  ),
+                  _GoalPage(
+                    formKey: _goalForm,
+                    data: _body,
+                    showTarget: _body.basicsValid,
+                    onChanged: () => setState(() {}),
+                    onNext: () {
+                      if (!(_goalForm.currentState?.validate() ?? true)) return;
+                      _go(_body.basicsValid ? 4 : 5);
+                    },
+                  ),
+                  _StartPage(data: _body, sex: _sex ?? 'F', onNext: () => _go(5)),
                   _ShapePage(sex: _sex ?? 'F', saving: _saving, onPick: _finish),
                 ],
               ),
@@ -97,6 +131,160 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+const _pageCount = 6;
+
+class _AboutPage extends StatelessWidget {
+  const _AboutPage({
+    required this.formKey,
+    required this.data,
+    required this.onChanged,
+    required this.onNext,
+    required this.onSkip,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final BodyFormData data;
+  final VoidCallback onChanged;
+  final VoidCallback? onNext;
+  final VoidCallback onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Form(
+      key: formKey,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+        children: [
+          Text('Sobre você', style: text.headlineLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Com a idade, a altura e o peso, o app calcula seu ponto de partida e acompanha a sua evolução. '
+            'Os dados ficam só no seu celular.',
+            style: text.bodyMedium,
+          ),
+          const SizedBox(height: 20),
+          BodyBasicsFields(data: data, onChanged: onChanged),
+          const SizedBox(height: 24),
+          FilledButton(onPressed: onNext, child: const Text('Continuar')),
+          const SizedBox(height: 4),
+          TextButton(onPressed: onSkip, child: const Text('Prefiro não informar agora')),
+        ],
+      ),
+    );
+  }
+}
+
+class _GoalPage extends StatelessWidget {
+  const _GoalPage({
+    required this.formKey,
+    required this.data,
+    required this.showTarget,
+    required this.onChanged,
+    required this.onNext,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final BodyFormData data;
+  final bool showTarget;
+  final VoidCallback onChanged;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Form(
+      key: formKey,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+        children: [
+          Text('Qual é o seu objetivo?', style: text.headlineLarge),
+          const SizedBox(height: 16),
+          GoalPicker(
+            value: data.goal,
+            onChanged: (g) {
+              data.goal = g;
+              onChanged();
+            },
+          ),
+          const SizedBox(height: 12),
+          Text('Fora da academia, você é', style: text.titleMedium),
+          const SizedBox(height: 8),
+          ActivityPicker(
+            value: data.activity,
+            onChanged: (a) {
+              data.activity = a;
+              onChanged();
+            },
+          ),
+          if (showTarget && data.goal != null && data.goal != Goal.health) ...[
+            const SizedBox(height: 20),
+            TargetField(data: data),
+          ],
+          const SizedBox(height: 24),
+          FilledButton(onPressed: data.goal == null ? null : onNext, child: const Text('Continuar')),
+        ],
+      ),
+    );
+  }
+}
+
+class _StartPage extends StatelessWidget {
+  const _StartPage({required this.data, required this.sex, required this.onNext});
+
+  final BodyFormData data;
+  final String sex;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final valid = data.basicsValid;
+    final body = data.toBody(const BodyData());
+    final m = BodyMetrics.compute(data: body, weightKg: valid ? data.weightKg : null, sex: sex, trainingDays: 5);
+    final goal = data.goal ?? Goal.health;
+    final target = body.targetKg;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      children: [
+        Text('Seu ponto de partida', style: text.headlineLarge),
+        const SizedBox(height: 8),
+        Text('Objetivo: ${goal.label.toLowerCase()}.', style: text.titleMedium),
+        const SizedBox(height: 16),
+        if (valid) MetricsGrid(metrics: m),
+        if (valid && m.weeksToTarget != null && target != null && m.weeksToTarget! > 0) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(color: GmColors.ink, borderRadius: BorderRadius.circular(16)),
+            child: Text(
+              'Num ritmo saudável (${formatKg(m.weeklyChangeKg!.abs()).replaceAll(' kg', '')} kg por semana), '
+              'você chega a ${formatKg(target)} em ${etaText(m.weeksToTarget!)}.',
+              style: text.titleMedium?.copyWith(color: Colors.white),
+            ),
+          ),
+        ],
+        if (!m.adult)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              'Para menores de 18 anos, calorias e metas de peso devem ser definidas com um médico ou nutricionista. '
+              'Os treinos do app servem para todas as idades a partir de 12 anos, com cargas leves e boa técnica.',
+              style: text.bodyMedium,
+            ),
+          ),
+        const SizedBox(height: 12),
+        Text(
+          'São estimativas para orientar. Um nutricionista ou médico ajusta esses números para você.',
+          style: text.bodySmall,
+        ),
+        const SizedBox(height: 24),
+        FilledButton(onPressed: onNext, child: const Text('Escolher meu treino')),
+      ],
     );
   }
 }

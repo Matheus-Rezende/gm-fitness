@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/body.dart';
 import '../models/exercise.dart';
 import '../models/preset.dart';
 import '../models/session.dart';
@@ -24,6 +25,8 @@ class AppState extends ChangeNotifier {
   static const _kDone = 'done_v1';
   static const _kActive = 'active_session_v1';
   static const _kSessions = 'sessions_v1';
+  static const _kBody = 'body_v1';
+  static const _kWeights = 'weights_v1';
 
   final SharedPreferences _prefs;
   final CatalogMeta meta;
@@ -40,6 +43,10 @@ class AppState extends ChangeNotifier {
   String _name = '';
   String? _presetId;
   bool _onboarded = false;
+
+  // corpo: dados informados e histórico de pesagens (mais antiga primeiro)
+  BodyData _body = const BodyData();
+  List<WeightRecord> _weights = [];
 
   // exercícios marcados como feitos, por data (aaaa-mm-dd)
   Map<String, Set<String>> _done = {};
@@ -90,6 +97,13 @@ class AppState extends ChangeNotifier {
         _presetId = m['presetId'] as String?;
         _onboarded = m['onboarded'] == true;
       }
+      final bd = _prefs.getString(_kBody);
+      if (bd != null) _body = BodyData.fromJson(Map<String, dynamic>.from(jsonDecode(bd) as Map));
+      final wg = _prefs.getString(_kWeights);
+      if (wg != null) {
+        _weights = [for (final e in (jsonDecode(wg) as List)) WeightRecord.fromJson(Map<String, dynamic>.from(e as Map))]
+          ..sort((a, b) => a.date.compareTo(b.date));
+      }
       final ac = _prefs.getString(_kActive);
       if (ac != null) _active = ActiveSession.fromJson(Map<String, dynamic>.from(jsonDecode(ac) as Map));
       final ss = _prefs.getString(_kSessions);
@@ -115,6 +129,8 @@ class AppState extends ChangeNotifier {
     await _prefs.setString(_kEntries, jsonEncode([for (final e in _entries) e.toJson()]));
     await _prefs.setString(
         _kProfile, jsonEncode({'sex': _sex, 'name': _name, 'presetId': _presetId, 'onboarded': _onboarded}));
+    await _prefs.setString(_kBody, jsonEncode(_body.toJson()));
+    await _prefs.setString(_kWeights, jsonEncode([for (final w in _weights) w.toJson()]));
     // guarda só as últimas 8 semanas de marcações
     final keys = _done.keys.toList()..sort();
     if (keys.length > 56) {
@@ -227,6 +243,47 @@ class AppState extends ChangeNotifier {
       final cur = entry(e.key);
       if (cur != null && cur.loadKg != e.value) await updateEntry(cur.copyWith(loadKg: e.value));
     }
+  }
+
+  // ------------------------------------------------------------ corpo e objetivo
+
+  BodyData get body => _body;
+
+  /// Pesagens, da mais antiga para a mais recente.
+  List<WeightRecord> get weights => List.unmodifiable(_weights);
+
+  double? get currentWeight => _weights.isEmpty ? null : _weights.last.kg;
+  double? get startWeight => _weights.isEmpty ? null : _weights.first.kg;
+
+  /// Dias de treino por semana, pelo plano atual ou pela lista montada.
+  int get trainingDays {
+    final days = {for (final e in _entries) if (e.weekday >= 0) e.weekday};
+    return days.isEmpty ? (currentPreset?.days.length ?? 3) : days.length;
+  }
+
+  BodyMetrics get metrics =>
+      BodyMetrics.compute(data: _body, weightKg: currentWeight, sex: _sex, trainingDays: trainingDays);
+
+  Future<void> setBody(BodyData data) async {
+    _body = data;
+    notifyListeners();
+    await _save();
+  }
+
+  /// Registra uma pesagem. Se já houver uma no mesmo dia, ela é substituída.
+  Future<void> addWeight(double kg, [DateTime? date]) async {
+    final d = date ?? DateTime.now();
+    _weights.removeWhere((w) => _sameDay(w.date, d));
+    _weights.add(WeightRecord(d, kg));
+    _weights.sort((a, b) => a.date.compareTo(b.date));
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> removeWeight(WeightRecord r) async {
+    _weights.removeWhere((w) => w.date == r.date && w.kg == r.kg);
+    notifyListeners();
+    await _save();
   }
 
   // ------------------------------------------------------------ perfil
@@ -475,6 +532,8 @@ class AppState extends ChangeNotifier {
     _done.clear();
     _active = null;
     _sessions.clear();
+    _body = const BodyData();
+    _weights.clear();
     _presetId = null;
     _onboarded = false;
     notifyListeners();

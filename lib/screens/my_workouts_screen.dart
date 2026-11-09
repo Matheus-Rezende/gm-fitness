@@ -6,6 +6,7 @@ import '../models/workout_entry.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
 import '../theme/gm_theme.dart';
+import '../update/updater.dart';
 import '../widgets/brand.dart';
 import '../widgets/common.dart';
 import '../widgets/entry_editor.dart';
@@ -89,12 +90,21 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                     IconButton(
                       tooltip: 'Meu perfil',
                       onPressed: () => showProfileSheet(context),
-                      icon: CircleAvatar(
-                        radius: 17,
-                        backgroundColor: GmColors.yellow,
-                        child: Text(
-                          state.name.isEmpty ? (state.isMale ? 'M' : 'F') : state.name.characters.first.toUpperCase(),
-                          style: const TextStyle(fontFamily: display, fontWeight: FontWeight.w800, color: GmColors.ink),
+                      icon: ListenableBuilder(
+                        listenable: Updater.instance,
+                        builder: (context, child) => Badge(
+                          isLabelVisible: Updater.instance.available != null,
+                          backgroundColor: GmColors.red,
+                          child: child,
+                        ),
+                        child: CircleAvatar(
+                          radius: 17,
+                          backgroundColor: GmColors.yellow,
+                          child: Text(
+                            state.name.isEmpty ? (state.isMale ? 'M' : 'F') : state.name.characters.first.toUpperCase(),
+                            style:
+                                const TextStyle(fontFamily: display, fontWeight: FontWeight.w800, color: GmColors.ink),
+                          ),
                         ),
                       ),
                     ),

@@ -1,3 +1,16 @@
+import java.util.Properties
+
+// Assinatura fixa do APK: as atualizações só instalam por cima quando todas as
+// versões usam a mesma chave. Vem de android/key.properties (local) ou das
+// variáveis GM_KEYSTORE_PATH / GM_KEYSTORE_PASSWORD (GitHub Actions).
+val keyProps = Properties().apply {
+    val f = rootProject.file("key.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+fun signing(prop: String, env: String): String? =
+    keyProps.getProperty(prop) ?: System.getenv(env)?.takeIf { it.isNotBlank() }
+val releaseStore = signing("storeFile", "GM_KEYSTORE_PATH")
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -29,11 +42,21 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (releaseStore != null) {
+            create("release") {
+                storeFile = file(releaseStore)
+                storePassword = signing("storePassword", "GM_KEYSTORE_PASSWORD")
+                keyAlias = signing("keyAlias", "GM_KEY_ALIAS") ?: "gmfitness"
+                keyPassword = signing("keyPassword", "GM_KEY_PASSWORD") ?: storePassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Sem a chave (ex.: na sua máquina), usa a de depuração para `flutter run --release` funcionar.
+            signingConfig = signingConfigs.getByName(if (releaseStore != null) "release" else "debug")
         }
     }
 }
@@ -46,4 +69,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("androidx.core:core:1.13.1")
 }

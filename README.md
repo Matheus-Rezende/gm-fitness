@@ -1,9 +1,12 @@
 # GM Fitness
 
-App Flutter para quem está começando na academia. Funciona **100% offline**: o catálogo, as animações e os seus treinos ficam no aparelho.
+App Flutter para quem está começando na academia. Funciona **offline**: o catálogo, as animações e os seus treinos ficam no aparelho. A internet só é usada para procurar atualizações do app.
 
 ## O que tem no app
 
+- **Sobre você**: a introdução pergunta idade, altura, peso, cintura (opcional), objetivo (emagrecer, definir, ganhar massa ou saúde) e nível de atividade. Tudo pode ser mudado no perfil.
+- **Aba Evolução**: IMC (OMS), faixa de peso saudável, calorias e proteína do dia (Mifflin-St Jeor), água, relação cintura/altura, gráfico do peso, previsão realista para chegar à meta, treinos das últimas 4 semanas e um plano de ação para o objetivo. Metas abaixo do peso saudável não são aceitas, e para menores de 18 anos o app não calcula calorias.
+- **Atualização dentro do app** (Android): ao abrir o app, ele procura uma versão nova na página de Releases, mostra as novidades e atualiza com um toque, sem perder os dados.
 - **Perfil feminino ou masculino**, escolhido na primeira abertura. Ele muda o boneco das animações, os planos sugeridos e as observações de cada exercício para aquele corpo.
 - **Planos por formato de corpo**, 5 dias por semana. Feminino: triângulo invertido, triângulo (pera), ampulheta, retângulo e oval. Masculino: trapézio (V), triângulo invertido, retângulo, triângulo e oval. Para quem nunca treinou ou não sabe o formato do corpo, "Primeiros passos" em 5 dias (um feminino e um masculino) ou em 3 dias.
 - **94 exercícios** com passo a passo, dicas, erros comuns e, nos principais, observações para o corpo feminino e masculino.
@@ -35,7 +38,30 @@ flutter build apk --release
 
 Para instalar sem computador, abra a página de **Releases** do repositório no navegador do celular e baixe o APK da versão mais recente.
 
-Para publicar uma versão nova, aumente `version:` no `pubspec.yaml` (por exemplo, de `0.3.0+3` para `0.4.0+4`) e envie para a `main`. O GitHub gera o APK e cria a Release `v0.4.0` sozinho. Também dá para disparar à mão em **Actions → Publicar versão → Run workflow**.
+Para publicar uma versão nova:
+
+1. Aumente `version:` no `pubspec.yaml` (por exemplo, de `0.5.0+5` para `0.6.0+6`) e `kAppVersion` em `lib/version.dart` (um teste confere se os dois batem).
+2. Escreva as novidades em uma seção `## 0.6.0` no `CHANGELOG.md`. Esse texto aparece na Release e no aviso de atualização do app.
+3. Envie para a `main`. O GitHub gera o APK assinado e cria a Release `v0.6.0`; os celulares com o app recebem o aviso na próxima vez que abrirem.
+
+Também dá para disparar à mão em **Actions → Publicar versão → Run workflow**.
+
+### Assinatura do APK
+
+O Android só instala uma atualização por cima se as duas versões tiverem a mesma assinatura. Por isso a Release usa uma chave fixa, guardada em dois segredos do repositório (**Settings → Secrets and variables → Actions**):
+
+- `ANDROID_KEYSTORE_BASE64`: o arquivo `.jks` em base64 (`base64 -w0 gm-fitness-release.jks`).
+- `ANDROID_KEYSTORE_PASSWORD`: a senha da chave (alias `gmfitness`).
+
+Sem eles, a publicação para com um aviso. Guarde uma cópia da chave fora do GitHub: se ela se perder, as próximas versões não instalam por cima e quem usa o app precisa desinstalar e instalar de novo.
+
+Para gerar um APK assinado na sua máquina, crie `android/key.properties` (ele não vai para o GitHub):
+
+```properties
+storeFile=/caminho/para/gm-fitness-release.jks
+storePassword=SUA_SENHA
+keyAlias=gmfitness
+```
 
 ### iOS
 
