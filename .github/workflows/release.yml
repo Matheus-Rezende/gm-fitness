@@ -2,6 +2,7 @@ name: Publicar versão
 
 # Quando o campo version do pubspec.yaml muda na main, gera o APK e publica
 # uma Release com a tag v<versão>. Também pode ser disparado à mão na aba Actions.
+# O APK é assinado com a chave fixa dos segredos ANDROID_KEYSTORE_*.
 on:
   push:
     branches: [main]
