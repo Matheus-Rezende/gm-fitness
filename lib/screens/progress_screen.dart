@@ -37,6 +37,7 @@ class ProgressScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: hasBasics
           ? FloatingActionButton.extended(
+              heroTag: 'fab_evolucao',
               onPressed: () => _weigh(context, state),
               icon: const Icon(Icons.monitor_weight_outlined),
               label: const Text('Registrar peso'),

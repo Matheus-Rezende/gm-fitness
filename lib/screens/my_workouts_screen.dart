@@ -66,6 +66,7 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_treino',
         onPressed: _add,
         icon: const Icon(Icons.add_rounded),
         label: const Text('Adicionar exercício'),
