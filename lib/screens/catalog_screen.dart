@@ -126,7 +126,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'fab_catalogo',
         heroTag: widget.pickMode ? 'fab_pick' : 'fab_catalog',
         onPressed: _create,
         icon: const Icon(Icons.add),
