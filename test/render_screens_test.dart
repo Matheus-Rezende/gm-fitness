@@ -122,6 +122,11 @@ void main() {
     await tester.pumpWidget(app());
     await waitFor(tester, find.byType(NavigationBar));
     await settle(tester, 4);
+    if (find.byType(NavigationBar).evaluate().isEmpty) {
+      await capture(tester, '00_debug');
+      final texts = find.byType(Text).evaluate().map((e) => (e.widget as Text).data).join(' | ');
+      fail('App não abriu nas abas. Textos na tela: $texts');
+    }
     await tap(tester, find.descendant(of: find.byType(NavigationBar), matching: find.text('Evolução')));
     await capture(tester, '04_evolucao');
     await tester.drag(find.byType(ListView).last, const Offset(0, -700));
