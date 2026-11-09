@@ -207,7 +207,7 @@ class BodyMetrics {
       water = (w * 0.035).clamp(1.5, 4.0);
     }
     if (adult && h != null && w != null && w > 0) {
-      final base = 10 * w + 6.25 * h - 5 * age! + (sex == 'M' ? 5 : -161);
+      final base = 10 * w + 6.25 * h - 5 * age + (sex == 'M' ? 5 : -161);
       bmr = base.round();
       final factor = (data.activity ?? Activity.light).factor + 0.03 * trainingDays.clamp(0, 6);
       final total = base * factor;
