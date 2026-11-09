@@ -395,7 +395,7 @@ class FigurePainter extends CustomPainter {
     final sides = detail == 0 ? 9 : 16;
     final hl = highlight;
     m.part = _pTorso;
-    _torso(m, hl, detail == 0 ? 12 : 24, detail);
+    _torso(m, hl, detail == 0 ? 12 : 28, detail);
     m.part = _pHead;
     _neckAndHead(m, detail);
     _arm(m, Jt.shN, Jt.elbN, Jt.handN, hl, sides, _pUpperArm, detail);
@@ -630,6 +630,7 @@ class FigurePainter extends CustomPainter {
     final adut = hl ? _mw('adutores') : 0.0;
     final abdu = hl ? _mw('abdutores') : 0.0;
     final pant = hl ? _mw('panturrilha') : 0.0;
+    final glut = hl ? _mw('gluteos') : 0.0;
     final ta = thigh.length < 1e-3 ? const V3(0, -1, 0) : thigh.unit;
     final w = ta.cross(anterior).unit;
     final outAng = outward.length < 1e-3 ? math.pi / 2 : math.atan2(outward.dot(w), outward.dot(anterior));
@@ -673,8 +674,10 @@ class FigurePainter extends CustomPainter {
         if (seg == 1) return _mv(pant, _smooth((-c - 0.05) / 0.4) * _soft(s, 0.05, 0.72));
         final o = math.cos(ang - outAng);
         var x = 0.0;
-        x = math.max(x, _mv(quad, _smooth(c / 0.45) * _soft(s, -1, 0.95, 0.08)));
-        x = math.max(x, _mv(post, _smooth(-c / 0.45) * _soft(s, -1, 0.95, 0.08)));
+        // perto do quadril o destaque some aos poucos, para casar com o tronco
+        x = math.max(x, _mv(quad, _smooth(c / 0.45) * _soft(s, 0.1, 0.95, 0.12)));
+        x = math.max(x, _mv(post, _smooth(-c / 0.45) * _soft(s, 0.12, 0.95, 0.12)));
+        x = math.max(x, _mv(glut, _smooth(-c / 0.4) * _soft(s, -1, 0.2, 0.1)));
         x = math.max(x, _mv(adut, _smooth((-o - 0.2) / 0.4) * _soft(s, -1, 0.75)));
         x = math.max(x, _mv(abdu, _smooth((o - 0.2) / 0.4) * _soft(s, -1, 0.42)));
         return x;
@@ -784,21 +787,30 @@ class FigurePainter extends CustomPainter {
     final trap = hl ? _mw('trapezio') : 0.0;
     final glut = hl ? _mw('gluteos') : 0.0;
     final abdu = hl ? _mw('abdutores') : 0.0;
+    // regiões com o formato dos músculos (c = lado, s = frente/costas, t = altura)
+    double blob(double dc, double dt, double rc, double rt) => math.exp(-(dc * dc) / (rc * rc) - (dt * dt) / (rt * rt));
     double muscleAt(double t, double c, double s) {
       final ac = c.abs();
+      final front = _smooth((s - 0.1) / 0.35), back = _smooth((-s - 0.1) / 0.35);
       var x = 0.0;
-      x = math.max(x, _mv(peito, _smooth((s - 0.15) / 0.35) * _soft(t, 0.58, 0.97, 0.06) * _smooth((0.95 - ac) / 0.3)));
-      x = math.max(x, _mv(abd, _smooth((s - 0.25) / 0.3) * _soft(t, 0.06, 0.6, 0.06) * _smooth((0.7 - ac) / 0.3)));
-      x = math.max(x, _mv(costas, _smooth((0.05 - s) / 0.35) * _soft(t, 0.42, 0.94, 0.06)));
-      x = math.max(x, _mv(lombar, _smooth((-0.2 - s) / 0.35) * _soft(t, 0.06, 0.47, 0.06) * _smooth((0.7 - ac) / 0.3)));
-      x = math.max(x, _mv(trap, _soft(t, 0.8, 1.2, 0.06) * _smooth((0.45 - s) / 0.35) * _smooth((0.85 - ac) / 0.25)));
-      x = math.max(x, _mv(glut, _smooth((-0.05 - s) / 0.35) * _soft(t, -1, 0.18, 0.06)));
-      x = math.max(x, _mv(abdu, _smooth((ac - 0.6) / 0.3) * _soft(t, -0.14, 0.2, 0.06)));
+      // peitorais: dois volumes acima do abdome
+      x = math.max(x, _mv(peito, front * blob(ac - 0.42, t - 0.78, 0.34, 0.14) * 1.4));
+      // abdome: faixa central da frente, um pouco mais larga dos lados (oblíquos)
+      x = math.max(x, _mv(abd, front * blob(c, t - 0.33, 0.5, 0.24) * 1.3));
+      // dorsais: em V nas costas
+      x = math.max(x, _mv(costas, back * blob(ac - 0.5 + (t - 0.7) * 0.6, t - 0.68, 0.32, 0.2) * 1.4));
+      // lombar: perto da coluna, embaixo
+      x = math.max(x, _mv(lombar, back * blob(c, t - 0.27, 0.42, 0.15) * 1.3));
+      // trapézio: losango no alto das costas e em cima dos ombros
+      x = math.max(x, _mv(trap, _smooth((0.45 - s) / 0.35) * blob(c, t - 0.95, 0.6, 0.13) * 1.3));
+      // glúteos: dois volumes atrás do quadril
+      x = math.max(x, _mv(glut, back * blob(ac - 0.42, t - 0.02, 0.42, 0.16) * 1.4));
+      x = math.max(x, _mv(abdu, _smooth((ac - 0.55) / 0.3) * blob(0, t - 0.03, 1, 0.14) * 1.2));
       return x;
     }
 
     final t0 = _b.torso.first[0];
-    final ts = <double>{for (var i = 0; i <= 16; i++) t0 + (1 - t0) * i / 16};
+    final ts = <double>{for (var i = 0; i <= 22; i++) t0 + (1 - t0) * i / 22};
     for (final br in breaks) {
       ts
         ..add(br - 0.003)
