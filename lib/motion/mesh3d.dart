@@ -154,10 +154,10 @@ class Mesh {
         final gap = py - floorY;
         if (gap < 8 && ny < 0.3) {
           final near = 1 - math.max(0.0, gap) / 8;
-          a *= 1 - 0.45 * (0.3 - ny) / 1.3 * near * near;
+          a *= 1 - 0.35 * (0.3 - ny) / 1.3 * near * near;
         }
       }
-      _ao[i] = a.clamp(0.25, 1.0);
+      _ao[i] = a.clamp(0.45, 1.0);
     }
   }
 
@@ -165,7 +165,7 @@ class Mesh {
   void drawShadow(Canvas canvas, Camera cam, double floorY, {Color color = const Color(0x2E000000)}) {
     final vc = vertexCount;
     if (vc == 0) return;
-    const lx = 0.25, ly = -1.0, lz = 0.18;
+    const lx = 0.25, lz = 0.18; // direção da luz: (lx, -1, lz)
     final pos = Float32List(vc * 2);
     final rt = cam.right, up = cam.up;
     for (var i = 0; i < vc; i++) {
@@ -178,7 +178,11 @@ class Mesh {
       pos[i * 2 + 1] = -(x * up.x + y * up.y + z * up.z);
     }
     final idx = Uint16List.fromList(_t);
-    canvas.saveLayer(null, Paint()..color = color);
+    canvas.saveLayer(
+        null,
+        Paint()
+          ..color = color
+          ..imageFilter = ImageFilter.blur(sigmaX: 1.6, sigmaY: 1.6));
     canvas.drawVertices(
       Vertices.raw(VertexMode.triangles, pos, indices: idx),
       BlendMode.src,

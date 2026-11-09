@@ -297,16 +297,16 @@ class FigurePainter extends CustomPainter {
   List<Occluder> _occluders() {
     final male = _b.male;
     final out = <Occluder>[
-      Occluder.capsule(_j(Jt.hip) + _torsoUp * 2, _j(Jt.neck) - _torsoUp * 3, male ? 8.6 : 8.0, part: _pTorso, reach: 7),
-      Occluder.capsule(_j(Jt.head), _j(Jt.head), 6.4, part: _pHead, reach: 5),
-      Occluder.capsule(_j(Jt.shN), _j(Jt.elbN), 3.2, part: _pUpperArm, reach: 5),
-      Occluder.capsule(_j(Jt.shF), _j(Jt.elbF), 3.2, part: _pUpperArm + 2, reach: 5),
-      Occluder.capsule(_j(Jt.elbN), _j(Jt.handN), 2.5, part: _pUpperArm + 1, reach: 4),
-      Occluder.capsule(_j(Jt.elbF), _j(Jt.handF), 2.5, part: _pUpperArm + 3, reach: 4),
-      Occluder.capsule(_j(Jt.hipN), _j(Jt.kneeN), 5.4, part: _pThigh, reach: 6),
-      Occluder.capsule(_j(Jt.hipF), _j(Jt.kneeF), 5.4, part: _pThigh + 2, reach: 6),
-      Occluder.capsule(_j(Jt.kneeN), _j(Jt.ankN), 3.6, part: _pThigh + 1, reach: 5),
-      Occluder.capsule(_j(Jt.kneeF), _j(Jt.ankF), 3.6, part: _pThigh + 3, reach: 5),
+      Occluder.capsule(_j(Jt.hip) + _torsoUp * 2, _j(Jt.neck) - _torsoUp * 3, male ? 8.6 : 8.0, part: _pTorso, reach: 6, strength: 0.35),
+      Occluder.capsule(_j(Jt.head), _j(Jt.head), 6.4, part: _pHead, reach: 5, strength: 0.4),
+      Occluder.capsule(_j(Jt.shN), _j(Jt.elbN), 3.2, part: _pUpperArm, reach: 5, strength: 0.45),
+      Occluder.capsule(_j(Jt.shF), _j(Jt.elbF), 3.2, part: _pUpperArm + 2, reach: 5, strength: 0.45),
+      Occluder.capsule(_j(Jt.elbN), _j(Jt.handN), 2.5, part: _pUpperArm + 1, reach: 4, strength: 0.45),
+      Occluder.capsule(_j(Jt.elbF), _j(Jt.handF), 2.5, part: _pUpperArm + 3, reach: 4, strength: 0.45),
+      Occluder.capsule(_j(Jt.hipN), _j(Jt.kneeN), 5.4, part: _pThigh, reach: 6, strength: 0.45),
+      Occluder.capsule(_j(Jt.hipF), _j(Jt.kneeF), 5.4, part: _pThigh + 2, reach: 6, strength: 0.45),
+      Occluder.capsule(_j(Jt.kneeN), _j(Jt.ankN), 3.6, part: _pThigh + 1, reach: 5, strength: 0.45),
+      Occluder.capsule(_j(Jt.kneeF), _j(Jt.ankF), 3.6, part: _pThigh + 3, reach: 5, strength: 0.45),
     ];
     for (final p in clip.prims) {
       if (p.kind == 'box' && p.opacity > 0.5) {
@@ -315,7 +315,7 @@ class FigurePainter extends CustomPainter {
           lo = V3(math.min(lo.x, q.x), math.min(lo.y, q.y), math.min(lo.z, q.z));
           hi = V3(math.max(hi.x, q.x), math.max(hi.y, q.y), math.max(hi.z, q.z));
         }
-        out.add(Occluder.box(lo, hi));
+        out.add(Occluder.box(lo, hi, strength: 0.4));
       } else if (p.kind == 'cyl') {
         out.add(Occluder.capsule(p.a, p.b, p.r, part: -2, reach: 4, strength: 0.45));
       }
@@ -361,9 +361,20 @@ class FigurePainter extends CustomPainter {
   double _mw(String g) {
     // ver Mesh.draw: 2 a 3 = principal, 1 a 2 = auxiliar
     if (style.primary.contains(g)) return 2.72 + 0.24 * _pulse;
-    if (style.secondary.contains(g)) return 1.72;
+    if (style.secondary.contains(g)) return 1.62;
     return 0;
   }
+
+  /// Destaque [base] (de _mw) com intensidade [w] de 0 a 1, para bordas suaves.
+  static double _mv(double base, double w) {
+    if (base <= 0 || w <= 0.03) return 0;
+    final f = base.floorToDouble();
+    return f + (base - f) * w.clamp(0.0, 1.0);
+  }
+
+  /// 1 dentro de [a, b], caindo suavemente nas bordas (largura [e]).
+  static double _soft(double x, double a, double b, [double e = 0.12]) =>
+      _smooth((x - a) / e) * _smooth((b - x) / e);
 
   // ------------------------------------------------------------ corpo
 
@@ -577,11 +588,11 @@ class FigurePainter extends CustomPainter {
         final c = math.cos(ang);
         var v = 0.0;
         if (seg == 0) {
-          if (biceps > 0 && c > 0.25 && s > 0.2) v = math.max(v, biceps);
-          if (triceps > 0 && c < -0.25 && s > 0.12) v = math.max(v, triceps);
-          if (ombros > 0 && s < 0.3) v = math.max(v, ombros);
-        } else if (ante > 0 && s < 0.85) {
-          v = ante;
+          v = math.max(v, _mv(biceps, _smooth(c / 0.5) * _soft(s, 0.15, 1.1)));
+          v = math.max(v, _mv(triceps, _smooth(-c / 0.5) * _soft(s, 0.08, 1.1)));
+          v = math.max(v, _mv(ombros, _soft(s, -1, 0.32)));
+        } else {
+          v = _mv(ante, _soft(s, -1, 0.85));
         }
         return v;
       },
@@ -659,13 +670,13 @@ class FigurePainter extends CustomPainter {
       },
       muscle: (seg, s, ang) {
         final c = math.cos(ang);
-        if (seg == 1) return pant > 0 && c < -0.15 && s > 0.08 && s < 0.7 ? pant : 0;
+        if (seg == 1) return _mv(pant, _smooth((-c - 0.05) / 0.4) * _soft(s, 0.05, 0.72));
         final o = math.cos(ang - outAng);
         var x = 0.0;
-        if (quad > 0 && c > 0.2) x = math.max(x, quad);
-        if (post > 0 && c < -0.2) x = math.max(x, post);
-        if (adut > 0 && o < -0.35 && s < 0.75) x = math.max(x, adut);
-        if (abdu > 0 && o > 0.35 && s < 0.4) x = math.max(x, abdu);
+        x = math.max(x, _mv(quad, _smooth(c / 0.45) * _soft(s, -1, 0.95, 0.08)));
+        x = math.max(x, _mv(post, _smooth(-c / 0.45) * _soft(s, -1, 0.95, 0.08)));
+        x = math.max(x, _mv(adut, _smooth((-o - 0.2) / 0.4) * _soft(s, -1, 0.75)));
+        x = math.max(x, _mv(abdu, _smooth((o - 0.2) / 0.4) * _soft(s, -1, 0.42)));
         return x;
       },
     );
@@ -774,15 +785,15 @@ class FigurePainter extends CustomPainter {
     final glut = hl ? _mw('gluteos') : 0.0;
     final abdu = hl ? _mw('abdutores') : 0.0;
     double muscleAt(double t, double c, double s) {
+      final ac = c.abs();
       var x = 0.0;
-      if (peito > 0 && s > 0.3 && t > 0.6 && t < 0.95 && c.abs() < 0.85) x = math.max(x, peito);
-      if (abd > 0 && s > 0.45 && t > 0.08 && t < 0.58 && c.abs() < 0.5) x = math.max(x, abd);
-      if (abd > 0 && s > 0.0 && t > 0.15 && t < 0.5 && c.abs() >= 0.5) x = math.max(x, abd);
-      if (costas > 0 && s < -0.05 && t > 0.45 && t < 0.92) x = math.max(x, costas);
-      if (lombar > 0 && s < -0.4 && t > 0.08 && t < 0.45 && c.abs() < 0.6) x = math.max(x, lombar);
-      if (trap > 0 && t > 0.82 && s < 0.35 && c.abs() < 0.8) x = math.max(x, trap);
-      if (glut > 0 && s < -0.15 && t < 0.16) x = math.max(x, glut);
-      if (abdu > 0 && c.abs() > 0.75 && t > -0.12 && t < 0.18) x = math.max(x, abdu);
+      x = math.max(x, _mv(peito, _smooth((s - 0.15) / 0.35) * _soft(t, 0.58, 0.97, 0.06) * _smooth((0.95 - ac) / 0.3)));
+      x = math.max(x, _mv(abd, _smooth((s - 0.25) / 0.3) * _soft(t, 0.06, 0.6, 0.06) * _smooth((0.7 - ac) / 0.3)));
+      x = math.max(x, _mv(costas, _smooth((0.05 - s) / 0.35) * _soft(t, 0.42, 0.94, 0.06)));
+      x = math.max(x, _mv(lombar, _smooth((-0.2 - s) / 0.35) * _soft(t, 0.06, 0.47, 0.06) * _smooth((0.7 - ac) / 0.3)));
+      x = math.max(x, _mv(trap, _soft(t, 0.8, 1.2, 0.06) * _smooth((0.45 - s) / 0.35) * _smooth((0.85 - ac) / 0.25)));
+      x = math.max(x, _mv(glut, _smooth((-0.05 - s) / 0.35) * _soft(t, -1, 0.18, 0.06)));
+      x = math.max(x, _mv(abdu, _smooth((ac - 0.6) / 0.3) * _soft(t, -0.14, 0.2, 0.06)));
       return x;
     }
 
