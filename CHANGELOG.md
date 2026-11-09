@@ -2,6 +2,14 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.8.0
+
+- **Braços e pernas sem emendas**: ombro, cotovelo e mão (e quadril, joelho e tornozelo) agora formam uma peça só, que dobra suavemente na articulação.
+- **Sombras realistas**: sombra do corpo e dos aparelhos projetada no chão e sombra suave nas dobras (axilas, atrás do joelho, corpo apoiado no banco).
+- **Mais detalhes**: mãos fechadas com polegar, cabelo com volume, gola da camiseta, barra da manga e do short, meias.
+- **Músculos em destaque com o formato real** (peitorais, abdome, dorsais em V, glúteos) e bordas suaves, sem recortes.
+- **Movimento mais fluido**: a animação passa pelas posições em curva, sem trancos entre um quadro e outro.
+
 ## 0.7.0
 
 - **Boneco em 3D de verdade**: corpo, cabeça, roupas e aparelhos agora são modelos 3D com luz e sombra. Ao girar a câmera (lado, ¾, frente, costas ou arrastando), a figura não deforma mais.

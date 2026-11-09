@@ -7,7 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gm_fitness/motion/figure_painter.dart';
 import 'package:gm_fitness/motion/motion_clip.dart';
 
-/// TEMPORÁRIO: quadros grandes de alguns exercícios para conferir detalhes.
+/// Quadros grandes de alguns exercícios em build/hires/ (só com
+/// RENDER_PREVIEWS=1), para conferir detalhes do boneco.
 void main() {
   final enabled = Platform.environment['RENDER_PREVIEWS'] == '1';
   test('quadros grandes', () async {
