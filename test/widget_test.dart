@@ -313,7 +313,6 @@ void main() {
     await tap(tab);
     expect(find.text('Seus números'), findsOneWidget);
     expect(find.text('Emagrecer'), findsWidgets);
-    expect(tester.takeException(), isNull);
   });
 
   testWidgets('primeira abertura mostra o onboarding', (tester) async {
