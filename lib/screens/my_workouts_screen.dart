@@ -79,8 +79,12 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
               sliver: SliverToBoxAdapter(
                 child: Row(
                   children: [
-                    const GmWordmark(size: 30),
-                    const Spacer(),
+                    const Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(fit: BoxFit.scaleDown, child: GmWordmark(size: 30)),
+                      ),
+                    ),
                     IconButton(
                       tooltip: 'Histórico de treinos',
                       onPressed: () => Navigator.push(
