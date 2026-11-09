@@ -39,7 +39,12 @@ class Mesh {
 
   /// Desenha a malha vista pela câmera [cam]. As coordenadas na tela são as
   /// mesmas de [Camera.project]; o canvas já deve estar escalado.
-  void draw(Canvas canvas, Camera cam, {Color highlight = const Color(0xFFFFB400)}) {
+  ///
+  /// O destaque muscular de cada vértice vale 0 (nenhum), de 1 a 2 (músculo
+  /// auxiliar, cor [secondary] com intensidade m - 1) ou de 2 a 3 (músculo
+  /// principal, cor [highlight] com intensidade m - 2).
+  void draw(Canvas canvas, Camera cam,
+      {Color highlight = const Color(0xFFFFB400), Color secondary = const Color(0xFFFFE27A)}) {
     final vc = vertexCount;
     if (vc == 0 || triangleCount == 0) return;
     if (vc > 65535) throw StateError('Malha grande demais: $vc vértices');
@@ -52,6 +57,7 @@ class Mesh {
     final light = (tw * 0.55 + up * 0.75 - rt * 0.45).unit;
     final half = (light + tw).unit;
     final hr = (highlight.r * 255), hg = (highlight.g * 255), hb = (highlight.b * 255);
+    final sr = (secondary.r * 255), sg = (secondary.g * 255), sb = (secondary.b * 255);
     for (var i = 0; i < vc; i++) {
       final x = _p[i * 3], y = _p[i * 3 + 1], z = _p[i * 3 + 2];
       pos[i * 2] = x * rt.x + y * rt.y + z * rt.z;
@@ -74,12 +80,14 @@ class Mesh {
       r *= lum;
       g *= lum;
       b *= lum;
-      if (m > 0) {
+      if (m >= 1) {
         // o destaque quase não escurece com a sombra, para aparecer sempre
         final hl = math.max(lum, 0.82);
-        r += (hr * hl - r) * m;
-        g += (hg * hl - g) * m;
-        b += (hb * hl - b) * m;
+        final primary = m >= 2;
+        final k = primary ? m - 2 : m - 1;
+        r += ((primary ? hr : sr) * hl - r) * k;
+        g += ((primary ? hg : sg) * hl - g) * k;
+        b += ((primary ? hb : sb) * hl - b) * k;
       }
       int ch(double v) => (v + 255 * spec).round().clamp(0, 255);
       cols[i] = (a << 24) | (ch(r) << 16) | (ch(g) << 8) | ch(b);

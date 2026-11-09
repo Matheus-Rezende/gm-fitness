@@ -276,11 +276,11 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
             padding: const EdgeInsets.only(top: 6, left: 4),
             child: Row(
               children: [
-                _Dot(color: const Color(0xFFFFB400).withAlpha(200)),
+                _Dot(color: const Color(0xFFFFB400)),
                 const SizedBox(width: 6),
                 Text('Músculo principal', style: theme.textTheme.bodySmall),
                 const SizedBox(width: 14),
-                _Dot(color: const Color(0xFFFFB400).withAlpha(90)),
+                _Dot(color: const Color(0xFFFFE27A)),
                 const SizedBox(width: 6),
                 Text('Auxiliares', style: theme.textTheme.bodySmall),
               ],

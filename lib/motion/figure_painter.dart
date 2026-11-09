@@ -339,8 +339,9 @@ class FigurePainter extends CustomPainter {
 
   /// Intensidade do destaque do grupo [g] (0 se não estiver em destaque).
   double _mw(String g) {
-    if (style.primary.contains(g)) return 0.62 + 0.26 * _pulse;
-    if (style.secondary.contains(g)) return 0.36 + 0.10 * _pulse;
+    // ver Mesh.draw: 2 a 3 = principal, 1 a 2 = auxiliar
+    if (style.primary.contains(g)) return 2.72 + 0.24 * _pulse;
+    if (style.secondary.contains(g)) return 1.72;
     return 0;
   }
 
@@ -479,7 +480,7 @@ class FigurePainter extends CustomPainter {
         var v = 0.0;
         if (biceps > 0 && c > 0.25 && s > 0.2) v = math.max(v, biceps);
         if (triceps > 0 && c < -0.25 && s > 0.12) v = math.max(v, triceps);
-        if (ombros > 0 && s < 0.3) v = math.max(v, ombros * (1 - s / 0.3 * 0.5));
+        if (ombros > 0 && s < 0.3) v = math.max(v, ombros);
         return v;
       },
     );
@@ -673,7 +674,7 @@ class FigurePainter extends CustomPainter {
       var x = 0.0;
       if (peito > 0 && s > 0.3 && t > 0.6 && t < 0.95 && c.abs() < 0.85) x = math.max(x, peito);
       if (abd > 0 && s > 0.45 && t > 0.08 && t < 0.58 && c.abs() < 0.5) x = math.max(x, abd);
-      if (abd > 0 && s > 0.0 && t > 0.15 && t < 0.5 && c.abs() >= 0.5) x = math.max(x, abd * 0.6);
+      if (abd > 0 && s > 0.0 && t > 0.15 && t < 0.5 && c.abs() >= 0.5) x = math.max(x, abd);
       if (costas > 0 && s < -0.05 && t > 0.45 && t < 0.92) x = math.max(x, costas);
       if (lombar > 0 && s < -0.4 && t > 0.08 && t < 0.45 && c.abs() < 0.6) x = math.max(x, lombar);
       if (trap > 0 && t > 0.82 && s < 0.35 && c.abs() < 0.8) x = math.max(x, trap);
