@@ -231,24 +231,36 @@ class _GoalCard extends StatelessWidget {
                 child: Text(goal.label,
                     style: text.labelLarge?.copyWith(color: goal == Goal.tone ? GmColors.ink : Colors.white)),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               if (state.weights.length > 1)
-                Text('${signedKg(change)} desde o início',
-                    style: text.bodyMedium?.copyWith(color: Colors.white70)),
+                Expanded(
+                  child: Text('${signedKg(change)} desde o início',
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: text.bodyMedium?.copyWith(color: Colors.white70)),
+                ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(formatKg(now).replaceAll(' kg', ''),
-                  style: const TextStyle(
-                      fontFamily: display, fontWeight: FontWeight.w800, fontSize: 56, height: 1, color: Colors.white)),
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.bottomLeft,
+                  child: Text(formatKg(now).replaceAll(' kg', ''),
+                      style: const TextStyle(
+                          fontFamily: display, fontWeight: FontWeight.w800, fontSize: 56, height: 1, color: Colors.white)),
+                ),
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 4, bottom: 6),
                 child: Text('kg', style: TextStyle(color: Colors.white70, fontSize: 18)),
               ),
               const Spacer(),
+              const SizedBox(width: 8),
               if (target != null)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,

@@ -55,6 +55,13 @@ void main() {
     File('build/screens/$name.png').writeAsBytesSync(bytes!);
   }
 
+  Future<void> waitFor(WidgetTester tester, Finder f) async {
+    for (var i = 0; i < 100 && f.evaluate().isEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+  }
+
   Future<void> tap(WidgetTester tester, Finder f) async {
     if (f.evaluate().isEmpty) {
       await tester.dragUntilVisible(f, find.byType(ListView).last, const Offset(0, -250));
@@ -78,7 +85,8 @@ void main() {
     await tester.runAsync(loadFonts);
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(app());
-    await settle(tester, 20);
+    await waitFor(tester, find.text('Começar'));
+    await settle(tester, 4);
     await tap(tester, find.text('Começar'));
     await tap(tester, find.text('Masculino'));
     await tap(tester, find.text('Continuar'));
@@ -112,7 +120,8 @@ void main() {
           '{"date":"${day(7)}","kg":75.7},{"date":"${day(0)}","kg":75.2}]',
     });
     await tester.pumpWidget(app());
-    await settle(tester, 20);
+    await waitFor(tester, find.byType(NavigationBar));
+    await settle(tester, 4);
     await tap(tester, find.descendant(of: find.byType(NavigationBar), matching: find.text('Evolução')));
     await capture(tester, '04_evolucao');
     await tester.drag(find.byType(ListView).last, const Offset(0, -700));
