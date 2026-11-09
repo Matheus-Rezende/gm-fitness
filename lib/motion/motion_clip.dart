@@ -211,8 +211,14 @@ class MotionClip {
     final k = pos - pos.floor();
     final a = frames[i0];
     final b = frames[i1];
+    final p = frames[(i0 - 1 + n) % n];
+    final q = frames[(i1 + 1) % n];
+    // curva de Catmull-Rom: o movimento passa pelos quadros sem trancos
+    final k2 = k * k, k3 = k2 * k;
     for (var i = 0; i < res.length; i++) {
-      res[i] = a[i] + (b[i] - a[i]) * k;
+      final p0 = p[i], p1 = a[i], p2 = b[i], p3 = q[i];
+      res[i] = 0.5 *
+          (2 * p1 + (p2 - p0) * k + (2 * p0 - 5 * p1 + 4 * p2 - p3) * k2 + (3 * p1 - p0 - 3 * p2 + p3) * k3);
     }
     return res;
   }

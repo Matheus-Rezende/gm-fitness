@@ -246,8 +246,19 @@ class FigurePainter extends CustomPainter {
     canvas.translate(-bounds.center.dx, -bounds.center.dy);
 
     _f = clip.sample(time);
+    final detail = size.shortestSide < 120 ? 0 : 1;
+    final m = Mesh();
+    for (final p in clip.prims) {
+      m.part = -2;
+      _prim(m, p);
+    }
+    _body(m, highlight: style.showMuscles, detail: detail);
+    m.part = 10;
+    _props(m);
+    m.occlude(_occluders(), floorY: kFloorY);
+
     _floor(canvas);
-    _shadow(canvas);
+    m.drawShadow(canvas, _cam, kFloorY);
 
     if (ghost && style.showPath) {
       _f = clip.sample(0);
@@ -259,12 +270,6 @@ class FigurePainter extends CustomPainter {
       _f = clip.sample(time);
     }
 
-    final m = Mesh();
-    for (final p in clip.prims) {
-      _prim(m, p);
-    }
-    _body(m, highlight: style.showMuscles, detail: size.shortestSide < 120 ? 0 : 1);
-    _props(m);
     m.draw(canvas, _cam, highlight: _muscle);
     if (style.showPath) _keyPath(canvas);
     canvas.restore();
@@ -288,19 +293,34 @@ class FigurePainter extends CustomPainter {
     }
   }
 
-  void _shadow(Canvas c) {
-    final a = _j(Jt.ankN), b = _j(Jt.ankF), h = _j(Jt.hip);
-    final low = math.min(math.min(a.y, b.y), h.y);
-    if (low > kFloorY + 30) return;
-    final center = V3((a.x + b.x + h.x) / 3, kFloorY, (a.z + b.z + h.z) / 3);
-    for (final (rx, rz, alpha) in const [(18.0, 12.0, 0x14), (13.0, 8.5, 0x18)]) {
-      final pts = <Offset>[];
-      for (var i = 0; i < 24; i++) {
-        final ang = i / 24 * math.pi * 2;
-        pts.add(_cam.project(center + V3(math.cos(ang) * rx, 0, math.sin(ang) * rz)));
+  /// Partes que fazem sombra de ambiente umas nas outras.
+  List<Occluder> _occluders() {
+    final male = _b.male;
+    final out = <Occluder>[
+      Occluder.capsule(_j(Jt.hip) + _torsoUp * 2, _j(Jt.neck) - _torsoUp * 3, male ? 8.6 : 8.0, part: _pTorso, reach: 7),
+      Occluder.capsule(_j(Jt.head), _j(Jt.head), 6.4, part: _pHead, reach: 5),
+      Occluder.capsule(_j(Jt.shN), _j(Jt.elbN), 3.2, part: _pUpperArm, reach: 5),
+      Occluder.capsule(_j(Jt.shF), _j(Jt.elbF), 3.2, part: _pUpperArm + 2, reach: 5),
+      Occluder.capsule(_j(Jt.elbN), _j(Jt.handN), 2.5, part: _pUpperArm + 1, reach: 4),
+      Occluder.capsule(_j(Jt.elbF), _j(Jt.handF), 2.5, part: _pUpperArm + 3, reach: 4),
+      Occluder.capsule(_j(Jt.hipN), _j(Jt.kneeN), 5.4, part: _pThigh, reach: 6),
+      Occluder.capsule(_j(Jt.hipF), _j(Jt.kneeF), 5.4, part: _pThigh + 2, reach: 6),
+      Occluder.capsule(_j(Jt.kneeN), _j(Jt.ankN), 3.6, part: _pThigh + 1, reach: 5),
+      Occluder.capsule(_j(Jt.kneeF), _j(Jt.ankF), 3.6, part: _pThigh + 3, reach: 5),
+    ];
+    for (final p in clip.prims) {
+      if (p.kind == 'box' && p.opacity > 0.5) {
+        var lo = const V3(1e9, 1e9, 1e9), hi = const V3(-1e9, -1e9, -1e9);
+        for (final q in p.points) {
+          lo = V3(math.min(lo.x, q.x), math.min(lo.y, q.y), math.min(lo.z, q.z));
+          hi = V3(math.max(hi.x, q.x), math.max(hi.y, q.y), math.max(hi.z, q.z));
+        }
+        out.add(Occluder.box(lo, hi));
+      } else if (p.kind == 'cyl') {
+        out.add(Occluder.capsule(p.a, p.b, p.r, part: -2, reach: 4, strength: 0.45));
       }
-      c.drawPath(Path()..addPolygon(pts, true), Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
     }
+    return out;
   }
 
   Color _primColor(String role) {
@@ -354,19 +374,152 @@ class FigurePainter extends CustomPainter {
     return f.length < 1e-3 ? const V3(1, 0, 0) : f.unit;
   }
 
+  // identificação das partes (para a sombra de ambiente)
+  static const _pTorso = 0;
+  static const _pHead = 1;
+  static const _pUpperArm = 2; // +1 antebraço; +2/+3 o outro braço
+  static const _pThigh = 6; // +1 canela; +2/+3 a outra perna
+
   void _body(Mesh m, {required bool highlight, required int detail}) {
-    final sides = detail == 0 ? 9 : 14;
+    final sides = detail == 0 ? 9 : 16;
     final hl = highlight;
-    _torso(m, hl, detail == 0 ? 12 : 20);
+    m.part = _pTorso;
+    _torso(m, hl, detail == 0 ? 12 : 24, detail);
+    m.part = _pHead;
     _neckAndHead(m, detail);
-    _arm(m, Jt.shN, Jt.elbN, Jt.handN, hl, sides);
-    _arm(m, Jt.shF, Jt.elbF, Jt.handF, hl, sides);
-    _leg(m, Jt.hipN, Jt.kneeN, Jt.ankN, Jt.toeN, hl, sides);
-    _leg(m, Jt.hipF, Jt.kneeF, Jt.ankF, Jt.toeF, hl, sides);
+    _arm(m, Jt.shN, Jt.elbN, Jt.handN, hl, sides, _pUpperArm, detail);
+    _arm(m, Jt.shF, Jt.elbF, Jt.handF, hl, sides, _pUpperArm + 2, detail);
+    _leg(m, Jt.hipN, Jt.kneeN, Jt.ankN, Jt.toeN, hl, sides, _pThigh);
+    _leg(m, Jt.hipF, Jt.kneeF, Jt.ankF, Jt.toeF, hl, sides, _pThigh + 2);
   }
 
-  /// Membro de [a] a [b] com raio [r] (início, meio, fim), seção que pode
-  /// ter saliências musculares e pontas arredondadas.
+  /// Raio ao longo de um segmento a partir de (início, meio, fim).
+  static double _radiusAt(List<double> r, double s) {
+    if (s < 0.45) return r[0] + (r[1] - r[0]) * _smooth(s / 0.45);
+    return r[1] + (r[2] - r[1]) * _smooth((s - 0.45) / 0.55);
+  }
+
+  /// Membro contínuo que passa por [pts] (ombro, cotovelo e mão, por
+  /// exemplo). A articulação não tem emenda: os anéis giram suavemente de um
+  /// segmento para o outro. Cada segmento tem seu perfil de raio, suas
+  /// saliências musculares e suas faixas de cor.
+  void _chain(
+    Mesh m,
+    List<V3> pts,
+    V3 ref,
+    List<List<double>> radii, {
+    required Color Function(int seg, double s, double ang) color,
+    double Function(int seg, double s, double ang)? muscle,
+    List<List<_Bulge>> bulges = const [],
+    List<List<double>> breaks = const [],
+    List<double> flatten = const [],
+    List<int> parts = const [],
+    int sides = 14,
+    int steps = 8,
+    bool capA = true,
+    bool capB = true,
+    double gloss = 0.05,
+  }) {
+    final segs = pts.length - 1;
+    if (segs < 1) return;
+    final axes = <V3>[];
+    for (var k = 0; k < segs; k++) {
+      final d = pts[k + 1] - pts[k];
+      axes.add(d.length < 1e-4 ? (k > 0 ? axes[k - 1] : const V3(0, -1, 0)) : d.unit);
+    }
+    var v0 = perpTo(ref, axes[0]);
+    v0 = v0.length < 1e-3 ? perpendicular(axes[0]) : v0.unit;
+    final bn = axes[0].cross(v0).unit; // normal do plano em que o membro dobra
+
+    (V3, V3) frame(V3 u) {
+      var v = perpTo(bn.cross(u), u);
+      v = v.length < 1e-4 ? perpendicular(u) : v.unit;
+      return (v, u.cross(v).unit);
+    }
+
+    double bulge(int seg, double s, double ang) {
+      var k = 1.0;
+      if (seg < bulges.length) {
+        for (final bl in bulges[seg]) {
+          final c = math.cos(ang - bl.angle);
+          if (c > 0) k += bl.amount * _window(s, bl.s0, bl.s1) * c * c;
+        }
+      }
+      return k;
+    }
+
+    double flat(int seg) => seg < flatten.length ? flatten[seg] : 1.0;
+    int partOf(int seg) => seg < parts.length ? parts[seg] : m.part;
+
+    final rings = <List<V3>>[];
+    final centers = <V3>[];
+    final cols = <List<Color>>[];
+    final mus = <List<double>>[];
+    final ringParts = <int>[];
+    final angs = [for (var j = 0; j < sides; j++) 2 * math.pi * j / sides];
+
+    void addRing(V3 center, V3 u, int seg, double s, double rScale, {double? radius, bool joint = false}) {
+      final (v, w) = frame(u);
+      final r = (radius ?? _radiusAt(radii[seg], s)) * rScale;
+      final fl = joint && seg + 1 < segs ? (flat(seg) + flat(seg + 1)) / 2 : flat(seg);
+      rings.add([
+        for (final ang in angs)
+          () {
+            final bg = joint ? 1.0 : bulge(seg, s, ang);
+            return center + v * (math.cos(ang) * r * bg) + w * (math.sin(ang) * r * fl * bg);
+          }(),
+      ]);
+      centers.add(center);
+      cols.add([for (final ang in angs) color(seg, s, ang)]);
+      mus.add([for (final ang in angs) joint ? 0.0 : (muscle?.call(seg, s, ang) ?? 0)]);
+      ringParts.add(partOf(seg));
+    }
+
+    const capSteps = [0.92, 0.7, 0.38, 0.0]; // cos do ângulo da ponta arredondada
+    if (capA) {
+      final r0 = _radiusAt(radii[0], 0);
+      for (final cs in capSteps.reversed) {
+        final sn = math.sqrt(1 - cs * cs);
+        addRing(pts[0] - axes[0] * (r0 * sn * 0.85), axes[0], 0, 0, cs);
+      }
+    }
+    for (var k = 0; k < segs; k++) {
+      final ss = <double>{for (var i = 0; i <= steps; i++) i / steps};
+      if (k < breaks.length) {
+        for (final br in breaks[k]) {
+          ss
+            ..add((br - 0.002).clamp(0.0, 1.0))
+            ..add((br + 0.002).clamp(0.0, 1.0));
+        }
+      }
+      final list = ss.toList()..sort();
+      for (final s in list) {
+        if (k > 0 && s < 0.13) continue;
+        if (k < segs - 1 && s > 0.87) continue;
+        addRing(pts[k] + (pts[k + 1] - pts[k]) * s, axes[k], k, s, 1);
+      }
+      if (k < segs - 1) {
+        // anel da articulação: eixo na bissetriz, um pouco mais largo quando dobra
+        final u = (axes[k] + axes[k + 1]);
+        final mid = u.length < 1e-3 ? axes[k] : u.unit;
+        final cosHalf = mid.dot(axes[k]).clamp(0.5, 1.0);
+        final r = (_radiusAt(radii[k], 1) + _radiusAt(radii[k + 1], 0)) / 2;
+        addRing(pts[k + 1], mid, k, 1, math.min(1.25, 1 / cosHalf), radius: r, joint: true);
+      }
+    }
+    if (capB) {
+      final last = segs - 1;
+      final r1 = _radiusAt(radii[last], 1);
+      for (final cs in capSteps) {
+        final sn = math.sqrt(1 - cs * cs);
+        addRing(pts[segs] + axes[last] * (r1 * sn * 0.85), axes[last], last, 1, cs);
+      }
+    }
+    m.rings(rings, centers,
+        color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], gloss: gloss, partOf: (i) => ringParts[i]);
+  }
+
+  /// Segmento único (pescoço, rabo de cavalo).
   void _limb(
     Mesh m,
     V3 a,
@@ -374,85 +527,16 @@ class FigurePainter extends CustomPainter {
     V3 ref,
     List<double> r, {
     required Color Function(double s, double ang) color,
-    double Function(double s, double ang)? muscle,
-    List<_Bulge> bulges = const [],
-    List<double> breaks = const [],
-    double flatten = 1.0,
     int sides = 12,
-    int steps = 8,
+    int steps = 6,
     bool capA = true,
     bool capB = true,
-    double gloss = 0.05,
   }) {
-    final axis = b - a;
-    final len = axis.length;
-    if (len < 0.01) return;
-    final u = axis * (1 / len);
-    var v = perpTo(ref, u);
-    v = v.length < 1e-3 ? perpendicular(u) : v.unit;
-    final w = u.cross(v).unit;
-
-    double radius(double s) {
-      if (s < 0.45) return r[0] + (r[1] - r[0]) * _smooth(s / 0.45);
-      return r[1] + (r[2] - r[1]) * _smooth((s - 0.45) / 0.55);
-    }
-
-    double bulge(double s, double ang) {
-      var k = 1.0;
-      for (final bl in bulges) {
-        final c = math.cos(ang - bl.angle);
-        if (c > 0) k += bl.amount * _window(s, bl.s0, bl.s1) * c * c;
-      }
-      return k;
-    }
-
-    final ss = <double>{for (var i = 0; i <= steps; i++) i / steps};
-    for (final br in breaks) {
-      ss
-        ..add((br - 0.002).clamp(0.0, 1.0))
-        ..add((br + 0.002).clamp(0.0, 1.0));
-    }
-    final sList = ss.toList()..sort();
-
-    final rings = <List<V3>>[];
-    final centers = <V3>[];
-    final cols = <List<Color>>[];
-    final mus = <List<double>>[];
-    final angs = [for (var j = 0; j < sides; j++) 2 * math.pi * j / sides];
-
-    void addRing(V3 center, double s, double rScale, double sForColor) {
-      final rs = radius(s) * rScale;
-      rings.add([
-        for (final ang in angs)
-          center + v * (math.cos(ang) * rs * bulge(s, ang)) + w * (math.sin(ang) * rs * flatten * bulge(s, ang)),
-      ]);
-      centers.add(center);
-      cols.add([for (final ang in angs) color(sForColor, ang)]);
-      mus.add([for (final ang in angs) muscle?.call(sForColor, ang) ?? 0]);
-    }
-
-    const capSteps = [1.0, 0.92, 0.7, 0.38, 0.0]; // cos do ângulo da ponta
-    if (capA) {
-      for (final cs in capSteps.reversed) {
-        if (cs == 1.0) continue;
-        final sn = math.sqrt(1 - cs * cs);
-        addRing(a - u * (radius(0) * sn * 0.85), 0, cs, 0);
-      }
-    }
-    for (final s in sList) {
-      addRing(a + axis * s, s, 1, s);
-    }
-    if (capB) {
-      for (final cs in capSteps) {
-        if (cs == 1.0) continue;
-        final sn = math.sqrt(1 - cs * cs);
-        addRing(b + u * (radius(1) * sn * 0.85), 1, cs, 1);
-      }
-    }
-    m.rings(rings, centers, color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], gloss: gloss);
+    _chain(m, [a, b], ref, [r],
+        color: (_, s, ang) => color(s, ang), sides: sides, steps: steps, capA: capA, capB: capB);
   }
 
-  void _arm(Mesh m, int sh, int elb, int hand, bool hl, int sides) {
+  void _arm(Mesh m, int sh, int elb, int hand, bool hl, int sides, int part, int detail) {
     final s3 = _j(sh), e3 = _j(elb), h3 = _j(hand);
     final upper = e3 - s3, fore = h3 - e3;
     var anterior = perpTo(fore, upper);
@@ -465,57 +549,69 @@ class FigurePainter extends CustomPainter {
     final ombros = hl ? _mw('ombros') : 0.0;
     final ante = hl ? _mw('antebraco') : 0.0;
     final ur = _b.upperArm;
-    _limb(
+    final sleeve = _shade(_b.top, 0.18);
+    _chain(
       m,
-      s3,
-      e3,
+      [s3, e3, h3],
       anterior,
-      [ur[0] * 1.18, ur[1], ur[2]],
+      [
+        [ur[0] * 1.18, ur[1], ur[2]],
+        _b.foreArm,
+      ],
       sides: sides,
-      breaks: male ? const [0.42] : const [],
-      bulges: const [_Bulge(0.25, 0.85, 0, 0.16), _Bulge(0.15, 0.8, math.pi, 0.12)],
-      color: (s, _) => male && s < 0.42 ? _b.top : skin,
-      muscle: (s, ang) {
+      parts: [part, part + 1],
+      flatten: const [1.0, 0.86],
+      breaks: male ? const [[0.39, 0.43]] : const [],
+      bulges: const [
+        [_Bulge(0.25, 0.85, 0, 0.16), _Bulge(0.15, 0.8, math.pi, 0.12), _Bulge(0.0, 0.3, math.pi / 2, 0.06)],
+        [_Bulge(0.0, 0.55, 0, 0.12), _Bulge(0.0, 0.45, math.pi, 0.05)],
+      ],
+      color: (seg, s, _) {
+        if (seg == 0 && male) {
+          if (s < 0.39) return _b.top;
+          if (s < 0.43) return sleeve;
+        }
+        return skin;
+      },
+      muscle: (seg, s, ang) {
         final c = math.cos(ang);
         var v = 0.0;
-        if (biceps > 0 && c > 0.25 && s > 0.2) v = math.max(v, biceps);
-        if (triceps > 0 && c < -0.25 && s > 0.12) v = math.max(v, triceps);
-        if (ombros > 0 && s < 0.3) v = math.max(v, ombros);
+        if (seg == 0) {
+          if (biceps > 0 && c > 0.25 && s > 0.2) v = math.max(v, biceps);
+          if (triceps > 0 && c < -0.25 && s > 0.12) v = math.max(v, triceps);
+          if (ombros > 0 && s < 0.3) v = math.max(v, ombros);
+        } else if (ante > 0 && s < 0.85) {
+          v = ante;
+        }
         return v;
       },
     );
-    final fr = _b.foreArm;
-    _limb(
-      m,
-      e3,
-      h3,
-      anterior,
-      fr,
-      sides: sides,
-      flatten: 0.86,
-      bulges: const [_Bulge(0.0, 0.55, 0, 0.12)],
-      color: (_, _) => skin,
-      muscle: ante > 0 ? (s, _) => s < 0.85 ? ante : 0 : null,
-    );
-    // mão: elipsoide apontando na direção do antebraço
+    // mão fechada: palma e dedos dobrados para dentro
     final fd = fore.length < 1e-3 ? const V3(0, -1, 0) : fore.unit;
     var palm = perpTo(anterior, fd);
     palm = palm.length < 1e-3 ? perpendicular(fd) : palm.unit;
     final side = fd.cross(palm).unit;
-    m.ellipsoid(h3 + fd * 1.7, fd, side, palm, male ? 2.9 : 2.6, male ? 2.1 : 1.85, male ? 1.35 : 1.2,
-        color: (_) => skin, lat: 6, lon: 10, gloss: 0.05);
+    final k = male ? 1.0 : 0.9;
+    final lat = detail == 0 ? 5 : 7, lon = detail == 0 ? 8 : 12;
+    m.ellipsoid(h3 + fd * (1.3 * k), fd, side, palm, 1.9 * k, 2.0 * k, 1.15 * k,
+        color: (_) => skin, lat: lat, lon: lon, gloss: 0.05);
+    m.ellipsoid(h3 + fd * (2.9 * k) + palm * (0.55 * k), fd, side, palm, 1.35 * k, 1.85 * k, 1.25 * k,
+        color: (_) => skin, lat: lat, lon: lon, gloss: 0.05);
+    if (detail > 0) {
+      // polegar do lado de dentro (voltado para o corpo)
+      final inward = perpTo(_j(Jt.hip) - h3, fd);
+      final ts = inward.dot(side) >= 0 ? side : -side;
+      m.ellipsoid(h3 + fd * (1.9 * k) + ts * (1.7 * k) + palm * (0.7 * k), fd, ts, palm, 1.3 * k, 0.65 * k, 0.6 * k,
+          color: (_) => skin, lat: 4, lon: 8);
+    }
   }
 
-  void _leg(Mesh m, int hip, int knee, int ank, int toe, bool hl, int sides) {
+  void _leg(Mesh m, int hip, int knee, int ank, int toe, bool hl, int sides, int part) {
     final h3 = _j(hip), k3 = _j(knee), a3 = _j(ank), t3 = _j(toe);
     final thigh = k3 - h3, shin = a3 - k3;
     var anterior = perpTo(-shin, thigh);
     if (anterior.length < 2) anterior = _torsoFront;
     anterior = anterior.unit;
-    var calfSide = perpTo(h3 - k3, shin);
-    if (calfSide.length < 2) calfSide = -_torsoFront;
-    calfSide = calfSide.unit;
-    // de que lado fica o lado de fora da coxa
     final outward = perpTo(h3 - _j(Jt.hip), thigh);
     final male = _b.male;
     final quad = hl ? _mw('quadriceps') : 0.0;
@@ -523,51 +619,57 @@ class FigurePainter extends CustomPainter {
     final adut = hl ? _mw('adutores') : 0.0;
     final abdu = hl ? _mw('abdutores') : 0.0;
     final pant = hl ? _mw('panturrilha') : 0.0;
-    // ângulo do lado de fora na seção (frente = 0)
-    final thighAxis = thigh.unit;
-    final v = anterior;
-    final w = thighAxis.cross(v).unit;
-    final outAng = outward.length < 1e-3 ? math.pi / 2 : math.atan2(outward.dot(w), outward.dot(v));
+    final ta = thigh.length < 1e-3 ? const V3(0, -1, 0) : thigh.unit;
+    final w = ta.cross(anterior).unit;
+    final outAng = outward.length < 1e-3 ? math.pi / 2 : math.atan2(outward.dot(w), outward.dot(anterior));
     final tr = _b.thigh;
-    final shorts = male;
-    _limb(
+    final hem = _shade(_b.bottom, 0.3);
+    _chain(
       m,
-      h3,
-      k3,
+      [h3, k3, a3],
       anterior,
-      shorts ? [tr[0] * 1.08, tr[1] * 1.08, tr[2]] : tr,
+      [
+        male ? [tr[0] * 1.08, tr[1] * 1.08, tr[2]] : tr,
+        _b.calf,
+      ],
       sides: sides,
-      breaks: shorts ? const [0.72] : const [],
-      bulges: const [_Bulge(0.15, 0.8, 0, 0.09), _Bulge(0.1, 0.75, math.pi, 0.07)],
-      capA: true,
-      color: (s, _) => male ? (s < 0.72 ? _b.bottom : _b.skin) : _b.bottom,
-      muscle: (s, ang) {
+      parts: [part, part + 1],
+      breaks: male
+          ? const [
+              [0.70, 0.74],
+              [0.86],
+            ]
+          : const [
+              [],
+              [0.93],
+            ],
+      bulges: const [
+        [_Bulge(0.15, 0.8, 0, 0.09), _Bulge(0.1, 0.75, math.pi, 0.07)],
+        [_Bulge(0.08, 0.6, math.pi, 0.30), _Bulge(0.0, 0.25, 0, 0.05)],
+      ],
+      color: (seg, s, _) {
+        if (seg == 0) {
+          if (!male) return _b.bottom;
+          if (s < 0.70) return _b.bottom;
+          if (s < 0.74) return hem;
+          return _b.skin;
+        }
+        if (male) return s > 0.86 ? _sock : _b.skin;
+        return s > 0.93 ? _b.skin : _b.bottom;
+      },
+      muscle: (seg, s, ang) {
         final c = math.cos(ang);
+        if (seg == 1) return pant > 0 && c < -0.15 && s > 0.08 && s < 0.7 ? pant : 0;
         final o = math.cos(ang - outAng);
         var x = 0.0;
         if (quad > 0 && c > 0.2) x = math.max(x, quad);
         if (post > 0 && c < -0.2) x = math.max(x, post);
         if (adut > 0 && o < -0.35 && s < 0.75) x = math.max(x, adut);
         if (abdu > 0 && o > 0.35 && s < 0.4) x = math.max(x, abdu);
-        return s > 0.95 ? 0 : x;
+        return x;
       },
     );
-    final cr = _b.calf;
-    // ângulo da panturrilha (para trás da canela)
-    final shinAxis = shin.unit;
-    final sv = perpTo(-calfSide, shinAxis).unit;
-    _limb(
-      m,
-      k3,
-      a3,
-      sv,
-      cr,
-      sides: sides,
-      breaks: male ? const [0.86] : const [],
-      bulges: const [_Bulge(0.08, 0.6, math.pi, 0.32), _Bulge(0.0, 0.25, 0, 0.05)],
-      color: (s, _) => male ? (s > 0.86 ? _sock : _b.skin) : _b.bottom,
-      muscle: pant > 0 ? (s, ang) => math.cos(ang) < -0.15 && s > 0.08 && s < 0.7 ? pant : 0 : null,
-    );
+    m.part = part + 1;
     _shoe(m, k3, a3, t3, sides);
   }
 
@@ -642,18 +744,19 @@ class FigurePainter extends CustomPainter {
     return (rows.last[1], rows.last[2], rows.last[3]);
   }
 
-  void _torso(Mesh m, bool hl, int n) {
+  void _torso(Mesh m, bool hl, int n, int detail) {
     final hip = _j(Jt.hip), neck = _j(Jt.neck);
     final up = _torsoUp, front = _torsoFront;
     final lat = up.cross(front).unit;
     final len = (neck - hip).length;
     final male = _b.male;
     // faixas de roupa (posição ao longo do tronco)
-    final breaks = male ? const [0.30, 0.34] : const [0.37, 0.40, 0.47, 0.50];
+    final breaks = male ? const [0.30, 0.34, 0.38] : const [0.37, 0.40, 0.47, 0.50];
     Color colorAt(double t) {
       if (male) {
         if (t < 0.30) return _b.bottom;
         if (t < 0.34) return _shade(_b.bottom, 0.35);
+        if (t < 0.38) return _shade(_b.top, 0.12); // barra da camiseta
         return _b.top;
       }
       if (t < 0.37) return _b.bottom;
@@ -723,6 +826,16 @@ class FigurePainter extends CustomPainter {
     ring(1.0, 0.45, 1.0, lift: 1.9);
     ring(1.0, 0.0, 1.0, lift: 2.1);
     m.rings(rings, centers, color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], gloss: 0.06);
+    if (detail > 0) {
+      // gola (camiseta) ou alças do top
+      final base = neck + up * 0.6;
+      final nr = male ? 3.9 : 3.4;
+      m.tube([
+        for (var i = 0; i <= 18; i++)
+          base + lat * (math.cos(2 * math.pi * i / 18) * nr) + front * (math.sin(2 * math.pi * i / 18) * nr * 0.9) -
+              up * (math.sin(2 * math.pi * i / 18) > 0 ? math.sin(2 * math.pi * i / 18) * 1.4 : 0),
+      ], 0.55, _shade(_b.top, male ? 0.2 : 0.25), sides: 6);
+    }
   }
 
   // ------------------------------------------------------------ cabeça
@@ -751,7 +864,17 @@ class FigurePainter extends CustomPainter {
     }
 
     m.ellipsoid(hc, -up, face, side, rUp, rFace, rSide,
-        color: (l) => isHair(l) ? hair : skin, lat: detail == 0 ? 8 : 12, lon: detail == 0 ? 12 : 18, gloss: 0.06);
+        color: (l) => isHair(l) ? hair : skin, lat: detail == 0 ? 8 : 14, lon: detail == 0 ? 12 : 20, gloss: 0.06);
+    if (detail > 0) {
+      // volume do cabelo por cima da cabeça
+      final k = male ? 1.06 : 1.09;
+      m.ellipsoid(hc + up * 0.25 - face * 0.15, -up, face, side, rUp * k, rFace * k, rSide * (k + 0.02),
+          color: (_) => hair, lat: 14, lon: 20, gloss: 0.18, include: (l) {
+        final uu = -l.x, fu = l.y;
+        final thr = fu >= 0 ? 0.30 + 0.42 * fu : 0.30 + (backLimit - 0.12) * (-fu);
+        return uu > thr;
+      });
+    }
 
     // ponto na superfície da cabeça numa direção (em coordenadas up/face/side)
     V3 surface(double du, double df, double ds, [double push = 0]) {
@@ -769,8 +892,10 @@ class FigurePainter extends CustomPainter {
       final tie = surface(0.35, -0.9, 0, -0.4);
       final end = tie - face * 3.0 - up * 7.0;
       final mid = V3.lerp(tie, end, 0.5) - face * 1.2;
-      _limb(m, tie, mid, face, [2.6, 2.7, 2.4], sides: 9, steps: 3, color: (_, _) => hair);
-      _limb(m, mid, end, face, [2.4, 2.2, 1.1], sides: 9, steps: 3, color: (_, _) => hair);
+      _chain(m, [tie, mid, end], face, const [
+        [2.5, 2.8, 2.6],
+        [2.6, 2.1, 0.9],
+      ], sides: detail == 0 ? 8 : 12, steps: 4, color: (_, _, _) => hair, gloss: 0.15);
       m.ellipsoid(tie, up, face, side, 1.2, 1.2, 1.6, color: (_) => _b.top, lat: 4, lon: 8);
     }
     if (detail == 0) return;

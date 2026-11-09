@@ -14,6 +14,11 @@ class Mesh {
   final List<double> _g = []; // brilho especular
   final List<int> _t = []; // índices dos triângulos
   final List<bool> _two = []; // triângulo visível dos dois lados
+  final List<int> _part = []; // parte do corpo/aparelho de cada vértice
+  final List<double> _ao = []; // oclusão de ambiente (1 = livre, 0 = escuro)
+
+  /// Parte atual: os próximos vértices pertencem a ela (para a oclusão).
+  int part = -1;
 
   int get vertexCount => _c.length;
   int get triangleCount => _two.length;
@@ -24,6 +29,8 @@ class Mesh {
     _c.add(c.toARGB32());
     _m.add(muscle);
     _g.add(gloss);
+    _part.add(part);
+    _ao.add(1);
     return _c.length - 1;
   }
 
@@ -69,7 +76,8 @@ class Mesh {
       final diff = math.max(0.0, nx * light.x + ny * light.y + nz * light.z);
       final sky = 0.5 + 0.5 * ny; // luz do ambiente vem mais de cima
       final rim = math.pow(1 - nt.abs().clamp(0.0, 1.0), 3).toDouble();
-      final lum = 0.34 + 0.16 * sky + 0.62 * diff + 0.10 * rim;
+      final ao = _ao[i];
+      final lum = (0.34 + 0.16 * sky) * ao + 0.62 * diff * (0.55 + 0.45 * ao) + 0.10 * rim;
       final spec = _g[i] > 0
           ? _g[i] * math.pow(math.max(0.0, nx * half.x + ny * half.y + nz * half.z), 18).toDouble()
           : 0.0;
@@ -116,6 +124,69 @@ class Mesh {
     );
   }
 
+  /// Escurece os vértices perto de outras partes (axilas, dobra do joelho,
+  /// corpo apoiado no banco, pés no chão), como a luz real faz.
+  void occlude(List<Occluder> occ, {double floorY = double.negativeInfinity}) {
+    final vc = vertexCount;
+    for (var i = 0; i < vc; i++) {
+      final px = _p[i * 3], py = _p[i * 3 + 1], pz = _p[i * 3 + 2];
+      final nx = _n[i * 3], ny = _n[i * 3 + 1], nz = _n[i * 3 + 2];
+      final own = _part[i];
+      var a = 1.0;
+      for (final o in occ) {
+        if (o.part == own && own >= 0) continue;
+        final (qx, qy, qz) = o.closest(px, py, pz);
+        var dx = qx - px, dy = qy - py, dz = qz - pz;
+        final dist = math.sqrt(dx * dx + dy * dy + dz * dz);
+        final gap = dist - o.radius;
+        if (gap >= o.reach) continue;
+        if (dist > 1e-6) {
+          dx /= dist;
+          dy /= dist;
+          dz /= dist;
+        }
+        final facing = nx * dx + ny * dy + nz * dz;
+        if (facing <= 0) continue;
+        final near = 1 - math.max(0.0, gap) / o.reach;
+        a *= 1 - o.strength * facing * near * near;
+      }
+      if (floorY.isFinite) {
+        final gap = py - floorY;
+        if (gap < 8 && ny < 0.3) {
+          final near = 1 - math.max(0.0, gap) / 8;
+          a *= 1 - 0.45 * (0.3 - ny) / 1.3 * near * near;
+        }
+      }
+      _ao[i] = a.clamp(0.25, 1.0);
+    }
+  }
+
+  /// Sombra projetada no chão (luz vinda de cima, levemente inclinada).
+  void drawShadow(Canvas canvas, Camera cam, double floorY, {Color color = const Color(0x2E000000)}) {
+    final vc = vertexCount;
+    if (vc == 0) return;
+    const lx = 0.25, ly = -1.0, lz = 0.18;
+    final pos = Float32List(vc * 2);
+    final rt = cam.right, up = cam.up;
+    for (var i = 0; i < vc; i++) {
+      var x = _p[i * 3], y = _p[i * 3 + 1], z = _p[i * 3 + 2];
+      final h = math.max(0.0, y - floorY);
+      x += lx * h;
+      z += lz * h;
+      y = floorY + 0.05;
+      pos[i * 2] = x * rt.x + y * rt.y + z * rt.z;
+      pos[i * 2 + 1] = -(x * up.x + y * up.y + z * up.z);
+    }
+    final idx = Uint16List.fromList(_t);
+    canvas.saveLayer(null, Paint()..color = color);
+    canvas.drawVertices(
+      Vertices.raw(VertexMode.triangles, pos, indices: idx),
+      BlendMode.src,
+      Paint()..color = const Color(0xFF000000),
+    );
+    canvas.restore();
+  }
+
   // ------------------------------------------------------------ formas
 
   /// Superfície em anéis (tubo, tronco, sapato). [rings] tem a mesma
@@ -128,12 +199,15 @@ class Mesh {
     required Color Function(int ring, int j) color,
     double Function(int ring, int j)? muscle,
     double gloss = 0,
+    int Function(int ring)? partOf,
   }) {
     final nr = rings.length;
+    final keepPart = part;
     if (nr < 2) return;
     final n = rings.first.length;
     final base = vertexCount;
     for (var i = 0; i < nr; i++) {
+      if (partOf != null) part = partOf(i);
       final prev = rings[i == 0 ? 0 : i - 1], next = rings[i == nr - 1 ? nr - 1 : i + 1];
       for (var j = 0; j < n; j++) {
         final p = rings[i][j];
@@ -150,6 +224,7 @@ class Mesh {
         vertex(p, nrm.unit, color(i, j), muscle: muscle?.call(i, j) ?? 0, gloss: gloss);
       }
     }
+    part = keepPart;
     for (var i = 0; i < nr - 1; i++) {
       for (var j = 0; j < n; j++) {
         final a = base + i * n + j, b = base + i * n + (j + 1) % n;
@@ -173,8 +248,10 @@ class Mesh {
     int lat = 8,
     int lon = 12,
     double gloss = 0,
+    bool Function(V3 dirLocal)? include,
   }) {
     final base = vertexCount;
+    final inc = <bool>[];
     for (var i = 0; i <= lat; i++) {
       final th = math.pi * i / lat;
       final ct = math.cos(th), st = math.sin(th);
@@ -185,13 +262,15 @@ class Mesh {
         final nrm = (ax * (l1 / r1) + ay * (l2 / r2) + az * (l3 / r3)).unit;
         final local = V3(l1, l2, l3);
         vertex(p, nrm, color(local), muscle: muscle?.call(local) ?? 0, gloss: gloss);
+        inc.add(include?.call(local) ?? true);
       }
     }
     for (var i = 0; i < lat; i++) {
       for (var j = 0; j < lon; j++) {
-        final a = base + i * lon + j, b = base + i * lon + (j + 1) % lon;
-        final cc = base + (i + 1) * lon + (j + 1) % lon, d = base + (i + 1) * lon + j;
-        quad(a, b, cc, d);
+        final a = i * lon + j, b = i * lon + (j + 1) % lon;
+        final cc = (i + 1) * lon + (j + 1) % lon, d = (i + 1) * lon + j;
+        if (include != null && !(inc[a] && inc[b] && inc[cc] && inc[d])) continue;
+        quad(base + a, base + b, base + cc, base + d);
       }
     }
   }
@@ -321,6 +400,37 @@ class Mesh {
   void panel(V3 p00, V3 p10, V3 p11, V3 p01, Color color) {
     final nrm = (p10 - p00).cross(p01 - p00).unit;
     _grid(p00, p10, p11, p01, nrm, color, 6, twoSided: true);
+  }
+}
+
+/// Algo que faz sombra de ambiente: um segmento com raio (cápsula) ou uma
+/// caixa alinhada aos eixos.
+class Occluder {
+  Occluder.capsule(V3 a, V3 b, this.radius, {required this.part, this.reach = 6, this.strength = 0.6})
+      : _ax = a.x, _ay = a.y, _az = a.z, _bx = b.x, _by = b.y, _bz = b.z, _box = false;
+
+  Occluder.box(V3 min, V3 max, {this.part = -2, this.reach = 5, this.strength = 0.5})
+      : radius = 0, _ax = min.x, _ay = min.y, _az = min.z, _bx = max.x, _by = max.y, _bz = max.z, _box = true;
+
+  final double radius;
+  final int part;
+
+  /// Distância (a partir da superfície) até onde a sombra chega.
+  final double reach;
+  final double strength;
+  final double _ax, _ay, _az, _bx, _by, _bz;
+  final bool _box;
+
+  /// Ponto do eixo (ou da caixa) mais perto de (x, y, z).
+  (double, double, double) closest(double x, double y, double z) {
+    if (_box) {
+      return (x.clamp(_ax, _bx), y.clamp(_ay, _by), z.clamp(_az, _bz));
+    }
+    final dx = _bx - _ax, dy = _by - _ay, dz = _bz - _az;
+    final len2 = dx * dx + dy * dy + dz * dz;
+    var t = len2 < 1e-9 ? 0.0 : ((x - _ax) * dx + (y - _ay) * dy + (z - _az) * dz) / len2;
+    t = t.clamp(0.0, 1.0);
+    return (_ax + dx * t, _ay + dy * t, _az + dz * t);
   }
 }
 
