@@ -323,7 +323,7 @@ class _DayPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fg = selected ? Colors.white : scheme.onSurface;
+    final fg = selected ? scheme.onPrimary : scheme.onSurface;
     return Semantics(
       button: true,
       selected: selected,

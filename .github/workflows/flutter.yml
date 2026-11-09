@@ -41,15 +41,6 @@ jobs:
         if: success() || failure()
         run: RENDER_PREVIEWS=1 flutter test test/render_preview_test.dart test/render_screens_test.dart
 
-      - name: TEMP telas no log
-        if: success() || failure()
-        run: |
-          for f in build/screens/1*.png; do
-            echo "=====B64 $(basename ${f%.png})"
-            base64 -w0 "$f"; echo
-            echo "=====END"
-          done
-
       - uses: actions/upload-artifact@v4
         with:
           name: previas-animacoes
