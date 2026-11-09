@@ -11,13 +11,17 @@ import '../models/preset.dart';
 import '../models/session.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_clip.dart';
+import 'settings.dart';
 
 MotionLibrary _parseMotions(String source) => MotionLibrary.parse(source);
 
 /// Estado do app: catálogo (vem dos assets, sem internet) e dados do
 /// usuário (guardados no aparelho).
 class AppState extends ChangeNotifier {
-  AppState._(this._prefs, this.meta, this._builtIn, this.presets, this.motions);
+  AppState._(this._prefs, this.meta, this._builtIn, this.presets, this.motions) : settings = AppSettings(_prefs);
+
+  /// Preferências do app (tema, cor, texto, avisos do descanso).
+  final AppSettings settings;
 
   static const _kEntries = 'entries_v1';
   static const _kCustom = 'custom_exercises_v1';

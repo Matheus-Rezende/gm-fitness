@@ -51,12 +51,17 @@ TextTheme _text(TextTheme base, Color ink, Color soft) {
   );
 }
 
-ThemeData buildGmTheme(Brightness brightness) {
+/// Versão clara da cor de destaque, para o tema escuro.
+Color accentForDark(Color accent) => accent == GmColors.blue
+    ? GmColors.blueLight
+    : HSLColor.fromColor(accent).withLightness(0.68).toColor();
+
+ThemeData buildGmTheme(Brightness brightness, {Color accent = GmColors.blue}) {
   final dark = brightness == Brightness.dark;
   final ink = dark ? const Color(0xFFE9ECF1) : GmColors.ink;
   final soft = dark ? const Color(0xFFA2AAB8) : const Color(0xFF5E6675);
-  final scheme = ColorScheme.fromSeed(seedColor: GmColors.blue, brightness: brightness).copyWith(
-    primary: dark ? GmColors.blueLight : GmColors.blue,
+  final scheme = ColorScheme.fromSeed(seedColor: accent, brightness: brightness).copyWith(
+    primary: dark ? accentForDark(accent) : accent,
     onPrimary: dark ? GmColors.night : Colors.white,
     secondary: GmColors.yellow,
     onSecondary: GmColors.ink,

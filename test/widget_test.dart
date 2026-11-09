@@ -9,6 +9,7 @@ import 'package:gm_fitness/models/session.dart';
 import 'package:gm_fitness/models/workout_entry.dart';
 import 'package:gm_fitness/motion/motion_clip.dart';
 import 'package:gm_fitness/state/app_state.dart';
+import 'package:gm_fitness/state/settings.dart';
 import 'package:gm_fitness/update/updater.dart';
 import 'package:gm_fitness/version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -313,6 +314,25 @@ void main() {
     await tap(tab);
     expect(find.text('Seus números'), findsOneWidget);
     expect(find.text('Emagrecer'), findsWidgets);
+  });
+
+  test('configurações: tema, cor e texto são salvos', () async {
+    SharedPreferences.setMockInitialValues({});
+    final state = await AppState.load();
+    final s = state.settings;
+    expect(s.themeMode, ThemeMode.system);
+    expect(s.accent, Accent.blue);
+    await s.setThemeMode(ThemeMode.dark);
+    await s.setAccent(Accent.green);
+    await s.setTextScale(1.25);
+    await s.setRestSound(false);
+    await state.clearAll();
+    final again = await AppState.load();
+    expect(again.settings.themeMode, ThemeMode.dark);
+    expect(again.settings.accent, Accent.green);
+    expect(again.settings.textScale, 1.25);
+    expect(again.settings.restSound, isFalse);
+    expect(again.settings.restVibration, isTrue);
   });
 
   testWidgets('primeira abertura mostra o onboarding', (tester) async {

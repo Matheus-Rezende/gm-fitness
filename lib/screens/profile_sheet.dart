@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import '../models/body.dart';
 import '../models/workout_entry.dart';
 import '../state/app_state.dart';
-import '../theme/gm_theme.dart';
-import '../update/update_ui.dart';
 import '../update/updater.dart';
-import '../version.dart';
 import '../widgets/body_widgets.dart';
 import '../widgets/brand.dart';
 import 'body_edit_screen.dart';
 import 'home_shell.dart';
+import 'settings_screen.dart';
 
 /// Abre o perfil em tela cheia.
 Future<void> showProfileSheet(BuildContext context) =>
@@ -32,24 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _clear(AppState state) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Apagar meus dados?'),
-        content: const Text('Sua lista de treinos, as cargas, o histórico, as pesagens, os exercícios que você criou '
-            'e o perfil serão apagados. Não dá para desfazer.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Apagar dados')),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    await state.clearAll();
-    if (mounted) Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
@@ -61,7 +41,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String or(String? v) => v ?? 'Não informado';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Meu perfil')),
+      appBar: AppBar(
+        title: const Text('Meu perfil'),
+        actions: [
+          IconButton(
+            tooltip: 'Configurações',
+            onPressed: () => openSettings(context),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
         children: [
@@ -128,39 +117,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.swap_horiz_rounded),
             label: const Text('Trocar plano'),
           ),
-          if (Updater.instance.supported) ...[
-            const SizedBox(height: 22),
-            const _UpdatesCard(),
-          ],
+          ListenableBuilder(
+            listenable: Updater.instance,
+            builder: (context, _) => Updater.instance.available == null
+                ? const SizedBox.shrink()
+                : const Padding(padding: EdgeInsets.only(top: 22), child: UpdatesCard()),
+          ),
           const SizedBox(height: 24),
           const PlateStripe(height: 4),
           const SizedBox(height: 8),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const GmLogo(size: 32),
-            title: const Text('Sobre o GM Fitness'),
-            subtitle: const Text('Versão $kAppVersion'),
-            onTap: () => showAboutDialog(
-              context: context,
-              applicationName: 'GM Fitness',
-              applicationVersion: kAppVersion,
-              applicationIcon: const GmLogo(size: 44),
-              children: const [
-                Text('Treinos para quem está começando na academia. Seus treinos e dados ficam só no seu '
-                    'aparelho. A internet é usada apenas para procurar atualizações do app.'),
-                SizedBox(height: 12),
-                Text('As animações, os planos e os cálculos são uma orientação geral e não substituem um '
-                    'profissional de educação física, nutricionista ou médico. Se sentir dor, pare o exercício.'),
-                SizedBox(height: 12),
-                Text('Fontes Barlow e Barlow Condensed, licença SIL Open Font License.'),
-              ],
-            ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.delete_outline_rounded),
-            title: const Text('Apagar meus dados'),
-            onTap: () => _clear(state),
+            leading: const Icon(Icons.settings_outlined),
+            title: const Text('Configurações'),
+            subtitle: const Text('Tema, cores, texto, avisos, atualizações e sobre o app'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => openSettings(context),
           ),
         ],
       ),
@@ -190,100 +162,6 @@ class _Row extends StatelessWidget {
           Text(value, style: text.titleSmall),
         ],
       ),
-    );
-  }
-}
-
-class _UpdatesCard extends StatelessWidget {
-  const _UpdatesCard();
-
-  String _when(DateTime? t) {
-    if (t == null) return 'ainda não procurou';
-    final d = DateTime.now().difference(t);
-    if (d.inMinutes < 1) return 'agora há pouco';
-    if (d.inHours < 1) return 'há ${d.inMinutes} min';
-    if (d.inDays < 1) return 'há ${d.inHours} h';
-    return 'há ${d.inDays} dia${d.inDays == 1 ? '' : 's'}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final up = Updater.instance;
-    final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
-    return ListenableBuilder(
-      listenable: up,
-      builder: (context, _) {
-        final u = up.available;
-        final checking = up.stage == UpdateStage.checking;
-        return Container(
-          padding: const EdgeInsets.fromLTRB(14, 12, 8, 8),
-          decoration: BoxDecoration(
-            color: u != null ? GmColors.yellow : scheme.surface,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.system_update_rounded, color: u != null ? GmColors.ink : scheme.primary),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(u != null ? 'Versão ${u.version} disponível' : 'Atualizações',
-                            style: text.titleMedium?.copyWith(color: u != null ? GmColors.ink : null)),
-                        Text(
-                          u != null
-                              ? 'Você está na $kAppVersion'
-                              : 'Versão $kAppVersion · última busca ${_when(up.lastCheck)}',
-                          style: text.bodySmall?.copyWith(color: u != null ? GmColors.ink : null),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (up.message != null && u == null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 6, right: 6),
-                  child: Text(up.message!, style: text.bodySmall?.copyWith(color: GmColors.red)),
-                ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  if (u != null)
-                    FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: GmColors.ink, foregroundColor: Colors.white),
-                      onPressed: () => showUpdateSheet(context),
-                      child: const Text('Ver e atualizar'),
-                    )
-                  else
-                    OutlinedButton(
-                      onPressed: checking
-                          ? null
-                          : () async {
-                              final found = await up.check(force: true);
-                              if (found == null && context.mounted && up.message == null) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(content: Text('Você já está na versão mais nova.')));
-                              }
-                            },
-                      child: Text(checking ? 'Procurando…' : 'Procurar agora'),
-                    ),
-                  const Spacer(),
-                  if (u == null) ...[
-                    Text('Avisar sozinho', style: text.bodySmall),
-                    Switch(value: up.autoCheck, onChanged: up.setAutoCheck),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

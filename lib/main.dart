@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/home_shell.dart';
 import 'screens/onboarding_screen.dart';
 import 'state/app_state.dart';
+import 'state/settings.dart';
 import 'theme/gm_theme.dart';
 import 'widgets/brand.dart';
 
@@ -21,13 +22,24 @@ class GmFitnessApp extends StatefulWidget {
 class _GmFitnessAppState extends State<GmFitnessApp> {
   late Future<AppState> _loading = AppState.load();
 
-  MaterialApp _app(Widget home) => MaterialApp(
-        title: 'GM Fitness',
-        debugShowCheckedModeBanner: false,
-        theme: buildGmTheme(Brightness.light),
-        darkTheme: buildGmTheme(Brightness.dark),
-        home: home,
-      );
+  MaterialApp _app(Widget home, [AppSettings? settings]) {
+    final accent = settings?.accent.color ?? GmColors.blue;
+    final scale = settings?.textScale ?? 1.0;
+    return MaterialApp(
+      title: 'GM Fitness',
+      debugShowCheckedModeBanner: false,
+      theme: buildGmTheme(Brightness.light, accent: accent),
+      darkTheme: buildGmTheme(Brightness.dark, accent: accent),
+      themeMode: settings?.themeMode ?? ThemeMode.system,
+      builder: scale == 1.0
+          ? null
+          : (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              ),
+      home: home,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +53,14 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
           ));
         }
         if (!snap.hasData) return _app(const _Splash());
-        return AppScope(state: snap.data!, child: _app(const _Root()));
+        final state = snap.data!;
+        return AppScope(
+          state: state,
+          child: ListenableBuilder(
+            listenable: state.settings,
+            builder: (_, _) => _app(const _Root(), state.settings),
+          ),
+        );
       },
     );
   }

@@ -2,6 +2,13 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.6.0
+
+- **Configurações** (no perfil, pelo ícone de engrenagem): tema automático, claro ou escuro, cor de destaque (azul, vermelho, verde ou roxo) e tamanho do texto.
+- Escolha se o fim do descanso toca som, vibra ou os dois.
+- Área **Sobre o app** com versão, novidades de cada versão, privacidade, aviso de saúde e licenças.
+- Atualizações e "Apagar meus dados" agora ficam nas configurações.
+
 ## 0.5.0
 
 - **Sobre você**: a introdução agora pergunta idade, altura, peso, cintura (opcional), objetivo e nível de atividade.

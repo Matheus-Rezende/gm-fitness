@@ -155,5 +155,22 @@ void main() {
     showUpdateSheet(ctx);
     await settle(tester);
     await capture(tester, '09_atualizacao');
+    await tap(tester, find.text('Depois'));
+    Updater.instance.available = null;
+
+    await tap(tester, find.byTooltip('Configurações'));
+    await capture(tester, '10_configuracoes');
+    await tap(tester, find.text('Escuro'));
+    await tap(tester, find.text('Verde'));
+    await capture(tester, '11_configuracoes_escuro');
+    await tester.drag(find.byType(ListView).last, const Offset(0, -900));
+    await capture(tester, '12_configuracoes_sobre');
+    await tester.pageBack();
+    await settle(tester);
+    await tester.pageBack();
+    await settle(tester);
+    await capture(tester, '13_treino_escuro');
+    await tap(tester, find.descendant(of: find.byType(NavigationBar), matching: find.text('Evolução')));
+    await capture(tester, '14_evolucao_escuro');
   }, skip: !enabled);
 }

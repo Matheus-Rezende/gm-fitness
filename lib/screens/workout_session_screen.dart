@@ -34,8 +34,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
       if (!mounted) return;
       final ends = _restEnds;
       if (ends != null && DateTime.now().isAfter(ends)) {
-        HapticFeedback.heavyImpact();
-        SystemSound.play(SystemSoundType.alert);
+        final settings = AppScope.read(context).settings;
+        if (settings.restVibration) HapticFeedback.heavyImpact();
+        if (settings.restSound) SystemSound.play(SystemSoundType.alert);
         _restEnds = null;
       }
       setState(() {});
