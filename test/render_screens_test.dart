@@ -16,6 +16,9 @@ void main() {
   final enabled = Platform.environment['RENDER_PREVIEWS'] == '1';
   final shot = GlobalKey();
 
+  // O cache de assets guarda Futures da zona de teste anterior, que não completam na próxima.
+  setUp(() => rootBundle.clear());
+
   Future<void> loadFonts() async {
     Future<ByteData> bytes(String path) async => ByteData.sublistView(await File(path).readAsBytes());
     final barlow = FontLoader('Barlow');
