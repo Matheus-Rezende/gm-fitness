@@ -8,6 +8,7 @@ import '../state/app_state.dart';
 import '../widgets/common.dart';
 import '../widgets/entry_editor.dart';
 import '../theme/gm_theme.dart';
+import '../widgets/exercise_video.dart';
 import '../widgets/exercise_visuals.dart';
 import 'custom_exercise_screen.dart';
 
@@ -85,7 +86,10 @@ class ExerciseDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           if (clip != null)
-            MotionView(clip: clip, style: figureStyleFor(state, ex))
+            ExerciseMedia(
+              videoAsset: exerciseVideoAsset(ex.id, male: state.isMale),
+              figure: MotionView(clip: clip, style: figureStyleFor(state, ex)),
+            )
           else
             Container(
               height: 160,
@@ -134,7 +138,7 @@ class ExerciseDetailScreen extends StatelessWidget {
           ],
           const SizedBox(height: 20),
           Text(
-            'A animação é uma ilustração da técnica. Use uma carga que permita fazer todas as repetições com '
+            'O vídeo e a animação ilustram a técnica. Use uma carga que permita fazer todas as repetições com '
             'boa execução e, se sentir dor, pare e procure um profissional.',
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),

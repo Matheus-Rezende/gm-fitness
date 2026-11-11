@@ -2,6 +2,12 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.9.0
+
+- **Vídeos reais dos exercícios**: os 33 exercícios dos planos para iniciantes agora têm um vídeo curto de uma pessoa fazendo uma repetição completa, com a amplitude correta. Homens veem o vídeo com o homem e mulheres, com a mulher.
+- O vídeo roda em repetição e sem som; toque nele para pausar ou continuar e arraste a barra para ver um momento específico.
+- O boneco 3D continua disponível no botão **Boneco 3D** e segue sendo usado nos exercícios que ainda não têm vídeo.
+
 ## 0.8.0
 
 - **Braços e pernas sem emendas**: ombro, cotovelo e mão (e quadril, joelho e tornozelo) agora formam uma peça só, que dobra suavemente na articulação.
