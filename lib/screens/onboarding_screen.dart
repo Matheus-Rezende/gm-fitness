@@ -335,13 +335,16 @@ class _Welcome extends StatelessWidget {
                   const PlateStripe(),
                 ],
               ),
-              const SizedBox(height: 28),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(onPressed: onNext, child: const Text('Começar')),
+              // botões juntos no rodapé (o espaço livre fica acima deles)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 28),
+                  FilledButton(onPressed: onNext, child: const Text('Começar')),
+                  const SizedBox(height: 12),
+                  const RestoreFromGoogleButton(),
+                ],
               ),
-              const SizedBox(height: 12),
-              const RestoreFromGoogleButton(),
             ],
           ),
         ),

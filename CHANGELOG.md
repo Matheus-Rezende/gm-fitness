@@ -2,6 +2,11 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.14.2
+
+- **Boas-vindas**: sem os selos "Ele" e "Ela" no vídeo; os botões "Começar" e "Entrar com Google" ficam juntos no rodapé.
+- **Botão do Google** com o logotipo do Google.
+
 ## 0.14.1
 
 - **Tela "Para quem é o treino?"**: fotos reais dele e dela de corpo inteiro, com o mesmo enquadramento, e texto atualizado.

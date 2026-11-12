@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -196,7 +198,7 @@ class CloudSection extends StatelessWidget {
                     onPressed: sync.busy ? null : sync.signIn,
                     icon: sync.busy
                         ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Icon(Icons.login_rounded),
+                        : const GoogleLogo(size: 20, onColor: true),
                     label: const Text('Entrar com Google'),
                   ),
                 ),
@@ -285,7 +287,7 @@ class RestoreFromGoogleButton extends StatelessWidget {
               style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
               icon: sync.busy
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.account_circle_outlined),
+                  : const GoogleLogo(size: 20),
               label: const Text('Entrar com Google'),
             ),
             const SizedBox(height: 8),
@@ -308,4 +310,57 @@ class RestoreFromGoogleButton extends StatelessWidget {
       },
     );
   }
+}
+
+
+/// "G" colorido do Google, desenhado (usado nos botões de login, como pede a
+/// identidade visual do Google).
+class GoogleLogo extends StatelessWidget {
+  const GoogleLogo({super.key, this.size = 20, this.onColor = false});
+
+  final double size;
+
+  /// Sobre botão preenchido: desenha num círculo branco para o G aparecer.
+  final bool onColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final g = CustomPaint(size: Size.square(size), painter: _GPainter());
+    if (!onColor) return g;
+    return Container(
+      padding: EdgeInsets.all(size * 0.12),
+      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+      child: g,
+    );
+  }
+}
+
+class _GPainter extends CustomPainter {
+  static const _blue = Color(0xFF4285F4), _green = Color(0xFF34A853), _yellow = Color(0xFFFBBC05), _red = Color(0xFFEA4335);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final s = size.width;
+    final stroke = s * 0.2;
+    final r = (s - stroke) / 2;
+    final c = Offset(s / 2, s / 2);
+    final rect = Rect.fromCircle(center: c, radius: r);
+    Paint p(Color col) => Paint()
+      ..color = col
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.butt;
+    double deg(double d) => d * math.pi / 180;
+    // ângulos a partir do eixo x, sentido horário (como no canvas)
+    canvas.drawArc(rect, deg(-45), deg(-90), false, p(_red)); // topo
+    canvas.drawArc(rect, deg(-135), deg(-90), false, p(_yellow)); // esquerda
+    canvas.drawArc(rect, deg(135), deg(-90), false, p(_green)); // baixo
+    canvas.drawArc(rect, deg(45), deg(-45), false, p(_blue)); // direita, até o meio
+    // barra horizontal azul
+    final bar = Paint()..color = _blue;
+    canvas.drawRect(Rect.fromLTRB(s / 2, s / 2 - stroke / 2, s / 2 + r + stroke / 2, s / 2 + stroke / 2), bar);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

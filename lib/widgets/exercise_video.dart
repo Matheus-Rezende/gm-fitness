@@ -214,18 +214,11 @@ class WelcomeDuoVideo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget chip(String t) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(14)),
-          child: Text(t, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-        );
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Stack(
         children: [
           ExerciseVideo(asset: asset, fallback: fallback, controls: false),
-          Positioned(left: 12, bottom: 12, child: chip('Ele')),
-          Positioned(right: 12, bottom: 12, child: chip('Ela')),
         ],
       ),
     );
