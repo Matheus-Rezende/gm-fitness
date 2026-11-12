@@ -22,7 +22,7 @@ Arquivo de controle para retomar a geração dos vídeos quando os créditos do 
 1. Exercícios com máquina (aparelho, polia, Smith, esteira, remo).
 2. Por último, exercícios sem máquina (barra, halter, kettlebell, peso corporal).
 
-## Status (atualizado em 11/11/2026, saldo ~323 créditos)
+## Status (atualizado em 12/11/2026, saldo ~225 créditos)
 
 Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 
@@ -34,19 +34,19 @@ Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 - [x] mesa_flexora — novos exercicios
 - [x] coice_polia — novos exercicios
 - [x] pulldown_bracos_estendidos — novos exercicios
-- [ ] voador_invertido — 1ª tentativa ruim (braços quase não abrem); refazer com vista de trás e Veo
+- [~] voador_invertido — HOMEM ok (vídeo de 4 s, vista de trás, montar ida+volta). MULHER falhou 2x (morph estranho) — tentar Veo
 - [x] barra_fixa_assistida — novos exercicios
-- [~] cadeira_adutora — mulher ok (novos exercicios); HOMEM refazer (pernas não fecham)
+- [x] cadeira_adutora — mulher ok (novos exercicios); homem refeito em 12/11 (vídeo de 4 s, montar ida+volta)
 - [x] abducao_polia — homem em novos exercicios; MULHER caiu na coleção "videos corrigidos"
-- [ ] crossover
-- [ ] panturrilha_sentado
-- [ ] hiperextensao_lombar
-- [ ] voador
-- [ ] agachamento_smith
-- [ ] pull_through
-- [ ] rosca_polia
-- [ ] corrida_esteira
-- [ ] corrida_intervalada
+- [ ] crossover — falhou 2x (homem e mulher: mãos não se encontram). Tentar Veo com imagem final
+- [~] panturrilha_sentado — gerado 12/11 (movimento sutil, conferir no celular)
+- [x] hiperextensao_lombar — 12/11
+- [x] voador — 12/11 (vídeos de 4 s, montar ida+volta)
+- [x] agachamento_smith — 12/11
+- [x] pull_through — 12/11
+- [x] rosca_polia — 12/11
+- [~] corrida_esteira — 12/11 (parece trote leve; mulher perto do painel)
+- [x] corrida_intervalada — 12/11 (sprint)
 
 ### Sem máquina
 elevacao_pelvica, agachamento_barra, stiff_barra, agachamento_bulgaro, abdominal_bicicleta,
@@ -58,3 +58,6 @@ supino_reto_barra, supino_inclinado_barra, flexao_braco, flexao_joelhos, paralel
 desenvolvimento_barra, elevacao_frontal, encolhimento, rosca_scott, triceps_frances, triceps_testa,
 triceps_coice, triceps_banco, escalador, giro_russo, elevacao_pernas_barra, super_homem,
 polichinelo, pular_corda, burpee
+
+
+Obs. 12/11: os vídeos gerados em 12/11 ainda NÃO foram movidos para a coleção "GM Fitness - novos exercicios" (arrastar no Flow está falhando); estão soltos no topo da aba Vídeos do projeto.
