@@ -2,6 +2,12 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.13.2
+
+- **Login com Google liberado para todos**: qualquer conta Google pode entrar e salvar o progresso no Google Drive.
+- **Primeira tela**: o link de restaurar virou um botão "Entrar com Google", com o aviso de que, sem entrar, os dados ficam só no aparelho e podem ser perdidos se o app for apagado.
+- Política de privacidade publicada no repositório (PRIVACIDADE.md).
+
 ## 0.13.1
 
 - **Login com Google ativado**: em Configurações > Conta Google e backup, toque em "Entrar com Google" para salvar seu progresso no Google Drive. Por enquanto o app está em modo de teste no Google, então só as contas cadastradas como testadoras conseguem entrar.
