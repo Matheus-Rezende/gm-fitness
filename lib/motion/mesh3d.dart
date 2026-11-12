@@ -11,6 +11,7 @@ class Mesh {
   final List<double> _n = []; // normal
   final List<int> _c = []; // cor ARGB
   final List<double> _m = []; // destaque muscular (0 a 1)
+  final List<double> _d = []; // sulcos entre músculos e costuras (0 a 1)
   final List<double> _g = []; // brilho especular
   final List<int> _t = []; // índices dos triângulos
   final List<bool> _two = []; // triângulo visível dos dois lados
@@ -23,11 +24,12 @@ class Mesh {
   int get vertexCount => _c.length;
   int get triangleCount => _two.length;
 
-  int vertex(V3 p, V3 n, Color c, {double muscle = 0, double gloss = 0}) {
+  int vertex(V3 p, V3 n, Color c, {double muscle = 0, double gloss = 0, double groove = 0}) {
     _p..add(p.x)..add(p.y)..add(p.z);
     _n..add(n.x)..add(n.y)..add(n.z);
     _c.add(c.toARGB32());
     _m.add(muscle);
+    _d.add(groove);
     _g.add(gloss);
     _part.add(part);
     _ao.add(1);
@@ -96,6 +98,14 @@ class Mesh {
         r += ((primary ? hr : sr) * hl - r) * k;
         g += ((primary ? hg : sg) * hl - g) * k;
         b += ((primary ? hb : sb) * hl - b) * k;
+      }
+      final gd = _d[i];
+      if (gd > 0) {
+        // sulcos: separam os músculos em destaque e marcam costuras na roupa
+        final f = 1 - gd.clamp(0.0, 1.0) * (m >= 1 ? 0.42 : 0.16);
+        r *= f;
+        g *= f;
+        b *= f;
       }
       int ch(double v) => (v + 255 * spec).round().clamp(0, 255);
       cols[i] = (a << 24) | (ch(r) << 16) | (ch(g) << 8) | ch(b);
@@ -202,6 +212,7 @@ class Mesh {
     List<V3> centers, {
     required Color Function(int ring, int j) color,
     double Function(int ring, int j)? muscle,
+    double Function(int ring, int j)? groove,
     double gloss = 0,
     int Function(int ring)? partOf,
   }) {
@@ -225,7 +236,8 @@ class Mesh {
         } else if (nrm.dot(p - centers[i]) < 0) {
           nrm = -nrm;
         }
-        vertex(p, nrm.unit, color(i, j), muscle: muscle?.call(i, j) ?? 0, gloss: gloss);
+        vertex(p, nrm.unit, color(i, j),
+            muscle: muscle?.call(i, j) ?? 0, groove: groove?.call(i, j) ?? 0, gloss: gloss);
       }
     }
     part = keepPart;

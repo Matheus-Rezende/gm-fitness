@@ -52,15 +52,145 @@ class _UpdateWatcherState extends State<UpdateWatcher> with WidgetsBindingObserv
   Widget build(BuildContext context) => widget.child;
 }
 
+/// Chave do navegador do app, para abrir a janela da atualização a partir do
+/// aviso flutuante (que fica acima de todas as telas).
+final updateNavigatorKey = GlobalKey<NavigatorState>();
+
 /// Mostra a versão nova com as novidades. Retorna true se a pessoa escolheu "Depois".
 Future<bool> showUpdateSheet(BuildContext context) async {
-  final r = await showModalBottomSheet<bool>(
-    context: context,
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (_) => const _UpdateSheet(),
-  );
-  return r ?? true;
+  final up = Updater.instance;
+  up.setSheetOpen(true);
+  try {
+    final r = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => const _UpdateSheet(),
+    );
+    return r ?? true;
+  } finally {
+    up.setSheetOpen(false);
+  }
+}
+
+/// Aviso flutuante enquanto a atualização baixa: aparece em qualquer tela
+/// quando a pessoa fecha a janela e continua usando o app. Tocar nele abre a
+/// janela de novo.
+class UpdateProgressBanner extends StatelessWidget {
+  const UpdateProgressBanner({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final up = Updater.instance;
+    return Stack(
+      children: [
+        child,
+        ListenableBuilder(
+          listenable: up,
+          builder: (context, _) {
+            final u = up.available;
+            final failed = up.stage == UpdateStage.failed && up.downloadFailed;
+            final show = up.supported && u != null && !up.sheetOpen && (up.busy || failed);
+            final bottom = MediaQuery.of(context).padding.bottom + 92;
+            return AnimatedPositioned(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOut,
+              left: 16,
+              right: 16,
+              bottom: show ? bottom : -120,
+              child: IgnorePointer(
+                ignoring: !show,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: show ? 1 : 0,
+                  child: u == null ? const SizedBox.shrink() : _BannerCard(info: u, failed: failed),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _BannerCard extends StatelessWidget {
+  const _BannerCard({required this.info, required this.failed});
+
+  final UpdateInfo info;
+  final bool failed;
+
+  @override
+  Widget build(BuildContext context) {
+    final up = Updater.instance;
+    final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final installing = up.stage == UpdateStage.installing;
+    final pct = ((up.progress ?? 0) * 100).round();
+    final title = failed
+        ? 'A atualização não terminou'
+        : installing
+            ? 'Abrindo o instalador da versão ${info.version}…'
+            : 'Baixando a versão ${info.version}… $pct%';
+    final subtitle = failed ? 'Toque para tentar de novo' : 'Pode continuar usando o app. Toque para ver detalhes.';
+    return Material(
+      elevation: 6,
+      color: scheme.surfaceContainerHigh,
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          final ctx = updateNavigatorKey.currentContext;
+          if (ctx != null) showUpdateSheet(ctx);
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: failed ? GmColors.red : GmColors.yellow,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      failed ? Icons.error_outline_rounded : Icons.downloading_rounded,
+                      color: failed ? Colors.white : GmColors.ink,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title, style: text.titleSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                        Text(subtitle, style: text.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if (!failed) ...[
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(value: installing ? null : up.progress, minHeight: 6),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _UpdateSheet extends StatelessWidget {

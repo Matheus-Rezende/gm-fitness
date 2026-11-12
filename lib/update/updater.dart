@@ -85,6 +85,21 @@ class Updater extends ChangeNotifier {
   String? message;
   DateTime? lastCheck;
   bool autoCheck = true;
+
+  /// O último download (ou a instalação) não terminou.
+  bool downloadFailed = false;
+
+  /// A janela da atualização está aberta (então o aviso flutuante some).
+  bool sheetOpen = false;
+
+  void setSheetOpen(bool v) {
+    if (sheetOpen == v) return;
+    sheetOpen = v;
+    notifyListeners();
+  }
+
+  /// Há um download ou instalação em andamento.
+  bool get busy => stage == UpdateStage.downloading || stage == UpdateStage.installing;
   bool _loaded = false;
 
   Future<SharedPreferences> _prefs() async {
@@ -171,6 +186,7 @@ class Updater extends ChangeNotifier {
     stage = UpdateStage.downloading;
     progress = 0;
     message = null;
+    downloadFailed = false;
     notifyListeners();
     final client = HttpClient()..connectionTimeout = const Duration(seconds: 15);
     try {
@@ -205,6 +221,7 @@ class Updater extends ChangeNotifier {
       await install(file.path);
     } catch (e) {
       stage = UpdateStage.failed;
+      downloadFailed = true;
       message = 'O download não terminou. Confira a internet e tente de novo.';
       notifyListeners();
     } finally {
@@ -220,6 +237,7 @@ class Updater extends ChangeNotifier {
     final r = await _channel.invokeMethod<String>('install', {'path': path});
     if (r == 'needs_permission') {
       stage = UpdateStage.failed;
+      downloadFailed = true;
       message = 'Libere "Permitir desta fonte" para o GM Fitness na tela que abriu, volte e toque em '
           '"Atualizar agora" de novo.';
     } else {

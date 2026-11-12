@@ -180,6 +180,31 @@ Offset _unit(Offset v) {
 
 Offset _cw(Offset v) => Offset(-v.dy, v.dx);
 
+/// Sulco fino em torno de [x0] (1 no centro, some a [w] de distância).
+double _line(double x, double x0, double w) {
+  final d = (x - x0) / w;
+  return d.abs() >= 1 ? 0 : 1 - d * d * (3 - 2 * d.abs());
+}
+
+/// Direção [primary] perpendicular a [axis]; quando ela fica curta demais
+/// (membro esticado, pé apontado), troca suavemente por [fallback], sem
+/// saltos de um quadro para o outro.
+V3 _stableDir(V3 primary, V3 fallback, V3 axis, double lo, double hi) {
+  final p = perpTo(primary, axis);
+  var f = perpTo(fallback, axis);
+  if (f.length < 1e-4) f = perpendicular(axis.length < 1e-6 ? const V3(0, 1, 0) : axis.unit);
+  f = f.unit;
+  final len = p.length;
+  if (len < 1e-6) return f;
+  var pu = p / len;
+  final w = _smooth((len - lo) / (hi - lo));
+  if (w >= 1) return pu;
+  // mantém o lado do reserva quando a principal está quase sumindo
+  if (pu.dot(f) < 0 && w < 0.5) pu = -pu;
+  final mix = pu * w + f * (1 - w);
+  return mix.length < 1e-4 ? f : mix.unit;
+}
+
 double _sgnPow(double v, double e) => v < 0 ? -math.pow(-v, e).toDouble() : math.pow(v, e).toDouble();
 
 /// Saliência de um músculo em uma direção da seção do membro.
@@ -392,16 +417,16 @@ class FigurePainter extends CustomPainter {
   static const _pThigh = 6; // +1 canela; +2/+3 a outra perna
 
   void _body(Mesh m, {required bool highlight, required int detail}) {
-    final sides = detail == 0 ? 9 : 16;
+    final sides = detail == 0 ? 9 : 24;
     final hl = highlight;
     m.part = _pTorso;
-    _torso(m, hl, detail == 0 ? 12 : 28, detail);
+    _torso(m, hl, detail == 0 ? 12 : 36, detail);
     m.part = _pHead;
     _neckAndHead(m, detail);
     _arm(m, Jt.shN, Jt.elbN, Jt.handN, hl, sides, _pUpperArm, detail);
     _arm(m, Jt.shF, Jt.elbF, Jt.handF, hl, sides, _pUpperArm + 2, detail);
-    _leg(m, Jt.hipN, Jt.kneeN, Jt.ankN, Jt.toeN, hl, sides, _pThigh);
-    _leg(m, Jt.hipF, Jt.kneeF, Jt.ankF, Jt.toeF, hl, sides, _pThigh + 2);
+    _leg(m, Jt.hipN, Jt.kneeN, Jt.ankN, Jt.toeN, hl, sides, _pThigh, detail);
+    _leg(m, Jt.hipF, Jt.kneeF, Jt.ankF, Jt.toeF, hl, sides, _pThigh + 2, detail);
   }
 
   /// Raio ao longo de um segmento a partir de (início, meio, fim).
@@ -421,8 +446,10 @@ class FigurePainter extends CustomPainter {
     List<List<double>> radii, {
     required Color Function(int seg, double s, double ang) color,
     double Function(int seg, double s, double ang)? muscle,
+    double Function(int seg, double s, double ang)? groove,
     List<List<_Bulge>> bulges = const [],
     List<List<double>> breaks = const [],
+    List<List<double>> extraS = const [],
     List<double> flatten = const [],
     List<int> parts = const [],
     int sides = 14,
@@ -466,6 +493,7 @@ class FigurePainter extends CustomPainter {
     final centers = <V3>[];
     final cols = <List<Color>>[];
     final mus = <List<double>>[];
+    final grs = <List<double>>[];
     final ringParts = <int>[];
     final angs = [for (var j = 0; j < sides; j++) 2 * math.pi * j / sides];
 
@@ -483,6 +511,7 @@ class FigurePainter extends CustomPainter {
       centers.add(center);
       cols.add([for (final ang in angs) color(seg, s, ang)]);
       mus.add([for (final ang in angs) joint ? 0.0 : (muscle?.call(seg, s, ang) ?? 0)]);
+      grs.add([for (final ang in angs) joint ? 0.0 : (groove?.call(seg, s, ang) ?? 0)]);
       ringParts.add(partOf(seg));
     }
 
@@ -496,6 +525,7 @@ class FigurePainter extends CustomPainter {
     }
     for (var k = 0; k < segs; k++) {
       final ss = <double>{for (var i = 0; i <= steps; i++) i / steps};
+      if (k < extraS.length) ss.addAll(extraS[k]);
       if (k < breaks.length) {
         for (final br in breaks[k]) {
           ss
@@ -527,7 +557,11 @@ class FigurePainter extends CustomPainter {
       }
     }
     m.rings(rings, centers,
-        color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], gloss: gloss, partOf: (i) => ringParts[i]);
+        color: (i, j) => cols[i][j],
+        muscle: (i, j) => mus[i][j],
+        groove: groove == null ? null : (i, j) => grs[i][j],
+        gloss: gloss,
+        partOf: (i) => ringParts[i]);
   }
 
   /// Segmento único (pescoço, rabo de cavalo).
@@ -550,9 +584,9 @@ class FigurePainter extends CustomPainter {
   void _arm(Mesh m, int sh, int elb, int hand, bool hl, int sides, int part, int detail) {
     final s3 = _j(sh), e3 = _j(elb), h3 = _j(hand);
     final upper = e3 - s3, fore = h3 - e3;
-    var anterior = perpTo(fore, upper);
-    if (anterior.length < 2) anterior = _torsoFront;
-    anterior = anterior.unit;
+    // frente do braço: para onde o cotovelo dobra; com o braço esticado, a
+    // frente do tronco (troca suave, sem o braço girar de repente)
+    final anterior = _stableDir(fore, _torsoFront, upper, 1.0, 4.0);
     final skin = _b.skin;
     final male = _b.male;
     final biceps = hl ? _mw('biceps') : 0.0;
@@ -561,22 +595,66 @@ class FigurePainter extends CustomPainter {
     final ante = hl ? _mw('antebraco') : 0.0;
     final ur = _b.upperArm;
     final sleeve = _shade(_b.top, 0.18);
+    // músculo trabalhado fica um pouco mais cheio (efeito "pump")
+    double pump(double w) => w >= 2 ? 1.0 : (w >= 1 ? 0.5 : 0.0);
+    final pb = pump(biceps), pt = pump(triceps), po = pump(ombros), pa = pump(ante);
+    final fine = detail > 0;
     _chain(
       m,
       [s3, e3, h3],
       anterior,
       [
-        [ur[0] * 1.18, ur[1], ur[2]],
+        [ur[0] * (1.18 + 0.06 * po), ur[1], ur[2]],
         _b.foreArm,
       ],
       sides: sides,
+      steps: fine ? 12 : 8,
       parts: [part, part + 1],
       flatten: const [1.0, 0.86],
       breaks: male ? const [[0.39, 0.43]] : const [],
-      bulges: const [
-        [_Bulge(0.25, 0.85, 0, 0.16), _Bulge(0.15, 0.8, math.pi, 0.12), _Bulge(0.0, 0.3, math.pi / 2, 0.06)],
-        [_Bulge(0.0, 0.55, 0, 0.12), _Bulge(0.0, 0.45, math.pi, 0.05)],
+      extraS: fine
+          ? const [
+              [0.30, 0.34, 0.62],
+              [0.3, 0.55],
+            ]
+          : const [],
+      bulges: [
+        [
+          _Bulge(0.25, 0.85, 0, 0.16 + 0.10 * pb),
+          _Bulge(0.15, 0.8, math.pi, 0.12 + 0.09 * pt),
+          _Bulge(0.0, 0.34, math.pi / 2, 0.06 + 0.07 * po),
+          _Bulge(0.0, 0.3, -math.pi / 2, 0.03 + 0.05 * po),
+        ],
+        [_Bulge(0.0, 0.55, 0, 0.12 + 0.07 * pa), _Bulge(0.0, 0.45, math.pi, 0.05 + 0.04 * pa)],
       ],
+      groove: !fine
+          ? null
+          : (seg, s, ang) {
+              final c = math.cos(ang), sn = math.sin(ang);
+              var g = 0.0;
+              if (seg == 0) {
+                if (ombros > 0) {
+                  // cabeças do deltoide e a borda de baixo dele
+                  g = math.max(g, _line(s, 0.32, 0.05) * _smooth((c + 0.9) / 0.4));
+                  if (s < 0.32) g = math.max(g, _line(sn.abs(), 0.86, 0.12) * _smooth(c / 0.3) * 0.8);
+                }
+                if (biceps > 0 || triceps > 0) {
+                  // separação entre bíceps e tríceps, dos dois lados
+                  if (s > 0.3 && s < 0.92) g = math.max(g, _line(c, 0, 0.2) * _soft(s, 0.32, 0.9, 0.08));
+                }
+                if (biceps > 0 && s > 0.55 && s < 0.95) {
+                  g = math.max(g, _line(c, 0.95, 0.08) * 0.5 * _soft(s, 0.58, 0.92, 0.08));
+                }
+                if (triceps > 0) {
+                  // "ferradura" do tríceps: cabeça lateral e tendão
+                  g = math.max(g, _line(s, 0.62, 0.05) * _smooth((-c - 0.55) / 0.25));
+                  if (s > 0.3 && s < 0.62) g = math.max(g, _line(c, -0.82, 0.12) * _soft(s, 0.3, 0.62, 0.06) * 0.8);
+                }
+              } else if (ante > 0) {
+                g = math.max(g, _line(c, 0, 0.22) * _soft(s, 0.05, 0.55, 0.08) * 0.8);
+              }
+              return g;
+            },
       color: (seg, s, _) {
         if (seg == 0 && male) {
           if (s < 0.39) return _b.top;
@@ -617,12 +695,13 @@ class FigurePainter extends CustomPainter {
     }
   }
 
-  void _leg(Mesh m, int hip, int knee, int ank, int toe, bool hl, int sides, int part) {
+  void _leg(Mesh m, int hip, int knee, int ank, int toe, bool hl, int sides, int part, int detail) {
     final h3 = _j(hip), k3 = _j(knee), a3 = _j(ank), t3 = _j(toe);
     final thigh = k3 - h3, shin = a3 - k3;
-    var anterior = perpTo(-shin, thigh);
-    if (anterior.length < 2) anterior = _torsoFront;
-    anterior = anterior.unit;
+    // frente da coxa: para onde o joelho aponta; com a perna esticada, a
+    // frente do tronco (troca suave, sem a perna girar de repente)
+    final anterior = _stableDir(-shin, _torsoFront, thigh, 1.0, 4.0);
+    final fine = detail > 0;
     final outward = perpTo(h3 - _j(Jt.hip), thigh);
     final male = _b.male;
     final quad = hl ? _mw('quadriceps') : 0.0;
@@ -636,6 +715,10 @@ class FigurePainter extends CustomPainter {
     final outAng = outward.length < 1e-3 ? math.pi / 2 : math.atan2(outward.dot(w), outward.dot(anterior));
     final tr = _b.thigh;
     final hem = _shade(_b.bottom, 0.3);
+    // faixa lateral do short/legging
+    final stripe = male ? const Color(0xFFE9ECF1) : _shade(_b.top, -0.15);
+    double pump(double w) => w >= 2 ? 1.0 : (w >= 1 ? 0.5 : 0.0);
+    final pq = pump(quad), pp = pump(post), pc = pump(pant);
     _chain(
       m,
       [h3, k3, a3],
@@ -645,7 +728,35 @@ class FigurePainter extends CustomPainter {
         _b.calf,
       ],
       sides: sides,
+      steps: fine ? 12 : 8,
       parts: [part, part + 1],
+      extraS: fine
+          ? const [
+              [0.08, 0.8],
+              [0.45, 0.5],
+            ]
+          : const [],
+      groove: !fine
+          ? null
+          : (seg, s, ang) {
+              final c = math.cos(ang);
+              final o = math.cos(ang - outAng);
+              var g = 0.0;
+              if (seg == 0) {
+                if (quad > 0) {
+                  // reto femoral entre os vastos e a "gota" do vasto medial
+                  if (s > 0.12 && s < 0.85) g = math.max(g, _line(math.sin(ang).abs(), 0.42, 0.14) * _smooth(c / 0.3));
+                  g = math.max(g, _line(s, 0.8, 0.05) * _smooth((-o - 0.1) / 0.3) * _smooth(c / 0.2) * 0.9);
+                }
+                if (post > 0 && s > 0.15 && s < 0.85) g = math.max(g, _line(c, -1, 0.12) * _soft(s, 0.15, 0.85, 0.08));
+                if (glut > 0) g = math.max(g, _line(s, 0.08, 0.05) * _smooth((-c - 0.2) / 0.4) * 0.8);
+              } else if (pant > 0) {
+                // duas cabeças do gastrocnêmio e onde viram tendão
+                if (s < 0.47) g = math.max(g, _line(c, -1, 0.1) * _soft(s, 0.06, 0.47, 0.06));
+                g = math.max(g, _line(s, 0.48, 0.05) * _smooth((-c - 0.2) / 0.4) * 0.9);
+              }
+              return g;
+            },
       breaks: male
           ? const [
               [0.70, 0.74],
@@ -655,17 +766,19 @@ class FigurePainter extends CustomPainter {
               [],
               [0.93],
             ],
-      bulges: const [
-        [_Bulge(0.15, 0.8, 0, 0.09), _Bulge(0.1, 0.75, math.pi, 0.07)],
-        [_Bulge(0.08, 0.6, math.pi, 0.30), _Bulge(0.0, 0.25, 0, 0.05)],
+      bulges: [
+        [_Bulge(0.15, 0.8, 0, 0.09 + 0.07 * pq), _Bulge(0.1, 0.75, math.pi, 0.07 + 0.06 * pp)],
+        [_Bulge(0.08, 0.6, math.pi, 0.30 + 0.12 * pc), _Bulge(0.0, 0.25, 0, 0.05)],
       ],
-      color: (seg, s, _) {
+      color: (seg, s, ang) {
+        final side = fine && math.cos(ang - outAng) > 0.965;
         if (seg == 0) {
-          if (!male) return _b.bottom;
-          if (s < 0.70) return _b.bottom;
+          if (!male) return side ? stripe : _b.bottom;
+          if (s < 0.70) return side ? stripe : _b.bottom;
           if (s < 0.74) return hem;
           return _b.skin;
         }
+        if (!male && side && s < 0.93) return stripe;
         if (male) return s > 0.86 ? _sock : _b.skin;
         return s > 0.93 ? _b.skin : _b.bottom;
       },
@@ -683,16 +796,42 @@ class FigurePainter extends CustomPainter {
         return x;
       },
     );
+    if (fine) {
+      // patela: na frente do joelho, na bissetriz entre coxa e canela
+      final shinFront = _stableDir(thigh, anterior, shin, 1.0, 4.0);
+      var kf = anterior + shinFront;
+      kf = kf.length < 1e-3 ? anterior : kf.unit;
+      final ax = (thigh.unit + shin.unit).length < 1e-3 ? thigh.unit : (thigh.unit + shin.unit).unit;
+      final kr = (_radiusAt(tr, 1) + _radiusAt(_b.calf, 0)) / 2;
+      final kneeCol = male ? _b.skin : _b.bottom;
+      m.part = part + 1;
+      m.ellipsoid(k3 + kf * (kr * 0.78), ax, kf, ax.cross(kf).unit, 1.9, 1.1, 1.7,
+          color: (_) => kneeCol, lat: 5, lon: 8, gloss: 0.05);
+    }
     m.part = part + 1;
-    _shoe(m, k3, a3, t3, sides);
+    _shoe(m, h3, k3, a3, t3, sides, anterior, fine);
   }
 
-  void _shoe(Mesh m, V3 knee, V3 ank, V3 toe, int sides) {
+  void _shoe(Mesh m, V3 hip, V3 knee, V3 ank, V3 toe, int sides, V3 legFront, bool fine) {
     var fd = toe - ank;
     if (fd.length < 1e-3) fd = const V3(1, 0, 0);
     final footLen = fd.length;
     fd = fd.unit;
-    var up = perpTo(knee - ank, fd);
+    // peito do pé: normalmente do lado do joelho. Com o pé apontado na mesma
+    // linha da canela (quatro apoios, deitado de bruços), essa direção some e
+    // o pé girava; aí vale a frente da canela.
+    final shin = knee - ank;
+    final shinFront = _stableDir(knee - hip, legFront, shin, 1.0, 4.0);
+    final c = shin.length < 1e-3 ? 0.0 : shin.unit.dot(fd).abs();
+    final w = _smooth((c - 0.8) / 0.15);
+    var up = perpTo(shin, fd);
+    up = up.length < 1e-3 ? perpTo(shinFront, fd) : up.unit;
+    final alt = perpTo(shinFront, fd);
+    if (alt.length > 1e-3) {
+      final au = alt.unit;
+      final mixed = up * (1 - w) + (up.dot(au) >= 0 || w > 0.5 ? au : -au) * w;
+      if (mixed.length > 1e-3) up = mixed.unit;
+    }
     up = up.length < 1e-3 ? const V3(0, 1, 0) : up.unit;
     final side = fd.cross(up).unit;
     final heel = ank - fd * 2.6 - up * 1.0;
@@ -739,6 +878,16 @@ class FigurePainter extends CustomPainter {
       ring(1, cs, tip + fd * (2.0 * math.sqrt(1 - cs * cs)));
     }
     m.rings(rings, centers, color: (i, j) => cols[i][j], gloss: 0.12);
+    if (!fine) return;
+    // cadarço: três laços atravessando o peito do pé
+    for (final s in const [0.22, 0.34, 0.46]) {
+      final (wdt, top, _) = sect(s);
+      final p = heel + axis * s + up * (top + 0.12);
+      m.tube([p - side * (wdt * 0.42), p + up * 0.18, p + side * (wdt * 0.42)], 0.22, const Color(0xFFDADFE6), sides: 4);
+    }
+    // reforço do calcanhar na cor de destaque
+    m.ellipsoid(heel - fd * 1.2 + up * 0.9, up, -fd, side, 1.3, 0.55, 1.5,
+        color: (_) => _shoeAccent, lat: 4, lon: 8, gloss: 0.1);
   }
 
   // ------------------------------------------------------------ tronco
@@ -809,12 +958,73 @@ class FigurePainter extends CustomPainter {
       return x;
     }
 
+    // músculo trabalhado fica um pouco mais cheio (efeito "pump")
+    double pumpAt(double t, double c, double s) {
+      final ac = c.abs();
+      final front = _smooth((s - 0.1) / 0.35), back = _smooth((-s - 0.1) / 0.35);
+      double k(double w) => w >= 2 ? 1.0 : (w >= 1 ? 0.5 : 0.0);
+      var x = 0.0;
+      x = math.max(x, k(peito) * front * blob(ac - 0.42, t - 0.76, 0.34, 0.13));
+      x = math.max(x, k(abd) * 0.6 * front * blob(c, t - 0.33, 0.45, 0.2));
+      x = math.max(x, k(costas) * back * blob(ac - 0.55, t - 0.66, 0.3, 0.18));
+      x = math.max(x, k(glut) * back * blob(ac - 0.42, t - 0.02, 0.4, 0.15));
+      x = math.max(x, k(trap) * _smooth((0.45 - s) / 0.35) * blob(c, t - 0.95, 0.5, 0.1));
+      return x;
+    }
+
+    // sulcos entre os músculos em destaque (gomos do abdome, linha do peitoral,
+    // coluna) e costuras da roupa
+    final fine = detail > 0;
+    const absRows = [0.24, 0.335, 0.43];
+    const pecLine = 0.655;
+    double grooveAt(double t, double c, double s) {
+      final ac = c.abs();
+      final front = _smooth((s - 0.2) / 0.3), back = _smooth((-s - 0.2) / 0.3);
+      var g = 0.0;
+      if (abd > 0) {
+        final inAbs = front * _soft(ac, -1, 0.34, 0.08) * _soft(t, 0.17, 0.52, 0.04);
+        g = math.max(g, _line(c, 0, 0.09) * inAbs);
+        for (final r in absRows) {
+          g = math.max(g, _line(t, r, 0.022) * inAbs * 0.9);
+        }
+        g = math.max(g, _line(ac, 0.36, 0.08) * front * _soft(t, 0.15, 0.55, 0.05) * 0.7);
+      }
+      if (peito > 0) {
+        final edge = pecLine + 0.05 * ac;
+        g = math.max(g, _line(t, edge, 0.025) * front * _soft(ac, -1, 0.82, 0.1));
+        g = math.max(g, _line(c, 0, 0.08) * front * _soft(t, pecLine, 0.93, 0.03));
+      }
+      if (costas > 0 || lombar > 0 || trap > 0) {
+        final lo = lombar > 0 ? 0.12 : 0.42, hi = trap > 0 || costas > 0 ? 0.97 : 0.5;
+        g = math.max(g, _line(c, 0, 0.08) * back * _soft(t, lo, hi, 0.04));
+      }
+      if (costas > 0) {
+        // borda de baixo das escápulas
+        g = math.max(g, _line(t, 0.8 - 0.12 * ac, 0.025) * back * _soft(ac, 0.15, 0.62, 0.08) * 0.8);
+      }
+      if (glut > 0) {
+        g = math.max(g, _line(c, 0, 0.09) * back * _soft(t, -1, 0.13, 0.04));
+        g = math.max(g, _line(t, -0.1, 0.03) * back * _soft(ac, 0.12, 0.8, 0.08) * 0.8);
+      }
+      if (fine && g < 0.5) {
+        // costura lateral da camiseta e do short
+        g = math.max(g, _line(s, 0, 0.1) * 0.5 * (male || t > 0.5 || t < 0.37 ? 1 : 0));
+      }
+      return g;
+    }
+
     final t0 = _b.torso.first[0];
-    final ts = <double>{for (var i = 0; i <= 22; i++) t0 + (1 - t0) * i / 22};
+    final steps = fine ? 40 : 22;
+    final ts = <double>{for (var i = 0; i <= steps; i++) t0 + (1 - t0) * i / steps};
     for (final br in breaks) {
       ts
         ..add(br - 0.003)
         ..add(br + 0.003);
+    }
+    if (fine) {
+      if (abd > 0) ts.addAll(absRows);
+      if (peito > 0) ts.addAll(const [pecLine, pecLine + 0.02, pecLine + 0.04]);
+      if (glut > 0) ts.add(-0.1);
     }
     final tList = ts.toList()..sort();
 
@@ -822,6 +1032,7 @@ class FigurePainter extends CustomPainter {
     final centers = <V3>[];
     final cols = <List<Color>>[];
     final mus = <List<double>>[];
+    final grs = <List<double>>[];
     final angs = [for (var j = 0; j < n; j++) 2 * math.pi * j / n];
 
     void ring(double t, double scale, double tColor, {double lift = 0}) {
@@ -829,13 +1040,25 @@ class FigurePainter extends CustomPainter {
       final center = hip + up * (t * len + lift);
       rings.add([
         for (final ang in angs)
-          center +
-              lat * (_sgnPow(math.cos(ang), 0.85) * a * scale) +
-              front * (_sgnPow(math.sin(ang), 0.85) * (math.sin(ang) >= 0 ? bf : bb) * scale),
+          () {
+            final c = math.cos(ang), sn = math.sin(ang);
+            final k = scale * (1 + 0.06 * pumpAt(tColor, c, sn));
+            return center + lat * (_sgnPow(c, 0.85) * a * k) + front * (_sgnPow(sn, 0.85) * (sn >= 0 ? bf : bb) * k);
+          }(),
       ]);
       centers.add(center);
       cols.add([for (final _ in angs) colorAt(tColor)]);
       mus.add([for (final ang in angs) muscleAt(tColor, math.cos(ang), math.sin(ang))]);
+      grs.add([for (final ang in angs) scale < 1 ? 0.0 : grooveAt(tColor, math.cos(ang), math.sin(ang))]);
+    }
+
+    /// Ponto na superfície do tronco (altura t, ângulo pelo cosseno c).
+    V3 surfaceAt(double t, double c, double sn, [double push = 0]) {
+      final (a, bf, bb) = _section(t);
+      final center = hip + up * (t * len);
+      final p = center + lat * (_sgnPow(c, 0.85) * a) + front * (_sgnPow(sn, 0.85) * (sn >= 0 ? bf : bb));
+      final out = p - center;
+      return out.length < 1e-6 ? p : p + out.unit * push;
     }
 
     // fecha embaixo (entre as pernas) e em cima (ombros)
@@ -848,8 +1071,30 @@ class FigurePainter extends CustomPainter {
     ring(1.0, 0.8, 1.0, lift: 1.2);
     ring(1.0, 0.45, 1.0, lift: 1.9);
     ring(1.0, 0.0, 1.0, lift: 2.1);
-    m.rings(rings, centers, color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], gloss: 0.06);
+    m.rings(rings, centers,
+        color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], groove: (i, j) => grs[i][j], gloss: 0.06);
     if (detail > 0) {
+      // marca no peito (lado esquerdo)
+      final lc = 0.42, ls = math.sqrt(1 - lc * lc);
+      final logo = surfaceAt(male ? 0.8 : 0.83, lc, ls, 0.12);
+      final ln = (logo - (hip + up * ((male ? 0.8 : 0.83) * len))).unit;
+      m.ellipsoid(logo, up, ln, up.cross(ln).unit, 0.75, 0.18, 1.05,
+          color: (_) => const Color(0xFFF2F4F7), lat: 4, lon: 8);
+      m.ellipsoid(logo + ln * 0.08, up, ln, up.cross(ln).unit, 0.32, 0.18, 0.55,
+          color: (_) => _shoeAccent, lat: 3, lon: 6);
+      if (male) {
+        // cordão do short
+        for (final sg in const [1.0, -1.0]) {
+          final a = surfaceAt(0.31, 0.12 * sg, 0.99, 0.15);
+          m.tube([a, a - up * 1.6 + lat * (0.25 * sg) + front * 0.3, a - up * 3.0 + lat * (0.35 * sg) + front * 0.35], 0.22,
+              const Color(0xFFE9ECF1),
+              sides: 4);
+        }
+      } else {
+        // umbigo
+        final nb = surfaceAt(0.435, 0, 1, -0.1);
+        m.ellipsoid(nb, up, front, lat, 0.45, 0.2, 0.3, color: (_) => _shade(_b.skin, 0.35), lat: 3, lon: 6);
+      }
       // gola (camiseta) ou alças do top
       final base = neck + up * 0.6;
       final nr = male ? 3.9 : 3.4;

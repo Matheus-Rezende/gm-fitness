@@ -5,6 +5,7 @@ import 'screens/onboarding_screen.dart';
 import 'state/app_state.dart';
 import 'state/settings.dart';
 import 'theme/gm_theme.dart';
+import 'update/update_ui.dart';
 import 'widgets/brand.dart';
 
 void main() {
@@ -31,12 +32,15 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
       theme: buildGmTheme(Brightness.light, accent: accent),
       darkTheme: buildGmTheme(Brightness.dark, accent: accent),
       themeMode: settings?.themeMode ?? ThemeMode.system,
-      builder: scale == 1.0
-          ? null
-          : (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
-                child: child!,
-              ),
+      navigatorKey: updateNavigatorKey,
+      builder: (context, child) {
+        final app = UpdateProgressBanner(child: child!);
+        if (scale == 1.0) return app;
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+          child: app,
+        );
+      },
       home: home,
     );
   }
