@@ -258,8 +258,9 @@ def build3d(pattern, warn):
             q.update(params)
             props_out.append(q)
     rows = []
-    for J in frames:
-        F = m3.convert(J, plane, cx, cy)
+    conv = [m3.convert(J, plane, cx, cy) for J in frames]
+    m3.fix_feet(conv, plane, pattern.id)
+    for J, F in zip(frames, conv):
         row = []
         for name in JOINTS:
             row += [round(v, 1) for v in F.pts[name]]

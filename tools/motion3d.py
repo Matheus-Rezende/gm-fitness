@@ -345,3 +345,153 @@ def tracked_specs(prop, plane, symmetric):
 
 def head_frame(F):
     return F.head_up, F.head_face
+
+
+# ------------------------------------------------------------ pés
+
+# Ângulo fixo do tornozelo (entre canela e pé, em graus) para padrões em que
+# o desenho 2D faz o pé girar em volta da canela.
+FOOT_ANGLE = {
+    'bicycle_crunch': (110.0, 110.0),
+    'bird_dog': (None, 168.0),
+    'donkey_kick': (165.0, None),
+    'side_lying_abduction': (100.0, 100.0),
+}
+TOE_OUT = math.radians(7.0)  # ponta do pé um pouco para fora, em pé
+# padrões com a ponta do pé mais aberta (graus)
+TOE_OUT_BY = {'sumo_squat': 35.0, 'squat_goblet': 12.0, 'jumping_jack': 12.0}
+
+
+def _v(a, b):
+    return (b[0] - a[0], b[1] - a[1], b[2] - a[2])
+
+
+def _dot(a, b):
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+
+
+def _len(a):
+    return math.sqrt(_dot(a, a))
+
+
+def _unit(a):
+    n = _len(a)
+    return (a[0] / n, a[1] / n, a[2] / n) if n > 1e-9 else (0.0, 0.0, 0.0)
+
+
+def _scale(a, s):
+    return (a[0] * s, a[1] * s, a[2] * s)
+
+
+def _plus(a, b):
+    return (a[0] + b[0], a[1] + b[1], a[2] + b[2])
+
+
+def _perp(v, axis):
+    a = _unit(axis)
+    return _plus(v, _scale(a, -_dot(v, a)))
+
+
+def _smooth(x):
+    t = min(1.0, max(0.0, x))
+    return t * t * (3 - 2 * t)
+
+
+def _angle(a, b):
+    return math.degrees(math.acos(max(-1.0, min(1.0, _dot(_unit(a), _unit(b))))))
+
+
+def _stable(primary, fallback, axis, lo=1.0, hi=4.0):
+    """Direção [primary] perpendicular a [axis], virada para o mesmo lado de
+    [fallback]; quando ela some, troca suavemente por [fallback]."""
+    p = _perp(primary, axis)
+    fb = _perp(fallback, axis)
+    fb_ok = _len(fb) > 0.3
+    if _len(fb) < 1e-4:
+        a = _unit(axis)
+        h = (0.0, 1.0, 0.0) if abs(a[1]) < 0.9 else (1.0, 0.0, 0.0)
+        fb = (a[1] * h[2] - a[2] * h[1], a[2] * h[0] - a[0] * h[2], a[0] * h[1] - a[1] * h[0])
+    fb = _unit(fb)
+    n = _len(p)
+    if n < 1e-6:
+        return fb
+    pu = _scale(p, 1 / n)
+    if fb_ok and _dot(pu, fb) < 0:
+        pu = _scale(pu, -1)
+    w = _smooth((n - lo) / (hi - lo))
+    m = _plus(_scale(pu, w), _scale(fb, 1 - w))
+    return fb if _len(m) < 1e-4 else _unit(m)
+
+
+def fix_feet(frames3d, plane, pattern_id):
+    """Recalcula a direção dos pés a partir da canela, para que eles sigam a
+    perna sem girar em volta dela.
+
+    O pé fica no plano da canela (sem torção) e, quando a pessoa está em pé,
+    plano no chão apontando para onde o joelho aponta, um pouco aberto. O
+    ângulo do tornozelo vem do desenho (limitado a valores possíveis) ou de
+    FOOT_ANGLE. Pés que ficam parados no mundo (apoiados em plataforma de
+    aparelho) são mantidos como desenhados.
+    """
+    floor_y = -GROUND
+    foot = L['foot']
+    fixed = FOOT_ANGLE.get(pattern_id, (None, None))
+    for k, side in enumerate(('N', 'F')):
+        dirs = [_unit(_v(F.pts['ank' + side], F.pts['toe' + side])) for F in frames3d]
+        still = all(_angle(dirs[0], dv) < 3.0 for dv in dirs)
+        # inclinação de referência do pé apoiado (o desenho de frente deixa o
+        # pé apontando para baixo; isso não é calcanhar levantado)
+        pitches = [math.degrees(math.asin(max(-1.0, min(1.0, dv[1])))) for dv in dirs]
+        ref_pitch = max(pitches) if plane == 'front' else 0.0
+        if still and plane != 'front' and fixed[k] is None:
+            continue
+        for F, dv, pitch in zip(frames3d, dirs, pitches):
+            hip, knee, ank, toe = (F.pts[j + side] for j in ('hip', 'knee', 'ank', 'toe'))
+            s = _unit(_v(ank, knee))  # canela, para cima
+            thigh = _v(hip, knee)
+            # frente da canela: perpendicular à canela e ao eixo do joelho, que
+            # acompanha o eixo do quadril (de F para N). Nunca vira de lado.
+            lat = _v(F.pts['hipF'], F.pts['hipN'])
+            # sentido: o mesmo de (frente do tronco) x (para cima no tronco), para
+            # a frente da canela apontar para a frente nos dois planos de desenho
+            tu = _unit(_v(F.pts['hip'], F.pts['neck']))
+            tfv = F.torso_f
+            ref = (tfv[1] * tu[2] - tfv[2] * tu[1], tfv[2] * tu[0] - tfv[0] * tu[2], tfv[0] * tu[1] - tfv[1] * tu[0])
+            if _dot(lat, ref) < 0:
+                lat = _scale(lat, -1)
+            lp = _perp(lat, s)
+            if _len(lp) < 1e-3:
+                lp = _perp((0.0, 0.0, 1.0), s)
+            lp = _unit(lp)
+            f = _unit((s[1] * lp[2] - s[2] * lp[1], s[2] * lp[0] - s[0] * lp[2], s[0] * lp[1] - s[1] * lp[0]))
+            # modo "no chão": canela em pé e tornozelo perto do chão
+            on_floor = _smooth((s[1] - 0.35) / 0.3) * _smooth((floor_y + 12 - ank[1]) / 4)
+            # ...e o desenho com o pé perto da horizontal (calcanhar no chão ou um
+            # pouco levantado); pé pendurado (cadeira extensora) não conta
+            on_floor *= _smooth((40.0 - abs(pitch - ref_pitch)) / 12.0)
+            # pé no plano da canela, com o ângulo do tornozelo
+            theta = fixed[k]
+            if theta is None:
+                theta = _angle(_v(ank, knee), _v(ank, toe))
+                theta = 100.0 if plane == 'front' else min(170.0, max(70.0, theta))
+            th = math.radians(theta)
+            air = _plus(_scale(s, math.cos(th)), _scale(f, math.sin(th)))
+            # pé no chão: horizontal, para onde o joelho aponta, aberto um pouco
+            hz = (f[0], 0.0, f[2])
+            if _len(hz) < 1e-3:
+                hz = (F.torso_f[0], 0.0, F.torso_f[2])
+            hz = _unit(hz)
+            hip_c = F.pts['hip']
+            if plane == 'side':
+                outward = (0.0, 0.0, 1.0 if side == 'N' else -1.0)
+            else:
+                outward = _unit((ank[0] - hip_c[0], 0.0, ank[2] - hip_c[2]))
+            op = _perp(outward, hz)
+            if _len(op) > 1e-3:
+                tout = math.radians(TOE_OUT_BY[pattern_id]) if pattern_id in TOE_OUT_BY else TOE_OUT
+                hz = _unit(_plus(hz, _scale(_unit(op), math.tan(tout))))
+            rel = math.radians(max(-60.0, min(30.0, pitch - ref_pitch)))
+            ground = _plus(_scale(hz, math.cos(rel)), (0.0, math.sin(rel), 0.0))
+            w = 0.0 if fixed[k] is not None else on_floor
+            d3 = _unit(_plus(_scale(air, 1 - w), _scale(ground, w)))
+            F.pts['toe' + side] = _plus(ank, _scale(d3, foot))
