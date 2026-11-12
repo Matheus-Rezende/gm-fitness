@@ -1,0 +1,32 @@
+name: Prévias em branch
+
+# Gera as prévias das animações e guarda na branch "previas" (para conferir
+# o desenho sem baixar artefatos). Só roda à mão.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  previews:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.9
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: RENDER_PREVIEWS=1 flutter test test/render_preview_test.dart test/render_hires_test.dart test/render_screens_test.dart || true
+      - name: Publica na branch previas
+        run: |
+          mkdir -p /tmp/out && cp -r build/previews build/screens /tmp/out/ 2>/dev/null || true
+          cd /tmp/out
+          git init -q -b previas
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -qm "prévias ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" previas
