@@ -48,6 +48,9 @@ class AppSettings extends ChangeNotifier {
     textScale = 1.0;
     restSound = true;
     restVibration = true;
+    notifEnabled = true;
+    notifMinutes = 8 * 60;
+    notifEvening = notifMotivation = notifInactive = notifWeigh = true;
     _restore();
     notifyListeners();
   }
@@ -60,6 +63,17 @@ class AppSettings extends ChangeNotifier {
   bool restSound = true;
   bool restVibration = true;
 
+  // notificações
+  bool notifEnabled = true;
+  int notifMinutes = 8 * 60; // lembrete do dia de treino (minutos desde 0h)
+  bool notifEvening = true; // à noite, se ainda não treinou
+  bool notifMotivation = true;
+  bool notifInactive = true; // quando fica dias sem abrir o app
+  bool notifWeigh = true; // pesagem semanal
+
+  /// Chamado quando muda algo das notificações (para reagendar).
+  VoidCallback? onNotificationsChanged;
+
   void _restore() {
     final s = _prefs.getString(_key);
     if (s == null) return;
@@ -71,6 +85,12 @@ class AppSettings extends ChangeNotifier {
       textScale = textScales.any((t) => t.$1 == scale) ? scale : 1.0;
       restSound = m['restSound'] != false;
       restVibration = m['restVibration'] != false;
+      notifEnabled = m['notifEnabled'] != false;
+      notifMinutes = ((m['notifMinutes'] as num?)?.toInt() ?? 8 * 60).clamp(0, 24 * 60 - 1);
+      notifEvening = m['notifEvening'] != false;
+      notifMotivation = m['notifMotivation'] != false;
+      notifInactive = m['notifInactive'] != false;
+      notifWeigh = m['notifWeigh'] != false;
     } catch (e) {
       debugPrint('Falha ao ler configurações: $e');
     }
@@ -86,6 +106,12 @@ class AppSettings extends ChangeNotifier {
         'textScale': textScale,
         'restSound': restSound,
         'restVibration': restVibration,
+        'notifEnabled': notifEnabled,
+        'notifMinutes': notifMinutes,
+        'notifEvening': notifEvening,
+        'notifMotivation': notifMotivation,
+        'notifInactive': notifInactive,
+        'notifWeigh': notifWeigh,
       }),
     );
     onSaved?.call();
@@ -104,6 +130,24 @@ class AppSettings extends ChangeNotifier {
   Future<void> setTextScale(double v) {
     textScale = v;
     return _save();
+  }
+
+  Future<void> setNotifications({
+    bool? enabled,
+    int? minutes,
+    bool? evening,
+    bool? motivation,
+    bool? inactive,
+    bool? weigh,
+  }) async {
+    notifEnabled = enabled ?? notifEnabled;
+    notifMinutes = minutes ?? notifMinutes;
+    notifEvening = evening ?? notifEvening;
+    notifMotivation = motivation ?? notifMotivation;
+    notifInactive = inactive ?? notifInactive;
+    notifWeigh = weigh ?? notifWeigh;
+    await _save();
+    onNotificationsChanged?.call();
   }
 
   Future<void> setRestSound(bool v) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../cloud/cloud_ui.dart';
+import '../notifications/reminders.dart';
 import '../state/app_state.dart';
 import '../state/settings.dart';
 import '../theme/gm_theme.dart';
@@ -141,6 +142,84 @@ class SettingsScreen extends StatelessWidget {
                 title: const Text('Vibrar no fim do descanso'),
               ),
             ]),
+            if (Reminders.instance.supported) ...[
+              const _Header('Notificações', Icons.notifications_outlined),
+              _Group(children: [
+                SwitchListTile(
+                  value: s.notifEnabled,
+                  onChanged: (v) => s.setNotifications(enabled: v),
+                  secondary: const Icon(Icons.notifications_active_outlined),
+                  title: const Text('Receber notificações'),
+                  subtitle: const Text('Lembretes dos dias de treino e incentivo'),
+                ),
+                if (s.notifEnabled) ...[
+                  ValueListenableBuilder<bool>(
+                    valueListenable: Reminders.instance.denied,
+                    builder: (context, denied, _) => denied
+                        ? ListTile(
+                            leading: Icon(Icons.warning_amber_rounded, color: scheme.error),
+                            title: const Text('As notificações estão bloqueadas no celular'),
+                            subtitle: const Text('Libere em Configurações do Android > Apps > GM Fitness > Notificações.'),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  const _Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.schedule_rounded),
+                    title: const Text('Lembrete nos dias de treino'),
+                    subtitle: Text(
+                        'Às ${(s.notifMinutes ~/ 60).toString().padLeft(2, '0')}:${(s.notifMinutes % 60).toString().padLeft(2, '0')}'),
+                    trailing: const Icon(Icons.edit_outlined),
+                    onTap: () async {
+                      final t = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay(hour: s.notifMinutes ~/ 60, minute: s.notifMinutes % 60),
+                        helpText: 'Horário do lembrete',
+                      );
+                      if (t != null) await s.setNotifications(minutes: t.hour * 60 + t.minute);
+                    },
+                  ),
+                  const _Divider(),
+                  SwitchListTile(
+                    value: s.notifEvening,
+                    onChanged: (v) => s.setNotifications(evening: v),
+                    secondary: const Icon(Icons.nightlight_outlined),
+                    title: const Text('Aviso à noite'),
+                    subtitle: const Text('Às 19h, se ainda não treinou no dia de treino'),
+                  ),
+                  const _Divider(),
+                  SwitchListTile(
+                    value: s.notifMotivation,
+                    onChanged: (v) => s.setNotifications(motivation: v),
+                    secondary: const Icon(Icons.emoji_events_outlined),
+                    title: const Text('Incentivo'),
+                    subtitle: const Text('Frases motivacionais, dicas de descanso e resumo de domingo'),
+                  ),
+                  const _Divider(),
+                  SwitchListTile(
+                    value: s.notifWeigh,
+                    onChanged: (v) => s.setNotifications(weigh: v),
+                    secondary: const Icon(Icons.monitor_weight_outlined),
+                    title: const Text('Pesagem semanal'),
+                    subtitle: const Text('Segunda-feira às 7h30'),
+                  ),
+                  const _Divider(),
+                  SwitchListTile(
+                    value: s.notifInactive,
+                    onChanged: (v) => s.setNotifications(inactive: v),
+                    secondary: const Icon(Icons.waving_hand_outlined),
+                    title: const Text('Quando eu sumir'),
+                    subtitle: const Text('Um lembrete depois de 3 e de 7 dias sem abrir o app'),
+                  ),
+                  const _Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.send_outlined),
+                    title: const Text('Enviar notificação de teste'),
+                    onTap: Reminders.instance.test,
+                  ),
+                ],
+              ]),
+            ],
             if (Updater.instance.supported) ...[
               const _Header('Atualizações', Icons.system_update_outlined),
               const UpdatesCard(),

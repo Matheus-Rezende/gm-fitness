@@ -19,12 +19,14 @@ plugins {
 
 android {
     namespace = "com.gmfitness.gm_fitness"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = maxOf(flutter.compileSdkVersion, 36)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // notificações agendadas (flutter_local_notifications)
+        isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -72,5 +74,6 @@ flutter {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("androidx.core:core:1.13.1")
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../cloud/cloud_ui.dart';
+import '../notifications/reminders.dart';
 import '../models/body.dart';
 import '../models/preset.dart';
 import '../models/workout_entry.dart';
@@ -58,6 +59,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
     if (preset != null) await state.applyPreset(preset, replace: true);
     await state.setProfile(onboarded: true);
+    // pede a permissão de notificações e agenda os lembretes
+    await Reminders.instance.reschedule(askPermission: true);
   }
 
   @override

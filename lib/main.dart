@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'cloud/cloud_sync.dart';
 import 'cloud/cloud_ui.dart';
+import 'notifications/reminders.dart';
 import 'screens/home_shell.dart';
 import 'screens/onboarding_screen.dart';
 import 'state/app_state.dart';
@@ -28,6 +31,7 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
   static Future<AppState> _load() async {
     final state = await AppState.load();
     await CloudSync.instance.init(state);
+    unawaited(Reminders.instance.init(state));
     return state;
   }
 

@@ -421,6 +421,13 @@ class AppState extends ChangeNotifier {
   static String dayKey(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
+  /// Treinou nesse dia (marcou algum exercício ou concluiu um treino)?
+  bool trainedOn(DateTime day) {
+    if (_done[dayKey(day)]?.isNotEmpty ?? false) return true;
+    return _sessions.any((s) =>
+        s.startedAt.year == day.year && s.startedAt.month == day.month && s.startedAt.day == day.day);
+  }
+
   bool isDone(String entryId, [DateTime? day]) => _done[dayKey(day ?? DateTime.now())]?.contains(entryId) ?? false;
 
   Future<void> toggleDone(String entryId) async {
