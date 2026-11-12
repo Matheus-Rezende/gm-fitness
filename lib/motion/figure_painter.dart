@@ -771,14 +771,12 @@ class FigurePainter extends CustomPainter {
         [_Bulge(0.08, 0.6, math.pi, 0.30 + 0.12 * pc), _Bulge(0.0, 0.25, 0, 0.05)],
       ],
       color: (seg, s, ang) {
-        final side = fine && math.cos(ang - outAng) > 0.965;
         if (seg == 0) {
-          if (!male) return side ? stripe : _b.bottom;
-          if (s < 0.70) return side ? stripe : _b.bottom;
+          if (!male) return _b.bottom;
+          if (s < 0.70) return _b.bottom;
           if (s < 0.74) return hem;
           return _b.skin;
         }
-        if (!male && side && s < 0.93) return stripe;
         if (male) return s > 0.86 ? _sock : _b.skin;
         return s > 0.93 ? _b.skin : _b.bottom;
       },
@@ -797,6 +795,26 @@ class FigurePainter extends CustomPainter {
       },
     );
     if (fine) {
+      // faixa fina na lateral do short (até a barra) ou da legging (até o tornozelo)
+      final outT = outward.length < 1e-3 ? ta.cross(anterior).unit : outward.unit;
+      final thR = male ? [tr[0] * 1.08, tr[1] * 1.08, tr[2]] : tr;
+      final pts = <V3>[];
+      for (final s in const [0.04, 0.2, 0.36, 0.52, 0.68]) {
+        pts.add(h3 + thigh * s + outT * (_radiusAt(thR, s) * 1.02 + 0.12));
+      }
+      if (!male) {
+        final sh = shin.length < 1e-3 ? const V3(0, -1, 0) : shin.unit;
+        var outS = perpTo(outT, sh);
+        outS = outS.length < 1e-3 ? outT : outS.unit;
+        for (final s in const [0.86, 1.0]) {
+          pts.add(h3 + thigh * s + (s < 0.95 ? outT : (outT + outS).unit) * (_radiusAt(thR, s) * 1.02 + 0.12));
+        }
+        for (final s in const [0.15, 0.35, 0.55, 0.75, 0.9]) {
+          pts.add(k3 + shin * s + outS * (_radiusAt(_b.calf, s) * 1.02 + 0.12));
+        }
+      }
+      m.part = part;
+      m.tube(pts, 0.3, stripe, sides: 4);
       // patela: na frente do joelho, na bissetriz entre coxa e canela
       final shinFront = _stableDir(thigh, anterior, shin, 1.0, 4.0);
       var kf = anterior + shinFront;
