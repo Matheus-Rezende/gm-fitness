@@ -24,6 +24,10 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
   late Future<AppState> _loading = AppState.load();
 
   MaterialApp _app(Widget home, [AppSettings? settings]) {
+    // a chave do navegador só vai no app principal: se fosse também na tela
+    // de carregamento, o navegador dela seria reaproveitado e o app ficaria
+    // preso nessa tela
+    final main = settings != null;
     final accent = settings?.accent.color ?? GmColors.blue;
     final scale = settings?.textScale ?? 1.0;
     return MaterialApp(
@@ -32,7 +36,7 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
       theme: buildGmTheme(Brightness.light, accent: accent),
       darkTheme: buildGmTheme(Brightness.dark, accent: accent),
       themeMode: settings?.themeMode ?? ThemeMode.system,
-      navigatorKey: updateNavigatorKey,
+      navigatorKey: main ? updateNavigatorKey : null,
       builder: (context, child) {
         final app = UpdateProgressBanner(child: child!);
         if (scale == 1.0) return app;
