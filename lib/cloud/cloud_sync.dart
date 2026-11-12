@@ -14,7 +14,7 @@ import 'drive_backup.dart';
 /// segredo). Pode ser trocado na compilação com
 /// --dart-define=GOOGLE_WEB_CLIENT_ID=...
 const kGoogleWebClientId = String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: _defaultWebClientId);
-const _defaultWebClientId = '';
+const _defaultWebClientId = '283591466032-snqnmpcc4k1it7u1iu6a01bhr17rq4pv.apps.googleusercontent.com';
 
 /// O que fazer quando a nuvem e o aparelho têm dados diferentes.
 enum SyncChoice { useCloud, useDevice }

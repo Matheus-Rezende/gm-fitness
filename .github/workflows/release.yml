@@ -69,7 +69,7 @@ jobs:
           GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
         run: |
           flutter pub get
-          flutter build apk --release --dart-define=GOOGLE_WEB_CLIENT_ID="$GOOGLE_WEB_CLIENT_ID"
+          if [ -n "$GOOGLE_WEB_CLIENT_ID" ]; then flutter build apk --release --dart-define=GOOGLE_WEB_CLIENT_ID="$GOOGLE_WEB_CLIENT_ID"; else flutter build apk --release; fi
 
       - name: Publicar
         if: steps.ver.outputs.exists == 'false'

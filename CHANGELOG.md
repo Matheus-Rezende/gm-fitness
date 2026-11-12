@@ -2,6 +2,10 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.13.1
+
+- **Login com Google ativado**: em Configurações > Conta Google e backup, toque em "Entrar com Google" para salvar seu progresso no Google Drive. Por enquanto o app está em modo de teste no Google, então só as contas cadastradas como testadoras conseguem entrar.
+
 ## 0.13.0
 
 - **Braços corrigidos no boneco 3D**: no abdominal supra e no abdominal bicicleta as mãos ficam atrás da cabeça com os cotovelos abertos (na bicicleta, o cotovelo vai em direção ao joelho oposto). Na ponte de glúteo os braços ficam apoiados no chão ao lado do corpo. No giro russo o tronco fica inclinado para trás, com as mãos juntas à frente do peito. Na abdução deitada a mão de cima fica no quadril.
