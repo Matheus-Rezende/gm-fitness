@@ -2,6 +2,10 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.14.1
+
+- **Tela "Para quem é o treino?"**: fotos reais dele e dela de corpo inteiro, com o mesmo enquadramento, e texto atualizado.
+
 ## 0.14.0
 
 - **Vídeos reais no lugar do boneco 3D**: nos 59 exercícios que têm vídeo, a tela do exercício mostra só o vídeo real (homem ou mulher, conforme o seu perfil). O boneco 3D continua apenas nos exercícios que ainda não ganharam vídeo.

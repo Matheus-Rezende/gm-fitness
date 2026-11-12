@@ -369,7 +369,7 @@ class _SexPage extends StatelessWidget {
           Text('Para quem é o treino?', style: text.headlineLarge),
           const SizedBox(height: 8),
           Text(
-            'Os planos por formato de corpo e o boneco das animações mudam conforme o corpo masculino ou feminino.',
+            'Os vídeos dos exercícios e os planos por formato de corpo mudam conforme a escolha.',
             style: text.bodyMedium,
           ),
           const SizedBox(height: 20),
@@ -429,7 +429,7 @@ class _SexCard extends StatelessWidget {
                 ClipRRect(
                     borderRadius: BorderRadius.circular(14),
                     child: AspectRatio(
-                      aspectRatio: 0.9,
+                      aspectRatio: 480 / 560,
                       child: Image.asset(
                         'assets/onboarding/sex_${value == 'M' ? 'm' : 'f'}.jpg',
                         fit: BoxFit.cover,
