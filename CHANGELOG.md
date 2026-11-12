@@ -2,6 +2,12 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.15.0
+
+- **Atualizações bem menores**: a partir desta versão o app baixa só a diferença entre a versão instalada e a nova (os vídeos e o que não mudou não são baixados de novo) e monta o APK novo no próprio celular. Se algo der errado, ele baixa o APK completo como antes.
+- **APK do tamanho do seu celular**: cada versão agora tem um APK para cada tipo de processador, com cerca de metade do tamanho do APK completo. O app escolhe o certo sozinho.
+- Esta atualização ainda é baixada inteira uma última vez; a partir da próxima, só a diferença.
+
 ## 0.14.2
 
 - **Boas-vindas**: sem os selos "Ele" e "Ela" no vídeo; os botões "Começar" e "Entrar com Google" ficam juntos no rodapé.
