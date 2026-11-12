@@ -196,7 +196,7 @@ V3 _stableDir(V3 primary, V3 fallback, V3 axis, double lo, double hi) {
   f = f.unit;
   final len = p.length;
   if (len < 1e-6) return f;
-  var pu = p / len;
+  var pu = p * (1 / len);
   final w = _smooth((len - lo) / (hi - lo));
   if (w >= 1) return pu;
   // mantém o lado do reserva quando a principal está quase sumindo
