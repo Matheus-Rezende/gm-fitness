@@ -2,6 +2,13 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.11.0
+
+- **Aviso de download da atualização**: se você fechar a janela da atualização e continuar usando o app, um aviso no rodapé mostra o andamento do download em qualquer tela. Se o download falhar, o aviso deixa tentar de novo com um toque.
+- **Pés firmes no boneco 3D**: nos exercícios de quatro apoios e deitado de bruços (perdigueiro, super-homem, coice, remada unilateral), os pés não giram mais durante o movimento. Braços e pernas também não viram de repente quando ficam esticados.
+- **Músculos mais definidos**: o músculo trabalhado fica um pouco mais cheio e ganha as divisões (gomos do abdome, linha do peitoral, cabeças do ombro, bíceps e tríceps, coxa e panturrilha, coluna nas costas).
+- **Roupas e corpo com mais detalhes**: faixa lateral no short e na legging, cordão no short, marca no peito da camiseta, costuras, cadarço e reforço no tênis, joelhos com patela e umbigo.
+
 ## 0.10.0
 
 - **Mais 26 exercícios com vídeo real**: agora 59 dos 94 exercícios têm vídeo. Entraram os de máquina (remo, mesa flexora, coice na polia, pulldown com braços estendidos, barra fixa assistida, cadeira adutora, abdução na polia, crossover, panturrilha sentado, hiperextensão lombar, voador, voador invertido, agachamento no Smith, pull-through, rosca na polia, corrida na esteira e corrida intervalada) e vários com barra e halteres (elevação pélvica, agachamento com barra, stiff com barra, agachamento búlgaro, abdominal bicicleta, rosca direta com barra, caminhada do fazendeiro, remada curvada com barra e com halteres).

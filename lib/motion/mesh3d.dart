@@ -102,7 +102,7 @@ class Mesh {
       final gd = _d[i];
       if (gd > 0) {
         // sulcos: separam os músculos em destaque e marcam costuras na roupa
-        final f = 1 - gd.clamp(0.0, 1.0) * (m >= 1 ? 0.42 : 0.16);
+        final f = 1 - gd.clamp(0.0, 1.0) * (m >= 1 ? 0.32 : 0.14);
         r *= f;
         g *= f;
         b *= f;
