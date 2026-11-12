@@ -70,6 +70,35 @@ void main() {
     }
   }, skip: !enabled);
 
+  test('braços e pernas em quadros grandes', () async {
+    final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
+    final ids = (Platform.environment['REVIEW_IDS'] ?? '').split(',').where((e) => e.isNotEmpty).toList();
+    final list = ids.isNotEmpty ? ids : (lib.clips.keys.toList()..sort());
+    Directory('build/arms').createSync(recursive: true);
+    const tw = 420.0, th = 340.0;
+    for (final id in list) {
+      final clip = lib[id]!;
+      final rec = ui.PictureRecorder();
+      final canvas = Canvas(rec);
+      for (var c = 0; c < 3; c++) {
+        canvas.save();
+        canvas.translate(c * tw, 0);
+        FigurePainter(
+                clip: clip,
+                time: const [0.0, 0.3, 0.55][c],
+                palette: FigurePalette.light,
+                style: const FigureStyle(male: true, showPath: false),
+                ghost: false,
+                yaw: clip.defaultYaw + (c == 2 ? 60 : 25))
+            .paint(canvas, const Size(tw, th));
+        canvas.restore();
+      }
+      final img = await rec.endRecording().toImage((tw * 3).toInt(), th.toInt());
+      final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+      File('build/arms/$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+    }
+  }, skip: !enabled);
+
   test('revisão de todos os movimentos', () async {
     final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
     final ids = lib.clips.keys.toList()..sort();
