@@ -271,7 +271,8 @@ class CloudSync extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState s) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final s = state;
     // ao sair do app, salva o que estiver pendente
     if ((s == AppLifecycleState.paused || s == AppLifecycleState.hidden) && _dirty && _ready) {
       _debounce?.cancel();

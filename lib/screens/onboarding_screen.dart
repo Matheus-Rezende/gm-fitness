@@ -9,6 +9,7 @@ import '../motion/motion_view.dart';
 import '../state/app_state.dart';
 import '../theme/gm_theme.dart';
 import '../widgets/body_shape_icon.dart';
+import '../widgets/exercise_video.dart';
 import '../widgets/body_widgets.dart';
 import '../widgets/brand.dart';
 import 'body_edit_screen.dart';
