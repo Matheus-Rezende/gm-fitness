@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../cloud/cloud_ui.dart';
 import '../models/body.dart';
 import '../models/preset.dart';
 import '../models/workout_entry.dart';
@@ -335,6 +336,8 @@ class _Welcome extends StatelessWidget {
                 width: double.infinity,
                 child: FilledButton(onPressed: onNext, child: const Text('Começar')),
               ),
+              const SizedBox(height: 8),
+              const RestoreFromGoogleButton(),
             ],
           ),
         ),

@@ -530,6 +530,34 @@ def _ik3(sh, target, la, lb, pole):
     return elb, target
 
 
+def _lean_back(F, deg):
+    """Inclina tronco, cabeça e braços para trás em volta do quadril."""
+    P = F.pts
+    hip = P['hip']
+    axis = _unit(_v(P['shF'], P['shN']))  # lateral
+    up = _unit(_v(hip, P['neck']))
+    front = _unit(_perp(F.torso_f, up))
+    # sentido: o pescoço vai para trás (contra a frente)
+    r = math.radians(deg)
+
+    def rot(v):
+        # Rodrigues em volta de axis, com o sinal que leva up para -front
+        c, s_ = math.cos(r), math.sin(r)
+        k = axis
+        kxv = _cross(k, v)
+        kdv = _dot(k, v)
+        return _plus(_plus(_scale(v, c), _scale(kxv, s_)), _scale(k, kdv * (1 - c)))
+
+    test = rot(up)
+    if _dot(test, front) > 0:
+        r = -r
+    for j in ('neck', 'head', 'shN', 'elbN', 'handN', 'shF', 'elbF', 'handF'):
+        P[j] = _plus(hip, rot(_v(hip, P[j])))
+    F.torso_f = rot(F.torso_f)
+    F.head_up = rot(F.head_up)
+    F.head_face = rot(F.head_face)
+
+
 def fix_arms(frames3d, pattern_id):
     mode = ARM_POSE.get(pattern_id)
     if mode is None:
@@ -537,6 +565,9 @@ def fix_arms(frames3d, pattern_id):
     la, lb = L['ua'], L['fa']
     for F in frames3d:
         P = F.pts
+        if mode == 'clasp_front':
+            # giro russo: tronco inclinado para trás (~40 graus), como pedem os guias
+            _lean_back(F, 40.0)
         up = _unit(_v(P['hip'], P['neck']))
         front = _unit(_perp(F.torso_f, up))
         face = _unit(F.head_face)

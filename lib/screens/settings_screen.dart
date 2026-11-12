@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../cloud/cloud_ui.dart';
 import '../state/app_state.dart';
 import '../state/settings.dart';
 import '../theme/gm_theme.dart';
@@ -22,7 +23,8 @@ class SettingsScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('Apagar meus dados?'),
         content: const Text('Sua lista de treinos, as cargas, o histórico, as pesagens, os exercícios que você criou '
-            'e o perfil serão apagados. As configurações de aparência continuam. Não dá para desfazer.'),
+            'e o perfil serão apagados deste aparelho. As configurações de aparência continuam. Não dá para desfazer. '
+            'Se você entrou com a conta Google, o backup no Drive não é apagado.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
           FilledButton(
@@ -199,6 +201,8 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ]),
+            const _Header('Conta Google e backup', Icons.cloud_outlined),
+            const _Group(children: [CloudSection()]),
             const _Header('Dados', Icons.storage_outlined),
             _Group(children: [
               ListTile(

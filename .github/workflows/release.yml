@@ -59,14 +59,17 @@ jobs:
           fi
           echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/gm-fitness.jks"
           echo "GM_KEYSTORE_PATH=$RUNNER_TEMP/gm-fitness.jks" >> "$GITHUB_ENV"
+          # impressão digital pública do certificado (usada no cadastro do login Google)
+          keytool -list -v -keystore "$RUNNER_TEMP/gm-fitness.jks" -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" 2>/dev/null | grep -E "SHA1:|SHA256:" | head -2 || true
 
       - name: APK
         if: steps.ver.outputs.exists == 'false'
         env:
           GM_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
         run: |
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --dart-define=GOOGLE_WEB_CLIENT_ID="$GOOGLE_WEB_CLIENT_ID"
 
       - name: Publicar
         if: steps.ver.outputs.exists == 'false'

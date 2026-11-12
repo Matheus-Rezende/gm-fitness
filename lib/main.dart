@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'cloud/cloud_sync.dart';
+import 'cloud/cloud_ui.dart';
 import 'screens/home_shell.dart';
 import 'screens/onboarding_screen.dart';
 import 'state/app_state.dart';
@@ -21,7 +23,13 @@ class GmFitnessApp extends StatefulWidget {
 }
 
 class _GmFitnessAppState extends State<GmFitnessApp> {
-  late Future<AppState> _loading = AppState.load();
+  late Future<AppState> _loading = _load();
+
+  static Future<AppState> _load() async {
+    final state = await AppState.load();
+    await CloudSync.instance.init(state);
+    return state;
+  }
 
   MaterialApp _app(Widget home, [AppSettings? settings]) {
     // a chave do navegador só vai no app principal: se fosse também na tela
@@ -37,8 +45,9 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
       darkTheme: buildGmTheme(Brightness.dark, accent: accent),
       themeMode: settings?.themeMode ?? ThemeMode.system,
       navigatorKey: main ? updateNavigatorKey : null,
+      scaffoldMessengerKey: main ? cloudMessengerKey : null,
       builder: (context, child) {
-        final app = UpdateProgressBanner(child: child!);
+        final app = UpdateProgressBanner(child: main ? CloudPrompt(child: child!) : child!);
         if (scale == 1.0) return app;
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
@@ -57,7 +66,7 @@ class _GmFitnessAppState extends State<GmFitnessApp> {
         if (snap.hasError) {
           return _app(_LoadError(
             message: '${snap.error}',
-            onRetry: () => setState(() => _loading = AppState.load()),
+            onRetry: () => setState(() => _loading = _load()),
           ));
         }
         if (!snap.hasData) return _app(const _Splash());

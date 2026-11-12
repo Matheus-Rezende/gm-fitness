@@ -35,6 +35,23 @@ class AppSettings extends ChangeNotifier {
 
   static const _key = 'settings_v1';
 
+  /// Chave das preferências (entra no backup da nuvem).
+  static const storageKey = _key;
+
+  /// Chamado depois de cada gravação (o backup na nuvem se agenda aqui).
+  VoidCallback? onSaved;
+
+  /// Lê de novo o que está gravado (depois de restaurar um backup).
+  void reload() {
+    themeMode = ThemeMode.system;
+    accent = Accent.blue;
+    textScale = 1.0;
+    restSound = true;
+    restVibration = true;
+    _restore();
+    notifyListeners();
+  }
+
   final SharedPreferences _prefs;
 
   ThemeMode themeMode = ThemeMode.system;
@@ -71,6 +88,7 @@ class AppSettings extends ChangeNotifier {
         'restVibration': restVibration,
       }),
     );
+    onSaved?.call();
   }
 
   Future<void> setThemeMode(ThemeMode v) {

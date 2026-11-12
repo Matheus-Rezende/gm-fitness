@@ -31,6 +31,15 @@ class AppState extends ChangeNotifier {
   static const _kSessions = 'sessions_v1';
   static const _kBody = 'body_v1';
   static const _kWeights = 'weights_v1';
+  static const _kChanged = 'local_changed_v1';
+
+  /// Chaves guardadas no backup da nuvem.
+  static const backupKeys = [
+    _kEntries, _kCustom, _kProfile, _kDone, _kActive, _kSessions, _kBody, _kWeights, AppSettings.storageKey,
+  ];
+
+  /// Chamado depois de cada gravação local (o backup na nuvem se agenda aqui).
+  VoidCallback? onSaved;
 
   final SharedPreferences _prefs;
   final CatalogMeta meta;
@@ -150,6 +159,89 @@ class AppState extends ChangeNotifier {
     }
     if (_sessions.length > 120) _sessions = _sessions.sublist(_sessions.length - 120);
     await _prefs.setString(_kSessions, jsonEncode([for (final x in _sessions) x.toJson()]));
+    await _prefs.setString(_kChanged, DateTime.now().toUtc().toIso8601String());
+    onSaved?.call();
+  }
+
+  // ------------------------------------------------------------ backup
+
+  /// Quando os dados deste aparelho mudaram pela última vez.
+  DateTime? get lastLocalChange => DateTime.tryParse(_prefs.getString(_kChanged) ?? '');
+
+  /// Há algo do usuário guardado (perfil feito, treinos ou histórico).
+  bool get hasUserData => _onboarded || _entries.isNotEmpty || _sessions.isNotEmpty || _weights.isNotEmpty;
+
+  /// Resumo curto do que existe, para mostrar ao comparar com a nuvem.
+  String get dataSummary {
+    final parts = <String>[
+      if (_name.isNotEmpty) _name,
+      '${_entries.length} ${_entries.length == 1 ? 'exercício' : 'exercícios'} na lista',
+      '${_sessions.length} ${_sessions.length == 1 ? 'treino concluído' : 'treinos concluídos'}',
+    ];
+    return parts.join(' · ');
+  }
+
+  /// Todos os dados do usuário e as configurações, como estão gravados.
+  Map<String, dynamic> exportBackup() => {
+        'format': 1,
+        'savedAt': DateTime.now().toUtc().toIso8601String(),
+        'data': {
+          for (final k in backupKeys)
+            if (_prefs.getString(k) != null) k: _prefs.getString(k),
+        },
+      };
+
+  /// Substitui os dados deste aparelho pelos do backup.
+  Future<void> importBackup(Map<String, dynamic> backup) async {
+    final data = Map<String, dynamic>.from(backup['data'] as Map? ?? const {});
+    for (final k in backupKeys) {
+      final v = data[k];
+      if (v is String) {
+        await _prefs.setString(k, v);
+      } else {
+        await _prefs.remove(k);
+      }
+    }
+    _custom = [];
+    _entries = [];
+    _sex = 'F';
+    _name = '';
+    _presetId = null;
+    _onboarded = false;
+    _body = const BodyData();
+    _weights = [];
+    _done = {};
+    _active = null;
+    _sessions = [];
+    _restore();
+    settings.reload();
+    await _prefs.setString(_kChanged, (backup['savedAt'] as String?) ?? DateTime.now().toUtc().toIso8601String());
+    notifyListeners();
+  }
+
+  /// Resumo de um backup (sem aplicar), para a pessoa decidir.
+  static String summaryOf(Map<String, dynamic> backup) {
+    final data = Map<String, dynamic>.from(backup['data'] as Map? ?? const {});
+    int count(String k) {
+      try {
+        final v = data[k];
+        return v is String ? (jsonDecode(v) as List).length : 0;
+      } catch (_) {
+        return 0;
+      }
+    }
+
+    var name = '';
+    try {
+      final pr = data[_kProfile];
+      if (pr is String) name = ((jsonDecode(pr) as Map)['name'] as String?) ?? '';
+    } catch (_) {}
+    final e = count(_kEntries), s = count(_kSessions);
+    return [
+      if (name.isNotEmpty) name,
+      '$e ${e == 1 ? 'exercício' : 'exercícios'} na lista',
+      '$s ${s == 1 ? 'treino concluído' : 'treinos concluídos'}',
+    ].join(' · ');
   }
 
   // ------------------------------------------------------------ treino cronometrado
