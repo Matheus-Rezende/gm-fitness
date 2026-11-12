@@ -2,6 +2,12 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.13.0
+
+- **Braços corrigidos no boneco 3D**: no abdominal supra e no abdominal bicicleta as mãos ficam atrás da cabeça com os cotovelos abertos (na bicicleta, o cotovelo vai em direção ao joelho oposto). Na ponte de glúteo os braços ficam apoiados no chão ao lado do corpo. No giro russo o tronco fica inclinado para trás, com as mãos juntas à frente do peito. Na abdução deitada a mão de cima fica no quadril.
+- **Conta Google e backup no Google Drive** (em Configurações > Conta Google e backup): entre com sua conta e o progresso (lista de treinos, cargas, histórico, pesagens, exercícios criados e configurações) é salvo automaticamente numa pasta escondida do app no seu Drive. Ao reinstalar o app ou trocar de celular, é só entrar de novo para restaurar. No primeiro acesso também há o botão "Já usei o app: entrar com Google e restaurar". Se o aparelho e a nuvem tiverem dados diferentes, o app pergunta qual usar.
+- O login com Google fica disponível assim que o cadastro do app no Google Cloud for concluído.
+
 ## 0.12.0
 
 - **Pés do boneco 3D corrigidos em todos os exercícios**: os pés agora seguem a canela e não giram mais. Em pé, ficam apoiados no chão apontando para a frente (um pouco abertos; no agachamento sumô, bem abertos). Nos exercícios desenhados de frente (elevação lateral, puxada, voador, crucifixo, abdução e outros) os pés deixaram de ficar tortos e enfiados no chão. No abdominal bicicleta, perdigueiro e coice os pés não viram mais durante o movimento.
