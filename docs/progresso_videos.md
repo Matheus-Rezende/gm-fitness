@@ -22,7 +22,7 @@ Arquivo de controle para retomar a geração dos vídeos quando os créditos do 
 1. Exercícios com máquina (aparelho, polia, Smith, esteira, remo).
 2. Por último, exercícios sem máquina (barra, halter, kettlebell, peso corporal).
 
-## Status (atualizado em 12/11/2026, saldo ~73 créditos)
+## Status (atualizado em 12/11/2026, saldo ~5 créditos; 50 grátis amanhã)
 
 Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 
@@ -55,9 +55,12 @@ Gerados em 12/11 (Omni 1.2 Flash, 8 s, soltos na aba Vídeos):
 - [~] stiff_barra — mulher ok; homem desce só até o joelho
 - [x] agachamento_bulgaro — homem e mulher
 - [x] abdominal_bicicleta — homem e mulher
+- [x] rosca_direta_barra — homem e mulher
+- [~] caminhada_fazendeiro — homem e mulher dão poucos passos quase no lugar e param
+- [x] remada_curvada_barra — homem e mulher
+- [x] remada_curvada_halteres — homem e mulher
 
-Faltam:
-rosca_direta_barra, caminhada_fazendeiro, remada_curvada_barra, remada_curvada_halteres,
+Faltam (próximo: agachamento_sumo):
 agachamento_sumo, crucifixo_halteres, afundo_halteres, elevacao_pernas, marcha_estacionaria,
 agachamento_livre, agachamento_goblet_kettlebell, agachamento_sumo_kettlebell, afundo,
 levantamento_terra, bom_dia, abducao_deitada, agachamento_isometrico, swing_kettlebell,
