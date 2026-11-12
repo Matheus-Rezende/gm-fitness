@@ -296,8 +296,10 @@ def _deadlift_keys():
         neck = (bar_x + 2, sh_y)
         hip = hip_from_neck(neck, torso)
         return P(hip, torso, arm=FA(arm_tilt, arm_tilt), leg=IL((81, ANK), 1, 90))
-    k0 = k(74.5, 52, 182)
-    k1 = k(54.5, 45, 181)
+    # saída do chão: quadril acima dos joelhos, ombros sobre a barra (o tronco
+    # em 52 graus deixava o quadril baixo demais, parecendo um agachamento)
+    k0 = k(74.5, 63, 182)
+    k1 = k(54.5, 48, 181)
     k2 = P((79, 68), 0, arm=FA(180, 180), leg=IL((81, ANK), 1, 90))
     return [k0, k1, k2]
 
@@ -537,8 +539,14 @@ fly_db = add_pattern(Pattern('fly_db', 'Crucifixo com halteres', 'front', _fly_k
 def _pecdeck_keys(open_first=True):
     base = dict(leg=FL(175, 180, 125), lt=0.4)
     opened = P((80, 85), 0, arm=FA(91, 96), **base)
-    closed = P((80, 85), 0, arm=FA(91, 91), au=-0.28, af=-0.28, **base)
-    return [opened, closed] if open_first else [closed, opened]
+    if open_first:
+        # voador: as mãos se encontram à frente do peito
+        closed = P((80, 85), 0, arm=FA(91, 91), au=-0.28, af=-0.28, **base)
+        return [opened, closed]
+    # voador invertido: começa com os braços esticados à frente, cada mão na
+    # frente do seu ombro (sem cruzar), e abre até formar um T
+    closed = P((80, 85), 0, arm=FA(91, 91), au=-0.12, af=-0.12, **base)
+    return [closed, opened]
 
 
 pec_deck = add_pattern(Pattern('pec_deck', 'Voador', 'front', _pecdeck_keys(True),

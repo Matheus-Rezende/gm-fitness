@@ -48,7 +48,7 @@ void main() {
       File('build/hires/$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
     }
     // sequência no tempo, para ver se os pés ficam firmes
-    for (final id in const ['bird_dog', 'superman', 'one_arm_row', 'donkey_kick', 'bicycle_crunch']) {
+    for (final id in const ['bird_dog', 'superman', 'one_arm_row', 'donkey_kick', 'bicycle_crunch', 'deadlift', 'reverse_fly', 'lateral_raise', 'sumo_squat', 'hip_abduction_standing', 'jump_rope', 'leg_curl_lying', 'pull_up']) {
       final clip = lib[id]!;
       final rec = ui.PictureRecorder();
       final canvas = Canvas(rec);
