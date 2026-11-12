@@ -2,6 +2,17 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.16.0
+
+- **Notificações** (Configurações > Notificações, todas podem ser desligadas):
+  - Lembrete nos dias de treino, no horário que você escolher (padrão 8h), com quantos exercícios e quais músculos.
+  - Aviso às 19h se ainda não treinou no dia de treino.
+  - Incentivo: frases motivacionais, dicas nos dias de descanso e um convite para ver o progresso no domingo.
+  - Pesagem semanal na segunda-feira às 7h30.
+  - Um lembrete se você ficar 3 e 7 dias sem abrir o app.
+  - Botão para enviar uma notificação de teste.
+- As notificações funcionam sem internet e se ajustam sozinhas quando você muda o treino ou marca exercícios como feitos.
+
 ## 0.15.0
 
 - **Atualizações bem menores**: a partir desta versão o app baixa só a diferença entre a versão instalada e a nova (os vídeos e o que não mudou não são baixados de novo) e monta o APK novo no próprio celular. Se algo der errado, ele baixa o APK completo como antes.
