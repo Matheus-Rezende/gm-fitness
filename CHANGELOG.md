@@ -2,6 +2,13 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.12.0
+
+- **Pés do boneco 3D corrigidos em todos os exercícios**: os pés agora seguem a canela e não giram mais. Em pé, ficam apoiados no chão apontando para a frente (um pouco abertos; no agachamento sumô, bem abertos). Nos exercícios desenhados de frente (elevação lateral, puxada, voador, crucifixo, abdução e outros) os pés deixaram de ficar tortos e enfiados no chão. No abdominal bicicleta, perdigueiro e coice os pés não viram mais durante o movimento.
+- **Levantamento terra**: a saída do chão foi corrigida, com o quadril acima dos joelhos e os ombros sobre a barra (antes parecia um agachamento).
+- **Voador invertido**: começa com os braços esticados à frente, cada mão diante do seu ombro, e abre até formar um T.
+- Todos os 88 movimentos foram revisados quadro a quadro.
+
 ## 0.11.0
 
 - **Aviso de download da atualização**: se você fechar a janela da atualização e continuar usando o app, um aviso no rodapé mostra o andamento do download em qualquer tela. Se o download falhar, o aviso deixa tentar de novo com um toque.
