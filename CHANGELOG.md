@@ -2,6 +2,12 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.10.0
+
+- **Mais 26 exercícios com vídeo real**: agora 59 dos 94 exercícios têm vídeo. Entraram os de máquina (remo, mesa flexora, coice na polia, pulldown com braços estendidos, barra fixa assistida, cadeira adutora, abdução na polia, crossover, panturrilha sentado, hiperextensão lombar, voador, voador invertido, agachamento no Smith, pull-through, rosca na polia, corrida na esteira e corrida intervalada) e vários com barra e halteres (elevação pélvica, agachamento com barra, stiff com barra, agachamento búlgaro, abdominal bicicleta, rosca direta com barra, caminhada do fazendeiro, remada curvada com barra e com halteres).
+- **Dead bug corrigido**: o vídeo agora mostra o braço e a perna opostos estendendo juntos e voltando, com a lombar apoiada no chão.
+- No voador invertido, a versão feminina usa por enquanto o vídeo masculino.
+
 ## 0.9.0
 
 - **Vídeos reais dos exercícios**: os 33 exercícios dos planos para iniciantes agora têm um vídeo curto de uma pessoa fazendo uma repetição completa, com a amplitude correta. Homens veem o vídeo com o homem e mulheres, com a mulher.
