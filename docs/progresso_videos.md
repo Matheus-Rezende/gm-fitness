@@ -70,4 +70,6 @@ triceps_coice, triceps_banco, escalador, giro_russo, elevacao_pernas_barra, supe
 polichinelo, pular_corda, burpee
 
 
-Obs. 12/11: os vídeos gerados em 12/11 ainda NÃO foram movidos para a coleção "GM Fitness - novos exercicios" (arrastar no Flow está falhando); estão soltos no topo da aba Vídeos do projeto.
+Obs. 12/11: todos os vídeos [x] e [~] acima (e o dead bug corrigido) já estão em assets/videos no repositório, ainda sem versão nova do app.
+voador_invertido usa o vídeo do homem também para a mulher (kExerciseVideosMaleOnly) até existir um vídeo bom dela.
+Como entregar: arrastar para coleção no Flow não funciona; baixar cada vídeo (menu ⋮ > Fazer o download > Tamanho original) e o usuário envia o .zip/.rar.

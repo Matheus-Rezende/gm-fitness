@@ -22,5 +22,6 @@ void main() {
       expect(ids.contains(id), isTrue, reason: '$id não existe em exercises.json');
     }
     expect(exerciseVideoAsset('nao_existe', male: true), isNull);
+    expect(kExerciseVideos.containsAll(kExerciseVideosMaleOnly), isTrue);
   });
 }

@@ -5,45 +5,77 @@ import 'package:video_player/video_player.dart';
 
 /// Exercícios que têm vídeo gravado (homem em `<id>_m.mp4`, mulher em `<id>_f.mp4`).
 const kExerciseVideos = <String>{
+  'abdominal_bicicleta',
   'abdominal_supra',
   'abducao_em_pe_elastico',
+  'abducao_polia',
+  'agachamento_barra',
+  'agachamento_bulgaro',
   'agachamento_goblet',
+  'agachamento_smith',
+  'barra_fixa_assistida',
   'bicicleta_ergometrica',
   'cadeira_abdutora',
+  'cadeira_adutora',
   'cadeira_extensora',
   'cadeira_flexora',
   'caminhada_esteira',
+  'caminhada_fazendeiro',
   'caminhada_inclinada',
+  'coice_polia',
   'coice_quatro_apoios',
+  'corrida_esteira',
+  'corrida_intervalada',
+  'crossover',
   'dead_bug',
   'desenvolvimento_halteres',
   'elevacao_lateral',
+  'elevacao_pelvica',
   'face_pull',
   'flexao_inclinada',
+  'hiperextensao_lombar',
   'leg_press_45',
+  'mesa_flexora',
   'panturrilha_em_pe',
+  'panturrilha_sentado',
   'perdigueiro',
   'ponte_gluteo',
   'prancha',
   'prancha_joelhos',
   'prancha_lateral',
+  'pull_through',
+  'pulldown_bracos_estendidos',
   'puxada_frontal',
+  'remada_curvada_barra',
+  'remada_curvada_halteres',
   'remada_sentada',
   'remada_unilateral',
+  'remo_ergometro',
+  'rosca_direta_barra',
   'rosca_direta_halteres',
   'rosca_martelo',
+  'rosca_polia',
+  'stiff_barra',
   'stiff_halteres',
   'subida_banco',
   'supino_inclinado_halteres',
   'supino_reto_halteres',
   'triceps_corda',
   'triceps_polia',
+  'voador',
+  'voador_invertido',
+};
+
+/// Exercícios que, por enquanto, só têm o vídeo do homem (usado também para a mulher).
+const kExerciseVideosMaleOnly = <String>{
+  'voador_invertido',
 };
 
 /// Caminho do vídeo do exercício para o sexo do usuário, ou null se não houver vídeo.
 String? exerciseVideoAsset(String exerciseId, {required bool male}) {
   if (!kExerciseVideos.contains(exerciseId)) return null;
-  return 'assets/videos/${exerciseId}_${male ? 'm' : 'f'}.mp4';
+  final useMale = male || kExerciseVideosMaleOnly.contains(exerciseId);
+  return 'assets/videos/${exerciseId}_${useMale ? 'm' : 'f'}.mp4';
 }
 
 /// Vídeo em loop, sem som, que começa sozinho. Toque para pausar ou continuar.
