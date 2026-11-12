@@ -23,6 +23,8 @@ void main() {
     const picks = [
       ('squat_bb', true), ('bench_press', false), ('deadlift', true), ('push_up', false), ('curl', true),
       ('hip_thrust', false), ('lunge_db', true), ('lat_pulldown', false), ('bench_dip', true), ('plank', false),
+      ('crunch', true), ('bird_dog', false), ('superman', true), ('one_arm_row', true), ('donkey_kick', false),
+      ('calf_raise', true),
     ];
     const w = 360.0, h = 292.0;
     Directory('build/hires').createSync(recursive: true);
@@ -44,6 +46,27 @@ void main() {
       final img = await rec.endRecording().toImage((w * 3).toInt(), h.toInt());
       final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
       File('build/hires/$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+    }
+    // sequência no tempo, para ver se os pés ficam firmes
+    for (final id in const ['bird_dog', 'superman', 'one_arm_row', 'donkey_kick', 'bicycle_crunch']) {
+      final clip = lib[id]!;
+      final rec = ui.PictureRecorder();
+      final canvas = Canvas(rec);
+      for (var c = 0; c < 6; c++) {
+        canvas.save();
+        canvas.translate(c * 240.0, 0);
+        FigurePainter(
+                clip: clip,
+                time: c / 6,
+                palette: FigurePalette.light,
+                style: const FigureStyle(male: true),
+                yaw: clip.defaultYaw + 35)
+            .paint(canvas, const Size(240, 195));
+        canvas.restore();
+      }
+      final img = await rec.endRecording().toImage(1440, 195);
+      final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+      File('build/hires/seq_$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
     }
   }, skip: !enabled);
 }
