@@ -313,12 +313,15 @@ class _Welcome extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 12),
-                  if (clip != null)
-                    MotionView(
-                      clip: clip,
-                      style: const FigureStyle(primary: {'quadriceps'}, secondary: {'gluteos'}),
-                      showControls: false,
-                    ),
+                  WelcomeDuoVideo(
+                    fallback: clip == null
+                        ? const SizedBox(height: 200)
+                        : MotionView(
+                            clip: clip,
+                            style: const FigureStyle(primary: {'quadriceps'}, secondary: {'gluteos'}),
+                            showControls: false,
+                          ),
+                  ),
                   const SizedBox(height: 28),
                   Text('Treino certo\ndesde o primeiro dia', style: text.displaySmall),
                   const SizedBox(height: 12),
@@ -422,12 +425,16 @@ class _SexCard extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                if (clip != null)
-                  ClipRRect(
+                ClipRRect(
                     borderRadius: BorderRadius.circular(14),
                     child: AspectRatio(
                       aspectRatio: 0.9,
-                      child: CustomPaint(
+                      child: Image.asset(
+                        'assets/onboarding/sex_${value == 'M' ? 'm' : 'f'}.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => clip == null
+                            ? const SizedBox.shrink()
+                            : CustomPaint(
                         painter: FigurePainter(
                           clip: clip,
                           time: clip.keyTimes[2],
@@ -435,6 +442,7 @@ class _SexCard extends StatelessWidget {
                           style: FigureStyle(male: value == 'M', showPath: false, showMuscles: false),
                           ghost: false,
                         ),
+                      ),
                       ),
                     ),
                   ),

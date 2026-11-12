@@ -25,6 +25,7 @@ flutter:
   assets:
     - assets/
     - assets/videos/
+    - assets/onboarding/
     - CHANGELOG.md
   fonts:
     - family: Barlow

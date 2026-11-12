@@ -138,7 +138,7 @@ class ExerciseDetailScreen extends StatelessWidget {
           ],
           const SizedBox(height: 20),
           Text(
-            'O vídeo e a animação ilustram a técnica. Use uma carga que permita fazer todas as repetições com '
+            'Veja a técnica acima. Use uma carga que permita fazer todas as repetições com '
             'boa execução e, se sentir dor, pare e procure um profissional.',
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),

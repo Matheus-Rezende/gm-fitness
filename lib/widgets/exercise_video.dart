@@ -81,10 +81,13 @@ String? exerciseVideoAsset(String exerciseId, {required bool male}) {
 /// Vídeo em loop, sem som, que começa sozinho. Toque para pausar ou continuar.
 /// Se o vídeo não puder ser aberto (ou em testes), mostra [fallback].
 class ExerciseVideo extends StatefulWidget {
-  const ExerciseVideo({super.key, required this.asset, required this.fallback});
+  const ExerciseVideo({super.key, required this.asset, required this.fallback, this.controls = true});
 
   final String asset;
   final Widget fallback;
+
+  /// Toque para pausar e barra de progresso (desligados na tela de boas-vindas).
+  final bool controls;
 
   @override
   State<ExerciseVideo> createState() => _ExerciseVideoState();
@@ -146,7 +149,9 @@ class _ExerciseVideoState extends State<ExerciseVideo> {
       borderRadius: BorderRadius.circular(16),
       child: AspectRatio(
         aspectRatio: ready ? c.value.aspectRatio : 16 / 9,
-        child: ready
+        child: ready && !widget.controls
+            ? VideoPlayer(c)
+            : ready
             ? GestureDetector(
                 onTap: _toggle,
                 child: Stack(
@@ -184,42 +189,45 @@ class _ExerciseVideoState extends State<ExerciseVideo> {
   }
 }
 
-/// Mostra o vídeo do exercício quando existe, com opção de ver o boneco 3D.
-class ExerciseMedia extends StatefulWidget {
+/// Mostra o vídeo real do exercício quando existe; senão, o boneco 3D.
+class ExerciseMedia extends StatelessWidget {
   const ExerciseMedia({super.key, required this.videoAsset, required this.figure});
 
   final String? videoAsset;
   final Widget figure;
 
   @override
-  State<ExerciseMedia> createState() => _ExerciseMediaState();
+  Widget build(BuildContext context) {
+    final asset = videoAsset;
+    if (asset == null) return figure;
+    return ExerciseVideo(key: ValueKey(asset), asset: asset, fallback: figure);
+  }
 }
 
-class _ExerciseMediaState extends State<ExerciseMedia> {
-  bool _showVideo = true;
+/// Vídeo da tela de boas-vindas: ele e ela lado a lado fazendo o mesmo exercício.
+class WelcomeDuoVideo extends StatelessWidget {
+  const WelcomeDuoVideo({super.key, required this.fallback});
+
+  static const asset = 'assets/videos/onboarding_duo.mp4';
+
+  final Widget fallback;
 
   @override
   Widget build(BuildContext context) {
-    final asset = widget.videoAsset;
-    if (asset == null) return widget.figure;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: SegmentedButton<bool>(
-            showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(value: true, icon: Icon(Icons.videocam_outlined), label: Text('Vídeo')),
-              ButtonSegment(value: false, icon: Icon(Icons.accessibility_new), label: Text('Boneco 3D')),
-            ],
-            selected: {_showVideo},
-            onSelectionChanged: (s) => setState(() => _showVideo = s.first),
-          ),
-        ),
-        const SizedBox(height: 8),
-        if (_showVideo) ExerciseVideo(key: ValueKey(asset), asset: asset, fallback: widget.figure) else widget.figure,
-      ],
+    Widget chip(String t) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(14)),
+          child: Text(t, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+        );
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(
+        children: [
+          ExerciseVideo(asset: asset, fallback: fallback, controls: false),
+          Positioned(left: 12, bottom: 12, child: chip('Ele')),
+          Positioned(right: 12, bottom: 12, child: chip('Ela')),
+        ],
+      ),
     );
   }
 }
