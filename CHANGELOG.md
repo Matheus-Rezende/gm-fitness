@@ -2,6 +2,12 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.14.0
+
+- **Vídeos reais no lugar do boneco 3D**: nos 59 exercícios que têm vídeo, a tela do exercício mostra só o vídeo real (homem ou mulher, conforme o seu perfil). O boneco 3D continua apenas nos exercícios que ainda não ganharam vídeo.
+- **Nova tela de boas-vindas**: ele e ela, lado a lado, fazendo elevação lateral juntos.
+- Na escolha de sexo, as fotos reais substituem os bonecos.
+
 ## 0.13.2
 
 - **Login com Google liberado para todos**: qualquer conta Google pode entrar e salvar o progresso no Google Drive.
