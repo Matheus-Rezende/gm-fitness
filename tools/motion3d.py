@@ -495,3 +495,83 @@ def fix_feet(frames3d, plane, pattern_id):
             w = 0.0 if fixed[k] is not None else on_floor
             d3 = _unit(_plus(_scale(air, 1 - w), _scale(ground, w)))
             F.pts['toe' + side] = _plus(ank, _scale(d3, foot))
+
+
+# ------------------------------------------------------------ braços
+
+# Posições de braço que o desenho 2D não consegue mostrar (cotovelo para o
+# lado, mãos atrás da cabeça, mãos à frente do corpo sem atravessar o tronco).
+ARM_POSE = {
+    'crunch': 'behind_head',
+    'bicycle_crunch': 'behind_head_twist',
+    'russian_twist': 'clasp_front',
+    'side_lying_abduction': 'top_on_hip',
+}
+
+
+def _cross(a, b):
+    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+
+
+def _ik3(sh, target, la, lb, pole):
+    """Dois segmentos de sh até target, com o cotovelo para o lado de pole."""
+    v = _v(sh, target)
+    dist = _len(v)
+    if dist < 1e-6:
+        return sh, sh
+    dist_c = min(dist, (la + lb) * 0.995)
+    u = _unit(v)
+    target = _plus(sh, _scale(u, dist_c))
+    a = (la * la - lb * lb + dist_c * dist_c) / (2 * dist_c)
+    h = math.sqrt(max(0.0, la * la - a * a))
+    p = _perp(pole, u)
+    p = _unit(p) if _len(p) > 1e-6 else _unit(_perp((0.0, 1.0, 0.0), u))
+    elb = _plus(_plus(sh, _scale(u, a)), _scale(p, h))
+    return elb, target
+
+
+def fix_arms(frames3d, pattern_id):
+    mode = ARM_POSE.get(pattern_id)
+    if mode is None:
+        return
+    la, lb = L['ua'], L['fa']
+    for F in frames3d:
+        P = F.pts
+        up = _unit(_v(P['hip'], P['neck']))
+        front = _unit(_perp(F.torso_f, up))
+        face = _unit(F.head_face)
+        hc = P['head']
+        for side in ('N', 'F'):
+            sh = P['sh' + side]
+            lat = _unit(_perp(_v(P['neck'], sh), up))
+            if mode.startswith('behind_head'):
+                # dedos atrás da cabeça, cotovelos abertos para os lados
+                target = _plus(_plus(hc, _scale(face, -4.2)), _scale(lat, 3.2))
+                fwd = 0.25
+                if mode == 'behind_head_twist':
+                    # o cotovelo vai à frente quando o joelho do outro lado sobe
+                    other = 'F' if side == 'N' else 'N'
+                    dk = _len(_v(P['knee' + other], P['neck']))
+                    dn = _len(_v(P['knee' + side], P['neck']))
+                    fwd = 0.25 + 1.4 * _smooth((dn - dk) / 12.0)
+                pole = _plus(lat, _scale(face, fwd))
+            elif mode == 'clasp_front':
+                mid = _scale(_plus(P['handN'], P['handF']), 0.5)
+                chest = _plus(P['neck'], _scale(up, -11.0))
+                twist = _dot(_v(chest, mid), _unit(_perp(_v(P['shF'], P['shN']), up)))
+                latw = _unit(_perp(_v(P['shF'], P['shN']), up))
+                target = _plus(_plus(chest, _scale(front, 17.0)), _scale(latw, twist * 0.8))
+                target = _plus(target, _scale(lat, 1.4))
+                pole = _plus(_scale(up, -0.6), lat)
+            elif mode == 'top_on_hip':
+                if side != 'N':
+                    continue
+                hp = P['hipN']
+                out = _unit(_v(P['hip'], hp))
+                target = _plus(_plus(hp, _scale(out, 6.5)), _scale(front, 1.5))
+                pole = _plus(_scale(front, -1.0), _scale(out, 0.6))
+            else:
+                continue
+            elb, hand = _ik3(sh, target, la, lb, pole)
+            P['elb' + side] = elb
+            P['hand' + side] = hand

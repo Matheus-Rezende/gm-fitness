@@ -260,6 +260,7 @@ def build3d(pattern, warn):
     rows = []
     conv = [m3.convert(J, plane, cx, cy) for J in frames]
     m3.fix_feet(conv, plane, pattern.id)
+    m3.fix_arms(conv, pattern.id)
     for J, F in zip(frames, conv):
         row = []
         for name in JOINTS:

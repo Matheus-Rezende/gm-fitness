@@ -340,7 +340,8 @@ GB_SH = (36.0, LIE_Y - 1)
 def _bridge_keys():
     def k(t):
         hip = add(GB_SH, d(t), -L['torso'])
-        return P(hip, t, head=6, arm=FA(t + 180 - 6, t + 180 - 6), leg=IL((84, ANK), 1, 90))
+        # braços apoiados no chão ao lado do corpo, palmas para baixo
+        return P(hip, t, head=6, arm=FA(90, 91), leg=IL((84, ANK), 1, 90))
     return [k(268), k(240)]
 
 
