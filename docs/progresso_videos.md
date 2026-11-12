@@ -22,7 +22,7 @@ Arquivo de controle para retomar a geração dos vídeos quando os créditos do 
 1. Exercícios com máquina (aparelho, polia, Smith, esteira, remo).
 2. Por último, exercícios sem máquina (barra, halter, kettlebell, peso corporal).
 
-## Status (atualizado em 12/11/2026, saldo ~225 créditos)
+## Status (atualizado em 12/11/2026, saldo ~73 créditos)
 
 Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 
@@ -34,11 +34,11 @@ Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 - [x] mesa_flexora — novos exercicios
 - [x] coice_polia — novos exercicios
 - [x] pulldown_bracos_estendidos — novos exercicios
-- [~] voador_invertido — HOMEM ok (vídeo de 4 s, vista de trás, montar ida+volta). MULHER falhou 2x (morph estranho) — tentar Veo
+- [~] voador_invertido — HOMEM ok (vídeo de 4 s, vista de trás, montar ida+volta). MULHER falhou 3x (a 3ª com Veo 3.1 Fast em 12/11: braços quase não abrem) — decidir com o usuário
 - [x] barra_fixa_assistida — novos exercicios
 - [x] cadeira_adutora — mulher ok (novos exercicios); homem refeito em 12/11 (vídeo de 4 s, montar ida+volta)
 - [x] abducao_polia — homem em novos exercicios; MULHER caiu na coleção "videos corrigidos"
-- [ ] crossover — falhou 2x (homem e mulher: mãos não se encontram). Tentar Veo com imagem final
+- [x] crossover — refeito com Veo 3.1 Fast em 12/11 (homem e mulher, mãos se encontram à frente; mulher faz 2 repetições)
 - [~] panturrilha_sentado — gerado 12/11 (movimento sutil, conferir no celular)
 - [x] hiperextensao_lombar — 12/11
 - [x] voador — 12/11 (vídeos de 4 s, montar ida+volta)
@@ -49,7 +49,14 @@ Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 - [x] corrida_intervalada — 12/11 (sprint)
 
 ### Sem máquina
-elevacao_pelvica, agachamento_barra, stiff_barra, agachamento_bulgaro, abdominal_bicicleta,
+Gerados em 12/11 (Omni 1.2 Flash, 8 s, soltos na aba Vídeos):
+- [x] elevacao_pelvica — homem e mulher
+- [~] agachamento_barra — homem ok (agacha fundo); mulher desce pouco e o rack tapa parte
+- [~] stiff_barra — mulher ok; homem desce só até o joelho
+- [x] agachamento_bulgaro — homem e mulher
+- [x] abdominal_bicicleta — homem e mulher
+
+Faltam:
 rosca_direta_barra, caminhada_fazendeiro, remada_curvada_barra, remada_curvada_halteres,
 agachamento_sumo, crucifixo_halteres, afundo_halteres, elevacao_pernas, marcha_estacionaria,
 agachamento_livre, agachamento_goblet_kettlebell, agachamento_sumo_kettlebell, afundo,
