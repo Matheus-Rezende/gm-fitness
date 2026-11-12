@@ -16,7 +16,7 @@ jobs:
   release:
     name: APK na página de Releases
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -62,14 +62,41 @@ jobs:
           # impressão digital pública do certificado (usada no cadastro do login Google)
           keytool -list -v -keystore "$RUNNER_TEMP/gm-fitness.jks" -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" 2>/dev/null | grep -E "SHA1:|SHA256:" | head -2 || true
 
-      - name: APK
+      - name: APKs (universal e por processador)
         if: steps.ver.outputs.exists == 'false'
         env:
           GM_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
+          TAG: ${{ steps.ver.outputs.tag }}
         run: |
           flutter pub get
-          if [ -n "$GOOGLE_WEB_CLIENT_ID" ]; then flutter build apk --release --dart-define=GOOGLE_WEB_CLIENT_ID="$GOOGLE_WEB_CLIENT_ID"; else flutter build apk --release; fi
+          DEF=""
+          if [ -n "$GOOGLE_WEB_CLIENT_ID" ]; then DEF="--dart-define=GOOGLE_WEB_CLIENT_ID=$GOOGLE_WEB_CLIENT_ID"; fi
+          mkdir -p out
+          # universal: para quem instala à mão e para versões antigas do app
+          flutter build apk --release $DEF
+          cp build/app/outputs/flutter-apk/app-release.apk "out/gm-fitness-${TAG}.apk"
+          # um APK por processador (mesmo versionCode do universal)
+          for pair in arm64-v8a:android-arm64 armeabi-v7a:android-arm x86_64:android-x64; do
+            ABI="${pair%%:*}"; PLAT="${pair##*:}"
+            flutter build apk --release --target-platform "$PLAT" $DEF
+            cp build/app/outputs/flutter-apk/app-release.apk "out/gm-fitness-${TAG}-${ABI}.apk"
+          done
+          ls -la out
+
+      - name: Patches (só a diferença para a versão anterior)
+        if: steps.ver.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          pip install --quiet bsdiff4
+          PREV=$(gh release view --json tagName -q .tagName 2>/dev/null || true)
+          mkdir -p prev
+          if [ -n "$PREV" ]; then gh release download "$PREV" -p '*.apk' -D prev || true; fi
+          ls -la prev
+          python3 tools/make_patches.py out prev "${TAG#v}"
+          cat out/update.json
 
       - name: Publicar
         if: steps.ver.outputs.exists == 'false'
@@ -78,7 +105,7 @@ jobs:
           TAG: ${{ steps.ver.outputs.tag }}
         run: |
           APK="gm-fitness-${TAG}.apk"
-          cp build/app/outputs/flutter-apk/app-release.apk "$APK"
+          cp "out/$APK" "$APK"
           VERSION="${TAG#v}"
           {
             awk -v v="$VERSION" '
@@ -88,7 +115,7 @@ jobs:
             echo
             echo "## Como instalar no Android"
             echo
-            echo "1. No celular, toque em **${APK}** logo abaixo, em *Assets*, para baixar."
+            echo "1. No celular, toque em **gm-fitness-${TAG}-arm64-v8a.apk** logo abaixo, em *Assets*, para baixar (serve para quase todos os celulares). Se não instalar, use **${APK}**, que funciona em qualquer aparelho."
             echo "2. Abra o arquivo baixado. Se o Android pedir, permita **instalar apps desconhecidos** para o navegador ou o gerenciador de arquivos."
             echo "3. Toque em **Instalar**."
             echo
@@ -96,4 +123,8 @@ jobs:
             echo
             echo "Quem tem a versão 0.4.0 ou anterior precisa desinstalar a antiga uma única vez antes de instalar esta, porque a assinatura do app mudou. Isso apaga a lista de treinos salva no celular."
           } > notas.md
+          # o APK universal vai primeiro: versões antigas do app pegam o primeiro APK da lista
           gh release create "$TAG" "$APK" --target "$GITHUB_SHA" --title "GM Fitness ${TAG}" --notes-file notas.md
+          gh release upload "$TAG" out/gm-fitness-${TAG}-*.apk
+          ls out/*.patch >/dev/null 2>&1 && gh release upload "$TAG" out/*.patch
+          gh release upload "$TAG" out/update.json

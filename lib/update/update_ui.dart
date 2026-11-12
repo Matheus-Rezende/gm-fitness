@@ -231,7 +231,7 @@ class _UpdateSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Nova versão ${u.version}', style: text.headlineSmall),
-                            Text('Você está na $kAppVersion${u.apkSize > 0 ? ' · download de ${u.sizeLabel}' : ''}',
+                            Text('Você está na $kAppVersion${u.apkSize > 0 ? ' · download de ${u.sizeLabel}${u.isPatch ? ' (só o que mudou)' : ''}' : ''}',
                                 style: text.bodySmall),
                           ],
                         ),

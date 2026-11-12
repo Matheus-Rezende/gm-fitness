@@ -23,6 +23,9 @@ class MainActivity : FlutterActivity() {
                         result.success(dir.absolutePath)
                     }
                     "canInstall" -> result.success(canInstall())
+                    // APK instalado (base para montar a versão nova só com a diferença)
+                    "apkPath" -> result.success(applicationInfo.sourceDir)
+                    "abis" -> result.success(Build.SUPPORTED_ABIS.toList())
                     "openInstallSettings" -> {
                         openInstallSettings()
                         result.success(null)
