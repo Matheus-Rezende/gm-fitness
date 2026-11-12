@@ -69,4 +69,37 @@ void main() {
       File('build/hires/seq_$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
     }
   }, skip: !enabled);
+
+  test('revisão de todos os movimentos', () async {
+    final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
+    final ids = lib.clips.keys.toList()..sort();
+    Directory('build/review').createSync(recursive: true);
+    const tw = 220.0, th = 180.0, cols = 6, per = 8;
+    for (var s = 0; s * per < ids.length; s++) {
+      final chunk = ids.skip(s * per).take(per).toList();
+      final rec = ui.PictureRecorder();
+      final canvas = Canvas(rec);
+      for (var r = 0; r < chunk.length; r++) {
+        final clip = lib[chunk[r]]!;
+        for (var c = 0; c < cols; c++) {
+          canvas.save();
+          canvas.translate(c * tw, r * th);
+          FigurePainter(
+                  clip: clip,
+                  time: c / cols,
+                  palette: FigurePalette.light,
+                  style: FigureStyle(male: s.isEven, showPath: false),
+                  ghost: false,
+                  yaw: clip.defaultYaw + 30)
+              .paint(canvas, const Size(tw, th));
+          canvas.restore();
+        }
+      }
+      final img = await rec.endRecording().toImage((tw * cols).toInt(), (th * chunk.length).toInt());
+      final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+      final name = 'r_${s.toString().padLeft(2, '0')}';
+      File('build/review/$name.txt').writeAsStringSync(chunk.join('\n'));
+      File('build/review/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+    }
+  }, skip: !enabled);
 }
