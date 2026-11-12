@@ -336,7 +336,7 @@ class _Welcome extends StatelessWidget {
                 width: double.infinity,
                 child: FilledButton(onPressed: onNext, child: const Text('Começar')),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               const RestoreFromGoogleButton(),
             ],
           ),

@@ -249,7 +249,9 @@ class CloudSection extends StatelessWidget {
   }
 }
 
-/// Botão do primeiro acesso: entrar e trazer o progresso de volta.
+/// Botão do primeiro acesso: entrar com a conta Google (restaura o progresso
+/// se já houver backup) e o aviso de que, sem entrar, os dados ficam só no
+/// aparelho.
 class RestoreFromGoogleButton extends StatelessWidget {
   const RestoreFromGoogleButton({super.key});
 
@@ -257,18 +259,53 @@ class RestoreFromGoogleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final sync = CloudSync.instance;
     if (!sync.supported) return const SizedBox.shrink();
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
     return ListenableBuilder(
       listenable: sync,
-      builder: (context, _) => SizedBox(
-        width: double.infinity,
-        child: TextButton.icon(
-          onPressed: sync.busy ? null : sync.signIn,
-          icon: sync.busy
-              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.cloud_download_outlined),
-          label: const Text('Já usei o app: entrar com Google e restaurar'),
-        ),
-      ),
+      builder: (context, _) {
+        final u = sync.user;
+        if (u != null) {
+          return Row(
+            children: [
+              Icon(Icons.cloud_done_outlined, size: 20, color: scheme.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text('Conectado como ${u.email}. Seu progresso será salvo no Google Drive.',
+                    style: text.bodySmall),
+              ),
+            ],
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OutlinedButton.icon(
+              onPressed: sync.busy ? null : sync.signIn,
+              style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+              icon: sync.busy
+                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.account_circle_outlined),
+              label: const Text('Entrar com Google'),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline_rounded, size: 16, color: scheme.onSurfaceVariant),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Entrando, seu progresso fica salvo na sua conta e volta se você trocar de celular. '
+                    'Sem entrar, os dados ficam só neste aparelho e podem ser perdidos se o app for apagado.',
+                    style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
