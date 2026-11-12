@@ -1,8 +1,10 @@
 name: Prévias em branch
 
 # Gera as prévias das animações e guarda na branch "previas" (para conferir
-# o desenho sem baixar artefatos). Só roda à mão.
+# o desenho sem baixar artefatos). Roda nas branches de polimento visual.
 on:
+  push:
+    branches: ['polimento-*']
   workflow_dispatch:
 
 permissions:
