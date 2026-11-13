@@ -47,7 +47,8 @@ class CartoonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (clip.frameCount == 0 || size.isEmpty) return;
-    final fp = FigurePainter(clip: clip, time: time, palette: palette, style: style, yaw: yaw, pitch: 7)..prepare();
+    final fp = FigurePainter(clip: clip, time: time, palette: palette, style: style, yaw: yaw, pitch: pitchFor(clip, time))
+      ..prepare();
     _cam = fp.camera;
     _f = fp.frame;
     _pulse = fp.pulse;
@@ -129,6 +130,43 @@ class CartoonPainter extends CustomPainter {
             ..close(),
           Paint()..color = palette.path);
     }
+  }
+
+  /// Câmera mais alta quando a pessoa está deitada (de barriga para cima ou
+  /// para baixo), para o peito ou as costas aparecerem.
+  static double pitchFor(MotionClip clip, double time) {
+    final f = clip.sample(time);
+    final front = MotionClip.at(f, Jt.torsoFront).unit;
+    return 7 + 30 * front.y.abs().clamp(0.0, 1.0);
+  }
+
+  /// Vista (0 lado, 45 ¾, 90 frente, 270 costas) em que o músculo principal
+  /// aparece melhor; empata a favor da vista padrão do exercício.
+  static double bestYaw(MotionClip clip, Set<String> primary) {
+    const frontG = {'peito', 'abdomen', 'biceps', 'quadriceps', 'antebraco'};
+    const backG = {'costas', 'lombar', 'gluteos', 'trapezio', 'triceps', 'posterior', 'panturrilha'};
+    final wantFront = primary.any(frontG.contains);
+    final wantBack = primary.any(backG.contains);
+    if (wantFront == wantBack) return clip.defaultYaw;
+    final f = clip.sample(0.3);
+    final front = MotionClip.at(f, Jt.torsoFront).unit;
+    final pitch = pitchFor(clip, 0.3);
+    double vis(double yaw) {
+      final t = Camera(yaw, pitch).toward;
+      final v = front.dot(t);
+      return wantFront ? v : -v;
+    }
+    final candidates = [clip.defaultYaw, 0.0, 45.0, 90.0, 270.0];
+    var best = clip.defaultYaw;
+    var bestV = vis(best) + 0.25; // a padrão ganha se não perder por muito
+    for (final y in candidates) {
+      final v = vis(y);
+      if (v > bestV) {
+        best = y;
+        bestV = v;
+      }
+    }
+    return best;
   }
 
   bool get _wholeBody => style.primary.contains('corpo_inteiro') || style.primary.contains('cardio');
@@ -280,27 +318,46 @@ class CartoonPainter extends CustomPainter {
       // camiseta em cima, roupa de baixo no quadril
       final topLen = look.male ? 0.32 : 0.46; // onde a camiseta termina (fração do tronco a partir do quadril)
       final muscles = <_Muscle>[];
-      void torsoPatch(String g, double tLo, double tHi, double along, double sideK, bool frontSide) {
+      final perpT = _perp3(hip, neck);
+      // mancha no tronco: faixa do lado que [frontSide] aponta (toda a largura de
+      // frente, uma tira na borda de lado, nada de costas), arredondada
+      void torsoPatch(String g, double tLo, double tHi, double sideK, bool frontSide) {
         final w = _mw(g);
         if (w == 0) return;
-        final vis = frontSide ? frontK : -frontK;
-        if (vis < 0.22) return;
-        final c = _p(hip + up * (axisLen * (tLo + tHi) / 2)) + frontScreen * (along * (frontSide ? 1 : -1) * vis.clamp(0.0, 1.0) * 0.8);
-        final h = axisLen * (tHi - tLo) / 2;
-        final wdt = shW * sideK * (0.45 + 0.55 * vis.clamp(0.0, 1.0));
-        muscles.add(_Muscle(g, w, Path()..addOval(Rect.fromCenter(center: c, width: wdt * 2, height: h * 2)), split: g == 'peito' || g == 'abdomen' || g == 'costas' || g == 'gluteos' ? frontScreen : null));
+        final dirV = frontSide ? front : front * -1;
+        final p0 = axisPt(tLo), p1 = axisPt(tHi);
+        final rMid = wAt(((tLo + tHi) / 2).clamp(0.0, 1.0)) * sideK;
+        final band = _band(path, p0, p1, rMid, dirV, perpT, from: 0.0, to: 1.0);
+        if (band == null) return;
+        // arredonda as pontas com uma elipse ao longo do eixo
+        final c = (p0 + p1) * 0.5;
+        final h = (p1 - p0).distance / 2 + 1.0;
+        final ang = math.atan2((p1 - p0).dy, (p1 - p0).dx);
+        final oval = Path()..addOval(Rect.fromCenter(center: Offset.zero, width: h * 2, height: rMid * 2.6));
+        final m = Matrix4.identity()
+          ..translate(c.dx, c.dy)
+          ..rotateZ(ang);
+        final region = Path.combine(PathOperation.intersect, band, oval.transform(m.storage));
+        if (region.getBounds().isEmpty) return;
+        final splitDir = frontScreen.distance > 0.3 ? frontScreen : null;
+        muscles.add(_Muscle(g, w, region, split: g == 'peito' || g == 'abdomen' || g == 'costas' ? splitDir : null));
       }
-      torsoPatch('peito', 0.68, 0.94, 3.5, 0.95, true);
-      torsoPatch('abdomen', 0.3, 0.66, 3.0, 0.62, true);
-      torsoPatch('costas', 0.5, 0.95, 3.5, 1.0, false);
-      torsoPatch('lombar', 0.16, 0.48, 3.0, 0.7, false);
-      if (_mw('gluteos') > 0 && -frontK > 0.22) {
+      torsoPatch('peito', 0.66, 0.95, 0.95, true);
+      torsoPatch('abdomen', 0.3, 0.64, 0.7, true);
+      torsoPatch('costas', 0.5, 0.96, 1.0, false);
+      torsoPatch('lombar', 0.16, 0.48, 0.75, false);
+      if (_mw('gluteos') > 0) {
         // glúteos: dois montes na parte de trás do quadril
-        final vis = (-frontK).clamp(0.0, 1.0);
-        final c = _p(hip - up * 1.0) - frontScreen * (3.5 * vis);
-        final sp = hipW * 0.5 * (0.3 + 0.7 * vis);
-        for (final sg in const [-1.0, 1.0]) {
-          muscles.add(_Muscle('gluteos', _mw('gluteos'), Path()..addOval(Rect.fromCenter(center: c + side * (sp * sg), width: sp * 1.9, height: 7.5))));
+        final p0 = axisPt(-0.08), p1 = axisPt(0.16);
+        final band = _band(path, p0, p1, hipW, front * -1, perpT, from: -0.4, to: 1.2);
+        if (band != null) {
+          final c = (p0 + p1) * 0.5;
+          final sp = hipW * 0.5;
+          for (final sg in const [-1.0, 1.0]) {
+            final oval = Path()..addOval(Rect.fromCenter(center: c + side * (sp * sg), width: sp * 2.1, height: (p1 - p0).distance + 3));
+            final region = Path.combine(PathOperation.intersect, band, oval);
+            if (!region.getBounds().isEmpty) muscles.add(_Muscle('gluteos', _mw('gluteos'), region));
+          }
         }
       }
       if (_mw('trapezio') > 0) {
@@ -364,7 +421,7 @@ class CartoonPainter extends CustomPainter {
       if (!look.male) {
         final tailDepth = headDepth - 0.6 - fz * 3.5;
         final base = c + uS * (r * 0.5) + rS * (back * r * 0.75);
-        final tip = base - uS * (r * 1.9) + rS * (back * r * 0.9 + fx * r * 0.1);
+        final tip = base - uS * (r * 2.6) + rS * (back * r * 1.0 + fx * r * 0.1);
         parts.add(_Part(tailDepth, capsule(base, tip, r * 0.42, r * 0.28), look.hair,
             over: (cv) => cv.drawCircle(base, r * 0.28, Paint()..color = look.accent)));
       }

@@ -41,7 +41,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   bool _playing = true;
   late bool _muscles = widget.style.showMuscles;
   late bool _path = widget.style.showPath;
-  late double _yaw = widget.initialYaw ?? widget.clip.defaultYaw;
+  late double _yaw = widget.initialYaw ?? CartoonPainter.bestYaw(widget.clip, widget.style.primary);
 
   static const _views = <(String, double)>[('Lado', 0), ('¾', 45), ('Frente', 90), ('Costas', 270)];
 
@@ -73,7 +73,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   void didUpdateWidget(MotionView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.clip != widget.clip) {
-      _yaw = widget.initialYaw ?? widget.clip.defaultYaw;
+      _yaw = widget.initialYaw ?? CartoonPainter.bestYaw(widget.clip, widget.style.primary);
       _ctrl.duration = _period();
       _ctrl.value = 0;
       if (_playing) _ctrl.repeat();
