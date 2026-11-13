@@ -2,6 +2,11 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.17.2
+
+- **Rosto do boneco corrigido**: os traços estavam espelhados e o rosto parecia virado para trás. Agora olhos, nariz e boca ficam do lado para onde a pessoa olha, a orelha fica do lado da nuca e o cabelo cobre o topo e a nuca. Olhos com íris e brilho, sobrancelhas, nariz e um sorriso leve; de perfil aparece só o olho da frente.
+- Rabo de cavalo dela menor e saindo da nuca.
+
 ## 0.17.1
 
 - **Boneco 2D revisado em todos os 88 movimentos e nas 4 vistas**:

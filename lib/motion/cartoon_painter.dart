@@ -425,10 +425,10 @@ class CartoonPainter extends CustomPainter {
       // cabeça quando ela olha para nós e na frente quando está de costas
       if (!look.male) {
         final tailDepth = headDepth - 0.6 - fz * 3.5;
-        final base = c + uS * (r * 0.45) + rS * (nape * r * 0.8);
-        final tip = base - uS * (r * 2.6) + rS * (nape * r * 0.9);
-        parts.add(_Part(tailDepth, capsule(base, tip, r * 0.42, r * 0.26), look.hair,
-            over: (cv) => cv.drawCircle(base, r * 0.26, Paint()..color = look.accent)));
+        final base = c + uS * (r * 0.25) + rS * (nape * r * 0.85);
+        final tip = base - uS * (r * 1.5) + rS * (nape * r * 0.45);
+        parts.add(_Part(tailDepth, capsule(base, tip, r * 0.3, r * 0.18), look.hair,
+            over: (cv) => cv.drawCircle(base, r * 0.2, Paint()..color = look.accent)));
       }
       parts.add(_Part(
         headDepth,
@@ -438,10 +438,10 @@ class CartoonPainter extends CustomPainter {
           cv.drawPath(hair, Paint()..color = look.hair);
           if (look.male) {
             // topete na testa e costeleta
-            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.92) + rS * (fx * r * 0.4), width: r * 1.0, height: r * 0.55), Paint()..color = look.hair);
+            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.93) + rS * (fx * r * 0.25), width: r * 0.8, height: r * 0.42), Paint()..color = look.hair);
           } else {
             // franja caindo para o lado da testa
-            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.7) + rS * (fx * r * 0.62), width: r * 1.0, height: r * 0.5), Paint()..color = look.hair);
+            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.78) + rS * (fx * r * 0.42), width: r * 0.8, height: r * 0.4), Paint()..color = look.hair);
           }
           if (fz > -0.2) _face(cv, c, r, fx, fz, uS, rS);
           // orelha do lado da nuca (some quando o rosto está bem de frente ou bem de costas)
