@@ -2,6 +2,13 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.17.0
+
+- **Boneco de volta, agora em desenho 2D**: na tela do exercício há a opção "Vídeo" ou "Boneco". O boneco virou um desenho cartoon com contorno, cores chapadas e mais personalidade: rosto com olhos, sobrancelhas e sorriso, cabelo (ele com topete, ela com rabo de cavalo), camiseta com a marca, short ou legging com faixa e tênis.
+- **Vistas fixas**: Lado, ¾, Frente e Costas. Não dá mais para girar livremente arrastando.
+- **Músculos trabalhados pintados no boneco**: o principal em laranja (pulsando) e os auxiliares em amarelo, respeitando a vista (o peito só aparece de frente, as costas só de costas...). Abaixo do boneco, a legenda diz quais são.
+- Gota de suor e cara de esforço na parte mais pesada do movimento.
+
 ## 0.16.0
 
 - **Notificações** (Configurações > Notificações, todas podem ser desligadas):
