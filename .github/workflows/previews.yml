@@ -25,7 +25,7 @@ jobs:
       - run: RENDER_PREVIEWS=1 flutter test test/render_preview_test.dart test/render_hires_test.dart test/render_screens_test.dart || true
       - name: Publica na branch previas
         run: |
-          mkdir -p /tmp/out && cp -r build/previews build/screens build/hires build/review build/arms /tmp/out/ 2>/dev/null || true
+          mkdir -p /tmp/out && cp -r build/previews build/screens build/hires build/review build/arms build/cartoon /tmp/out/ 2>/dev/null || true
           cd /tmp/out
           git init -q -b previas
           git config user.name "github-actions"

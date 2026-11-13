@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'cartoon_painter.dart';
 import 'figure_painter.dart';
 import 'motion_clip.dart';
 
@@ -17,6 +18,7 @@ class MotionView extends StatefulWidget {
     this.showKeyPoses = true,
     this.fullscreen = false,
     this.initialYaw,
+    this.muscleLabels = const {},
   });
 
   final MotionClip clip;
@@ -25,6 +27,9 @@ class MotionView extends StatefulWidget {
   final bool showKeyPoses;
   final bool fullscreen;
   final double? initialYaw;
+
+  /// Nome de cada grupo muscular (chave -> rótulo), para a legenda.
+  final Map<String, String> muscleLabels;
 
   @override
   State<MotionView> createState() => _MotionViewState();
@@ -39,6 +44,8 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   late double _yaw = widget.initialYaw ?? widget.clip.defaultYaw;
 
   static const _views = <(String, double)>[('Lado', 0), ('¾', 45), ('Frente', 90), ('Costas', 270)];
+
+  String _names(Set<String> keys) => keys.map((k) => widget.muscleLabels[k] ?? k).join(', ');
 
   bool _isView(double y) {
     final d = ((_yaw - y) % 360 + 360) % 360;
@@ -117,7 +124,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   void _openFullscreen() {
     Navigator.of(context).push(MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (_) => _FullscreenMotion(clip: widget.clip, style: _style, yaw: _yaw),
+      builder: (_) => _FullscreenMotion(clip: widget.clip, style: _style, yaw: _yaw, labels: widget.muscleLabels),
     ));
   }
 
@@ -135,14 +142,11 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
         aspectRatio: clip.aspectRatio,
         child: GestureDetector(
           onTap: widget.showControls ? _toggle : null,
-          onHorizontalDragUpdate: widget.showControls
-              ? (d) => setState(() => _yaw = ((_yaw - d.delta.dx * 0.7) % 360 + 360) % 360)
-              : null,
           child: RepaintBoundary(
             child: AnimatedBuilder(
               animation: _ctrl,
               builder: (context, _) => CustomPaint(
-                painter: FigurePainter(clip: clip, time: _ctrl.value, palette: palette, style: _style, yaw: _yaw),
+                painter: CartoonPainter(clip: clip, time: _ctrl.value, palette: palette, style: _style, yaw: _yaw),
                 child: const SizedBox.expand(),
               ),
             ),
@@ -199,7 +203,7 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
         const SizedBox(height: 8),
         Row(
           children: [
-            Icon(Icons.threesixty_rounded, size: 20, color: scheme.onSurfaceVariant),
+            Icon(Icons.visibility_outlined, size: 20, color: scheme.onSurfaceVariant),
             const SizedBox(width: 6),
             Expanded(
               child: SingleChildScrollView(
@@ -221,10 +225,6 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
               ),
             ),
           ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 4),
-          child: Text('Arraste o boneco para os lados para girar.', style: theme.textTheme.bodySmall),
         ),
         Row(
           children: [
@@ -274,15 +274,23 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
         if (_muscles && hasMuscles)
           Padding(
             padding: const EdgeInsets.only(top: 6, left: 4),
-            child: Row(
+            child: Wrap(
+              spacing: 14,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                _Dot(color: const Color(0xFFFFB400)),
-                const SizedBox(width: 6),
-                Text('Músculo principal', style: theme.textTheme.bodySmall),
-                const SizedBox(width: 14),
-                _Dot(color: const Color(0xFFFFE27A)),
-                const SizedBox(width: 6),
-                Text('Auxiliares', style: theme.textTheme.bodySmall),
+                if (widget.style.primary.isNotEmpty)
+                  _Legend(
+                    color: CartoonPainter.primaryColor,
+                    text: 'Principal: ${_names(widget.style.primary)}',
+                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                if (widget.style.secondary.isNotEmpty)
+                  _Legend(
+                    color: CartoonPainter.secondaryColor,
+                    text: 'Auxiliares: ${_names(widget.style.secondary)}',
+                    style: theme.textTheme.bodySmall,
+                  ),
               ],
             ),
           ),
@@ -311,14 +319,22 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   }
 }
 
-class _Dot extends StatelessWidget {
-  const _Dot({required this.color});
+class _Legend extends StatelessWidget {
+  const _Legend({required this.color, required this.text, this.style});
 
   final Color color;
+  final String text;
+  final TextStyle? style;
 
   @override
-  Widget build(BuildContext context) =>
-      Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle));
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          const SizedBox(width: 6),
+          Text(text, style: style),
+        ],
+      );
 }
 
 class _KeyPose extends StatelessWidget {
@@ -345,12 +361,11 @@ class _KeyPose extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: clip.aspectRatio,
               child: CustomPaint(
-                painter: FigurePainter(
+                painter: CartoonPainter(
                   clip: clip,
                   time: time,
                   palette: paletteOf(context),
                   style: FigureStyle(male: style.male, primary: style.primary, secondary: style.secondary, showPath: false),
-                  ghost: false,
                   yaw: yaw,
                 ),
                 child: const SizedBox.expand(),
@@ -366,7 +381,8 @@ class _KeyPose extends StatelessWidget {
 }
 
 class _FullscreenMotion extends StatelessWidget {
-  const _FullscreenMotion({required this.clip, required this.style, required this.yaw});
+  const _FullscreenMotion({required this.clip, required this.style, required this.yaw, required this.labels});
+  final Map<String, String> labels;
 
   final MotionClip clip;
   final FigureStyle style;
@@ -382,7 +398,7 @@ class _FullscreenMotion extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 900),
-              child: MotionView(clip: clip, style: style, fullscreen: true, initialYaw: yaw),
+              child: MotionView(clip: clip, style: style, fullscreen: true, initialYaw: yaw, muscleLabels: labels),
             ),
           ),
         ),
@@ -421,12 +437,11 @@ class MotionThumb extends StatelessWidget {
         height: size,
         child: RepaintBoundary(
           child: CustomPaint(
-            painter: FigurePainter(
+            painter: CartoonPainter(
               clip: c,
               time: c.keyTimes[2],
               palette: paletteOf(context),
               style: FigureStyle(male: male, showPath: false, showMuscles: false),
-              ghost: false,
             ),
           ),
         ),

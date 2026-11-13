@@ -189,18 +189,44 @@ class _ExerciseVideoState extends State<ExerciseVideo> {
   }
 }
 
-/// Mostra o vídeo real do exercício quando existe; senão, o boneco 3D.
-class ExerciseMedia extends StatelessWidget {
+/// Mostra o vídeo real do exercício quando existe, com a opção de ver o
+/// boneco (desenho 2D com os músculos trabalhados). Sem vídeo, só o boneco.
+class ExerciseMedia extends StatefulWidget {
   const ExerciseMedia({super.key, required this.videoAsset, required this.figure});
 
   final String? videoAsset;
   final Widget figure;
 
   @override
+  State<ExerciseMedia> createState() => _ExerciseMediaState();
+}
+
+class _ExerciseMediaState extends State<ExerciseMedia> {
+  bool _showVideo = true;
+
+  @override
   Widget build(BuildContext context) {
-    final asset = videoAsset;
-    if (asset == null) return figure;
-    return ExerciseVideo(key: ValueKey(asset), asset: asset, fallback: figure);
+    final asset = widget.videoAsset;
+    if (asset == null) return widget.figure;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: SegmentedButton<bool>(
+            showSelectedIcon: false,
+            segments: const [
+              ButtonSegment(value: true, icon: Icon(Icons.videocam_outlined), label: Text('Vídeo')),
+              ButtonSegment(value: false, icon: Icon(Icons.accessibility_new), label: Text('Boneco')),
+            ],
+            selected: {_showVideo},
+            onSelectionChanged: (s) => setState(() => _showVideo = s.first),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (_showVideo) ExerciseVideo(key: ValueKey(asset), asset: asset, fallback: widget.figure) else widget.figure,
+      ],
+    );
   }
 }
 

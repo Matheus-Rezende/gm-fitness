@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gm_fitness/motion/cartoon_painter.dart';
 import 'package:gm_fitness/motion/figure_painter.dart';
 import 'package:gm_fitness/motion/motion_clip.dart';
 
@@ -96,6 +97,58 @@ void main() {
       final img = await rec.endRecording().toImage((tw * 3).toInt(), th.toInt());
       final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
       File('build/arms/$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+    }
+  }, skip: !enabled);
+
+  test('boneco 2D: folhas de revisão', () async {
+    final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
+    Directory('build/cartoon').createSync(recursive: true);
+    const tw = 300.0, th = 240.0;
+    // quadro grande por exercício, 4 vistas, homem (linha 1) e mulher (linha 2)
+    const ids = ['squat_bw', 'bench_press', 'curl', 'crunch', 'lat_pulldown', 'plank', 'deadlift', 'lateral_raise',
+      'lunge_db', 'hip_thrust', 'push_up', 'calf_raise', 'leg_press', 'row_cable', 'bird_dog', 'treadmill_walk'];
+    const views = [0.0, 45.0, 90.0, 270.0];
+    final groups = <String, (Set<String>, Set<String>)>{
+      'squat_bw': ({'quadriceps'}, {'gluteos', 'posterior'}),
+      'bench_press': ({'peito'}, {'triceps', 'ombros'}),
+      'curl': ({'biceps'}, {'antebraco'}),
+      'crunch': ({'abdomen'}, {}),
+      'lat_pulldown': ({'costas'}, {'biceps'}),
+      'plank': ({'abdomen'}, {'lombar', 'ombros'}),
+      'deadlift': ({'posterior'}, {'gluteos', 'lombar'}),
+      'lateral_raise': ({'ombros'}, {'trapezio'}),
+      'lunge_db': ({'quadriceps'}, {'gluteos'}),
+      'hip_thrust': ({'gluteos'}, {'posterior'}),
+      'push_up': ({'peito'}, {'triceps'}),
+      'calf_raise': ({'panturrilha'}, {}),
+      'leg_press': ({'quadriceps'}, {'gluteos'}),
+      'row_cable': ({'costas'}, {'biceps'}),
+      'bird_dog': ({'lombar'}, {'gluteos', 'abdomen'}),
+      'treadmill_walk': ({'cardio'}, {}),
+    };
+    for (final id in ids) {
+      final clip = lib[id];
+      if (clip == null) continue;
+      final g = groups[id] ?? (<String>{}, <String>{});
+      final rec = ui.PictureRecorder();
+      final canvas = Canvas(rec);
+      for (var r = 0; r < 2; r++) {
+        for (var c = 0; c < views.length; c++) {
+          canvas.save();
+          canvas.translate(c * tw, r * th);
+          CartoonPainter(
+            clip: clip,
+            time: c == 1 ? clip.keyTimes[1] : 0.3,
+            palette: FigurePalette.light,
+            style: FigureStyle(male: r == 0, primary: g.$1, secondary: g.$2, showPath: c == 0),
+            yaw: views[c],
+          ).paint(canvas, const Size(tw, th));
+          canvas.restore();
+        }
+      }
+      final img = await rec.endRecording().toImage((tw * views.length).toInt(), (th * 2).toInt());
+      final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+      File('build/cartoon/$id.png').writeAsBytesSync(bytes!.buffer.asUint8List());
     }
   }, skip: !enabled);
 

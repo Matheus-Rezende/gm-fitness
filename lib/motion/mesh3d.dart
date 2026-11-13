@@ -52,8 +52,9 @@ class Mesh {
   /// O destaque muscular de cada vértice vale 0 (nenhum), de 1 a 2 (músculo
   /// auxiliar, cor [secondary] com intensidade m - 1) ou de 2 a 3 (músculo
   /// principal, cor [highlight] com intensidade m - 2).
+  /// [cel]: sombreamento em 3 tons, sem brilho, para o estilo de desenho.
   void draw(Canvas canvas, Camera cam,
-      {Color highlight = const Color(0xFFFFB400), Color secondary = const Color(0xFFFFE27A)}) {
+      {Color highlight = const Color(0xFFFFB400), Color secondary = const Color(0xFFFFE27A), bool cel = false}) {
     final vc = vertexCount;
     if (vc == 0 || triangleCount == 0) return;
     if (vc > 65535) throw StateError('Malha grande demais: $vc vértices');
@@ -79,8 +80,11 @@ class Mesh {
       final sky = 0.5 + 0.5 * ny; // luz do ambiente vem mais de cima
       final rim = math.pow(1 - nt.abs().clamp(0.0, 1.0), 3).toDouble();
       final ao = _ao[i];
-      final lum = (0.34 + 0.16 * sky) * ao + 0.62 * diff * (0.55 + 0.45 * ao) + 0.10 * rim;
-      final spec = _g[i] > 0
+      var lum = (0.34 + 0.16 * sky) * ao + 0.62 * diff * (0.55 + 0.45 * ao) + 0.10 * rim;
+      if (cel) lum = lum < 0.5 ? 0.68 : (lum < 0.8 ? 0.88 : 1.02);
+      final spec = cel || _g[i] <= 0
+          ? 0.0
+          : _g[i] > 0
           ? _g[i] * math.pow(math.max(0.0, nx * half.x + ny * half.y + nz * half.z), 18).toDouble()
           : 0.0;
       final argb = _c[i];

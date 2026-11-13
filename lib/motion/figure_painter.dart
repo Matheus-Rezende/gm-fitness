@@ -254,6 +254,45 @@ class FigurePainter extends CustomPainter {
 
   V3 _t3(int i) => MotionClip.at(_f, Jt.trackedBase + i * 3);
 
+  // ---- usados pelo desenho 2D (CartoonPainter), que reaproveita o cenário
+
+  /// Prepara câmera, quadro e corpo sem desenhar.
+  void prepare() {
+    _b = style.male ? _Body.maleBody : _Body.female;
+    _cam = Camera(yaw ?? clip.defaultYaw, pitch);
+    _pulse = 0.5 + 0.5 * math.sin(time * math.pi * 4);
+    _f = clip.sample(time);
+  }
+
+  Camera get camera => _cam;
+  Float32List get frame => _f;
+  double get pulse => _pulse;
+
+  /// Equipamentos fixos (banco, aparelho, parede...).
+  Mesh equipmentMesh() {
+    final m = Mesh();
+    for (final p in clip.prims) {
+      m.part = -2;
+      _prim(m, p);
+    }
+    return m;
+  }
+
+  /// Cada objeto móvel (barra, halter, cabo...) numa malha própria, com a
+  /// profundidade do ponto onde é segurado, para intercalar com o corpo.
+  List<(double, Mesh)> propMeshes() {
+    final out = <(double, Mesh)>[];
+    for (final pr in clip.props) {
+      if (pr.track.isEmpty) continue;
+      final m = Mesh()..part = 10;
+      _prop(m, pr);
+      if (m.vertexCount > 0) out.add((_cam.depth(_t3(pr.track[0])), m));
+    }
+    return out;
+  }
+
+  void drawFloor(Canvas canvas) => _floor(canvas);
+
   @override
   void paint(Canvas canvas, Size size) {
     if (clip.frameCount == 0 || size.isEmpty) return;
@@ -1210,6 +1249,12 @@ class FigurePainter extends CustomPainter {
   void _props(Mesh m) {
     for (final pr in clip.props) {
       if (pr.track.isEmpty) continue;
+      _prop(m, pr);
+    }
+  }
+
+  void _prop(Mesh m, MotionProp pr) {
+    {
       final a3 = _t3(pr.track[0]);
       switch (pr.type) {
         case 'barbell':
@@ -1226,7 +1271,7 @@ class FigurePainter extends CustomPainter {
           }
         case 'dumbbell':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             final axis = (_t3(pr.track[1]) - a3).unit;
             m.cylinder(a3 - axis * 5.4, a3 + axis * 5.4, 0.75, _chrome, sides: 8, gloss: 0.5);
             for (final sg in const [-1.0, 1.0]) {
@@ -1235,7 +1280,7 @@ class FigurePainter extends CustomPainter {
           }
         case 'kettlebell':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             final elbow = _t3(pr.track[1]);
             final down = (a3 - elbow).unit;
             var side = perpTo(const V3(0, 0, 1), down);
@@ -1252,13 +1297,13 @@ class FigurePainter extends CustomPainter {
           }
         case 'padcyl':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             final b3 = _t3(pr.track[1]);
             m.cylinder(a3, b3, pr.val('r', 4), palette.pad, cap: _shade(palette.pad, 0.15), sides: 14, gloss: 0.1);
           }
         case 'lever':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             final b3 = _t3(pr.track[1]);
             m.tube([a3, b3], 1.1, palette.equipmentDark, sides: 8, gloss: 0.2);
             m.ellipsoid(a3, const V3(0, 1, 0), const V3(1, 0, 0), const V3(0, 0, 1), 1.9, 1.9, 1.9,
@@ -1266,13 +1311,13 @@ class FigurePainter extends CustomPainter {
           }
         case 'quad':
           {
-            if (pr.track.length < 4) continue;
+            if (pr.track.length < 4) return;
             final q = [for (final i in pr.track) _t3(i)];
             m.panel(q[0], q[1], q[2], q[3], palette.equipmentDark);
           }
         case 'cable':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             final b3 = _t3(pr.track[1]);
             m.tube([a3, b3], 0.32, _cable, sides: 5);
             m.ellipsoid(b3, const V3(0, 1, 0), const V3(1, 0, 0), const V3(0, 0, 1), 1.2, 1.2, 1.2,
@@ -1280,7 +1325,7 @@ class FigurePainter extends CustomPainter {
           }
         case 'grip':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             final b3 = _t3(pr.track[1]);
             final d = b3 - a3;
             final ext = d.length < 1e-3 ? V3.zero : d.unit * 4;
@@ -1288,12 +1333,12 @@ class FigurePainter extends CustomPainter {
           }
         case 'band':
           {
-            if (pr.track.length < 2) continue;
+            if (pr.track.length < 2) return;
             m.tube([a3, _t3(pr.track[1])], 0.8, _band, sides: 6);
           }
         case 'rope':
           {
-            if (pr.track.length < 3) continue;
+            if (pr.track.length < 3) return;
             final b3 = _t3(pr.track[1]);
             final c3 = _t3(pr.track[2]);
             m.tube([

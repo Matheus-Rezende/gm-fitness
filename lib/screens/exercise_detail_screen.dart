@@ -88,7 +88,7 @@ class ExerciseDetailScreen extends StatelessWidget {
           if (clip != null)
             ExerciseMedia(
               videoAsset: exerciseVideoAsset(ex.id, male: state.isMale),
-              figure: MotionView(clip: clip, style: figureStyleFor(state, ex)),
+              figure: MotionView(clip: clip, style: figureStyleFor(state, ex), muscleLabels: state.meta.groups),
             )
           else
             Container(
@@ -138,7 +138,7 @@ class ExerciseDetailScreen extends StatelessWidget {
           ],
           const SizedBox(height: 20),
           Text(
-            'Veja a técnica acima. Use uma carga que permita fazer todas as repetições com '
+            'O vídeo mostra a técnica; o boneco mostra os músculos que trabalham. Use uma carga que permita fazer todas as repetições com '
             'boa execução e, se sentir dor, pare e procure um profissional.',
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
