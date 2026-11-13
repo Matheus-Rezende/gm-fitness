@@ -193,6 +193,33 @@ class CartoonPainter extends CustomPainter {
       ..close();
   }
 
+  /// Faixa do membro (cápsula p0→p1 de raio [r]) onde a superfície aponta na
+  /// direção 3D [dir]: cobre a largura toda quando [dir] olha para quem vê,
+  /// metade quando aponta para o lado e nada quando aponta para trás.
+  Path? _band(Path base, Offset p0, Offset p1, double r, V3 dir, V3 perp3, {double from = 0.0, double to = 1.0}) {
+    final d = p1 - p0;
+    final len = d.distance;
+    if (len < 1e-3) return null;
+    final u = d / len;
+    var n = Offset(-u.dy, u.dx);
+    // n na tela deve corresponder a perp3 (ambos perpendiculares ao membro)
+    final nS = _dir(perp3);
+    if (nS.dx * n.dx + nS.dy * n.dy < 0) n = -n;
+    final aSide = dir.dot(perp3), aTow = dir.dot(_cam.toward);
+    if (aTow < -0.92) return null;
+    var phi = math.atan2(-aTow, aSide.abs() < 1e-6 ? 1e-6 : aSide);
+    phi = phi.clamp(-math.pi / 2, math.pi / 2);
+    final s0 = r * math.sin(phi);
+    final sgn = aSide >= 0 ? 1.0 : -1.0; // lado positivo = n
+    // região: s*sgn > s0*sgn  (s = coordenada lateral na tela)
+    final q0 = p0 + d * from, q1 = p0 + d * to;
+    final inner = n * (s0 * sgn * sgn); // = n * s0
+    final outer = n * (sgn * r * 3);
+    final rect = Path()..addPolygon([q0 + inner, q1 + inner, q1 + outer, q0 + outer], true);
+    final out = Path.combine(PathOperation.intersect, base, rect);
+    return out.getBounds().isEmpty ? null : out;
+  }
+
   List<_Part> _bodyParts() {
     final look = _look;
     final parts = <_Part>[];
@@ -255,7 +282,7 @@ class CartoonPainter extends CustomPainter {
         final w = _mw(g);
         if (w == 0) return;
         final vis = frontSide ? frontK : -frontK;
-        if (vis < 0.08) return;
+        if (vis < 0.22) return;
         final c = _p(hip + up * (axisLen * (tLo + tHi) / 2)) + frontScreen * (along * (frontSide ? 1 : -1) * vis.clamp(0.0, 1.0) * 0.8);
         final h = axisLen * (tHi - tLo) / 2;
         final wdt = shW * sideK * (0.45 + 0.55 * vis.clamp(0.0, 1.0));
@@ -265,7 +292,15 @@ class CartoonPainter extends CustomPainter {
       torsoPatch('abdomen', 0.3, 0.66, 3.0, 0.62, true);
       torsoPatch('costas', 0.5, 0.95, 3.5, 1.0, false);
       torsoPatch('lombar', 0.16, 0.48, 3.0, 0.7, false);
-      torsoPatch('gluteos', -0.12, 0.16, 4.0, 1.0, false);
+      if (_mw('gluteos') > 0 && -frontK > 0.22) {
+        // glúteos: dois montes na parte de trás do quadril
+        final vis = (-frontK).clamp(0.0, 1.0);
+        final c = _p(hip - up * 1.0) - frontScreen * (3.5 * vis);
+        final sp = hipW * 0.5 * (0.3 + 0.7 * vis);
+        for (final sg in const [-1.0, 1.0]) {
+          muscles.add(_Muscle('gluteos', _mw('gluteos'), Path()..addOval(Rect.fromCenter(center: c + side * (sp * sg), width: sp * 1.9, height: 7.5))));
+        }
+      }
       if (_mw('trapezio') > 0) {
         final c = _p(neck - up * 2);
         muscles.add(_Muscle('trapezio', _mw('trapezio'), Path()..addOval(Rect.fromCenter(center: c, width: shW * 1.5, height: 6))));
@@ -325,7 +360,7 @@ class CartoonPainter extends CustomPainter {
       final headDepth = depthOf(head);
       // rabo de cavalo (mulher): atrás da cabeça, mais fundo quando ela olha para nós
       if (!look.male) {
-        final tailDepth = headDepth - fz * 3.5;
+        final tailDepth = headDepth - 0.6 - fz * 3.5;
         final base = c + uS * (r * 0.5) + rS * (back * r * 0.75);
         final tip = base - uS * (r * 1.9) + rS * (back * r * 0.9 + fx * r * 0.1);
         parts.add(_Part(tailDepth, capsule(base, tip, r * 0.42, r * 0.28), look.hair,
@@ -368,41 +403,24 @@ class CartoonPainter extends CustomPainter {
       ant = ant.length < 1e-3 ? _cam.right : ant.unit;
       final pa = _p(a), pb = _p(b), ph = _p(h);
       final perpU = _perp3(a, b);
-      final sideSign = ant.dot(perpU); // >0: frente do braço no lado "perp" da tela
       final upper = capsule(pa, pb, ru0, ru1);
       final ms = <_Muscle>[];
-      void half(String g, double sg, Path base, Offset p0, Offset p1, double r) {
+      void band(String g, V3 dir, {double from = 0.05, double to = 0.95}) {
         final w = _mw(g);
         if (w == 0) return;
-        final d = p1 - p0;
-        final len = d.distance;
-        if (len < 1e-3) return;
-        final u = d / len;
-        final n = Offset(-u.dy, u.dx) * sg;
-        // metade da cápsula do lado [n]: recorte por retângulo
-        final rect = Path()
-          ..addPolygon([
-            p0 + u * (-r) + n * 0.4,
-            p1 + u * r + n * 0.4,
-            p1 + u * r + n * (r * 3),
-            p0 + u * (-r) + n * (r * 3),
-          ], true);
-        ms.add(_Muscle(g, w, Path.combine(PathOperation.intersect, base, rect)));
+        final pth = _band(upper, pa, pb, ru1, dir, perpU, from: from, to: to);
+        if (pth != null) ms.add(_Muscle(g, w, pth));
       }
-      final sgn = sideSign >= 0 ? 1.0 : -1.0;
-      final nS = _dir(perpU);
-      // o lado "perp" na tela corresponde a n = (-u.dy, u.dx)? confere pelo produto
-      final dU = pb - pa;
-      final nTela = Offset(-dU.dy, dU.dx);
-      final align = (nTela.dx * nS.dx + nTela.dy * nS.dy) >= 0 ? 1.0 : -1.0;
-      half(upperFront, sgn * align, upper, pa, pb, ru1);
-      half(upperBack, -sgn * align, upper, pa, pb, ru1);
+      band(upperFront, ant, from: 0.18, to: 0.95);
+      band(upperBack, ant * -1, from: 0.12, to: 0.95);
       if (shoulder && _mw('ombros') > 0) {
-        ms.add(_Muscle('ombros', _mw('ombros'), Path()..addOval(Rect.fromCircle(center: pa + (pb - pa) * 0.08, radius: ru0 * 1.05))));
+        ms.add(_Muscle('ombros', _mw('ombros'), Path()..addOval(Rect.fromCircle(center: pa + (pb - pa) * 0.1, radius: ru0 * 1.05))));
       }
       final fore = capsule(pb, ph, rf0, rf1);
       final fm = <_Muscle>[];
-      if (_mw(foreG) > 0) fm.add(_Muscle(foreG, _mw(foreG), Path.combine(PathOperation.intersect, fore, capsule(pb + (ph - pb) * 0.1, pb + (ph - pb) * 0.75, rf0 * 1.2, rf1 * 1.1))));
+      if (_mw(foreG) > 0) {
+        fm.add(_Muscle(foreG, _mw(foreG), Path.combine(PathOperation.intersect, fore, capsule(pb + (ph - pb) * 0.1, pb + (ph - pb) * 0.75, rf0 * 1.2, rf1 * 1.1))));
+      }
       final sleeve = shoulder;
       parts.add(_Part(depthOf(a, b), upper, sleeve ? look.skin : look.bottom, muscles: ms, detail: sleeve
           ? (cv) {
@@ -432,60 +450,33 @@ class CartoonPainter extends CustomPainter {
       ant = ant.length < 1e-3 ? _cam.right : ant.unit;
       final ph = _p(h), pk = _p(k), pa = _p(a), pt = _p(t);
       final perpT = _perp3(h, k);
-      final sgn = ant.dot(perpT) >= 0 ? 1.0 : -1.0;
-      final dT = pk - ph;
-      final nTela = Offset(-dT.dy, dT.dx);
-      final nS = _dir(perpT);
-      final align = (nTela.dx * nS.dx + nTela.dy * nS.dy) >= 0 ? 1.0 : -1.0;
       final thigh = capsule(ph, pk, look.thighR, look.thighR * 0.72);
       final ms = <_Muscle>[];
-      void half(String g, double sg, Path base, Offset p0, Offset p1, double r, [double from = 0.05, double to = 0.95]) {
+      void band(String g, V3 dir, {double from = 0.05, double to = 0.95}) {
         final w = _mw(g);
         if (w == 0) return;
-        final d = p1 - p0;
-        final len = d.distance;
-        if (len < 1e-3) return;
-        final u = d / len;
-        final n = Offset(-u.dy, u.dx) * sg;
-        final q0 = p0 + d * from, q1 = p0 + d * to;
-        final rect = Path()..addPolygon([q0 + n * 0.3, q1 + n * 0.3, q1 + n * (r * 3), q0 + n * (r * 3)], true);
-        ms.add(_Muscle(g, w, Path.combine(PathOperation.intersect, base, rect)));
+        final pth = _band(thigh, ph, pk, look.thighR * 0.86, dir, perpT, from: from, to: to);
+        if (pth != null) ms.add(_Muscle(g, w, pth));
       }
-      half('quadriceps', sgn * align, thigh, ph, pk, look.thighR, 0.1, 0.92);
-      half('posterior', -sgn * align, thigh, ph, pk, look.thighR, 0.08, 0.9);
-      // adutores (parte de dentro) e abdutores (parte de fora): lado que aponta para o outro quadril
+      band('quadriceps', ant, from: 0.1, to: 0.92);
+      band('posterior', ant * -1, from: 0.08, to: 0.9);
+      // adutores (parte de dentro) e abdutores (parte de fora)
       final otherHip = _j(hj == Jt.hipN ? Jt.hipF : Jt.hipN);
       final inward = perpTo(otherHip - h, thighV);
       if (inward.length > 1.0) {
-        final inSgn = inward.unit.dot(perpT) >= 0 ? 1.0 : -1.0;
-        half('adutores', inSgn * align, thigh, ph, pk, look.thighR, 0.15, 0.85);
-        half('abdutores', -inSgn * align, thigh, ph, pk, look.thighR, -0.05, 0.5);
+        band('adutores', inward.unit, from: 0.15, to: 0.85);
+        band('abdutores', inward.unit * -1, from: -0.05, to: 0.5);
       } else if (_mw('abdutores') > 0) {
         ms.add(_Muscle('abdutores', _mw('abdutores'), Path()..addOval(Rect.fromCircle(center: ph + (pk - ph) * 0.12, radius: look.thighR * 1.0))));
       }
       final calf = capsule(pk, pa, look.calfR, look.calfR * 0.62);
       final cm = <_Muscle>[];
-      {
-        final perpS = _perp3(k, a);
-        var back = perpTo(h - k, shinV); // atrás da canela: para o lado oposto da coxa dobrada
+      if (_mw('panturrilha') > 0) {
+        var back = perpTo(h - k, shinV); // atrás da canela: oposto à coxa dobrada
         back = back.length < 1.5 ? perpTo(front * -1, shinV) : back;
         if (back.length > 1e-3) {
-          final bs = back.unit.dot(perpS) >= 0 ? 1.0 : -1.0;
-          final dS = pa - pk;
-          final nT = Offset(-dS.dy, dS.dx);
-          final nSS = _dir(perpS);
-          final al = (nT.dx * nSS.dx + nT.dy * nSS.dy) >= 0 ? 1.0 : -1.0;
-          final w = _mw('panturrilha');
-          if (w > 0) {
-            final d = pa - pk;
-            final len = d.distance;
-            if (len > 1e-3) {
-              final u = d / len;
-              final n = Offset(-u.dy, u.dx) * (bs * al);
-              final rect = Path()..addPolygon([pk + d * 0.05 + n * 0.3, pk + d * 0.7 + n * 0.3, pk + d * 0.7 + n * 9, pk + d * 0.05 + n * 9], true);
-              cm.add(_Muscle('panturrilha', w, Path.combine(PathOperation.intersect, calf, rect)));
-            }
-          }
+          final pth = _band(calf, pk, pa, look.calfR * 0.9, back.unit, _perp3(k, a), from: 0.05, to: 0.7);
+          if (pth != null) cm.add(_Muscle('panturrilha', _mw('panturrilha'), pth));
         }
       }
       parts.add(_Part(depthOf(h, k), thigh, look.bottom, muscles: ms, detail: (cv) {
@@ -616,20 +607,18 @@ class CartoonPainter extends CustomPainter {
 
   void _patch(Canvas c, Path part, _Muscle m) {
     final primary = m.weight >= 1;
-    final base = primary ? primaryColor : secondaryColor;
-    final alpha = primary ? (150 + 70 * _pulse).round() : 150;
+    final base = primary ? _shadeC(primaryColor, 0.10 * _pulse) : secondaryColor;
     c.save();
     c.clipPath(part);
     final region = m.path;
-    c.drawPath(region, Paint()..color = base.withAlpha(alpha));
+    c.drawPath(region, Paint()..color = base.withAlpha(primary ? 245 : 225));
     // linha de separação no meio (peitoral, abdome, costas)
     if (m.split != null) {
       final b = region.getBounds();
       final n = Offset(-m.split!.dy, m.split!.dx);
       c.drawLine(b.center + n * b.height, b.center - n * b.height, Paint()
-        ..color = base.withAlpha(90)
-        ..strokeWidth = 0.6
-        ..blendMode = BlendMode.darken);
+        ..color = _shadeC(base, -0.22).withAlpha(160)
+        ..strokeWidth = 0.6);
     }
     c.drawPath(region, Paint()
       ..color = _shadeC(base, -0.25).withAlpha(primary ? 200 : 140)
