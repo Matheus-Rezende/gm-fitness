@@ -106,7 +106,7 @@ void main() {
     const tw = 300.0, th = 240.0;
     // quadro grande por exercício, 4 vistas, homem (linha 1) e mulher (linha 2)
     const ids = ['squat_bw', 'bench_press', 'curl', 'crunch', 'lat_pulldown', 'plank', 'deadlift', 'lateral_raise',
-      'lunge_db', 'hip_thrust', 'push_up', 'calf_raise', 'leg_press', 'row_cable', 'bird_dog', 'treadmill_walk'];
+      'lunge_db', 'hip_thrust', 'push_up', 'calf_raise', 'leg_press', 'seated_row', 'bird_dog', 'walk'];
     const views = [0.0, 45.0, 90.0, 270.0];
     final groups = <String, (Set<String>, Set<String>)>{
       'squat_bw': ({'quadriceps'}, {'gluteos', 'posterior'}),
@@ -122,9 +122,9 @@ void main() {
       'push_up': ({'peito'}, {'triceps'}),
       'calf_raise': ({'panturrilha'}, {}),
       'leg_press': ({'quadriceps'}, {'gluteos'}),
-      'row_cable': ({'costas'}, {'biceps'}),
+      'seated_row': ({'costas'}, {'biceps'}),
       'bird_dog': ({'lombar'}, {'gluteos', 'abdomen'}),
-      'treadmill_walk': ({'cardio'}, {}),
+      'walk': ({'cardio'}, {}),
     };
     for (final id in ids) {
       final clip = lib[id];

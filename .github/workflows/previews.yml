@@ -4,7 +4,7 @@ name: Prévias em branch
 # o desenho sem baixar artefatos). Roda nas branches de polimento visual.
 on:
   push:
-    branches: ['polimento-*']
+    branches: ['polimento-*', 'boneco-*']
   workflow_dispatch:
 
 permissions:
