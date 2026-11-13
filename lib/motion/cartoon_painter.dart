@@ -207,13 +207,15 @@ class CartoonPainter extends CustomPainter {
     if (nS.dx * n.dx + nS.dy * n.dy < 0) n = -n;
     final aSide = dir.dot(perp3), aTow = dir.dot(_cam.toward);
     if (aTow < -0.92) return null;
-    var phi = math.atan2(-aTow, aSide.abs() < 1e-6 ? 1e-6 : aSide);
-    phi = phi.clamp(-math.pi / 2, math.pi / 2);
-    final s0 = r * math.sin(phi);
-    final sgn = aSide >= 0 ? 1.0 : -1.0; // lado positivo = n
-    // região: s*sgn > s0*sgn  (s = coordenada lateral na tela)
+    // superfície do cilindro: ângulo phi em volta do eixo (0 = de frente para quem vê);
+    // o músculo cobre onde normal·dir > 0, ou seja, aTow*cos(phi) + aSide*sin(phi) > 0
+    final phi0 = math.atan2(-aTow, aSide.abs() < 1e-6 ? 1e-6 : aSide).clamp(-math.pi / 2, math.pi / 2);
+    final s0 = r * math.sin(phi0);
+    final best = math.atan2(aSide, aTow).clamp(-math.pi / 2, math.pi / 2); // onde dir mais aparece
+    final sBest = r * math.sin(best);
+    final sgn = sBest >= s0 ? 1.0 : -1.0; // região: do lado de sBest em relação a s0
     final q0 = p0 + d * from, q1 = p0 + d * to;
-    final inner = n * (s0 * sgn * sgn); // = n * s0
+    final inner = n * s0;
     final outer = n * (sgn * r * 3);
     final rect = Path()..addPolygon([q0 + inner, q1 + inner, q1 + outer, q0 + outer], true);
     final out = Path.combine(PathOperation.intersect, base, rect);
