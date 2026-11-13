@@ -1,0 +1,6 @@
+remo_ergometro (rower) cardio + costas/quadriceps/corpo_inteiro
+marcha_estacionaria (march) cardio + quadriceps/abdomen
+polichinelo (jumping_jack) cardio + corpo_inteiro
+pular_corda (jump_rope) cardio + panturrilha
+burpee (burpee) corpo_inteiro + cardio/peito/quadriceps
+caminhada_fazendeiro (farmer_walk) corpo_inteiro + antebraco/trapezio/abdomen

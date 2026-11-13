@@ -1,0 +1,8 @@
+crossover (cable_crossover) peito + ombros
+flexao_braco (push_up) peito + triceps/ombros/abdomen
+flexao_joelhos (push_up_knee) peito + triceps/ombros
+flexao_inclinada (push_up_incline) peito + triceps/ombros
+paralelas (dips) triceps + peito/ombros
+puxada_frontal (lat_pulldown) costas + biceps/ombros
+barra_fixa (pull_up) costas + biceps/abdomen
+barra_fixa_assistida (pull_up) costas + biceps

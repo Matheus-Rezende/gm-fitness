@@ -1,0 +1,8 @@
+remada_sentada (seated_row) costas + biceps/trapezio
+remada_curvada_barra (bent_row) costas + biceps/lombar/trapezio
+remada_curvada_halteres (bent_row_db) costas + biceps/trapezio
+remada_unilateral (one_arm_row) costas + biceps
+pulldown_bracos_estendidos (straight_arm_pulldown) costas + abdomen
+desenvolvimento_barra (overhead_press) ombros + triceps/abdomen
+desenvolvimento_halteres (overhead_press_db) ombros + triceps
+elevacao_lateral (lateral_raise) ombros + trapezio

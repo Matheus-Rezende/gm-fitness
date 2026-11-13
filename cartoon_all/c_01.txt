@@ -1,0 +1,8 @@
+afundo_halteres (lunge_db) quadriceps + gluteos/posterior
+agachamento_bulgaro (bulgarian) quadriceps + gluteos/posterior
+subida_banco (step_up) gluteos + quadriceps/posterior
+leg_press_45 (leg_press) quadriceps + gluteos/posterior
+cadeira_extensora (leg_extension) quadriceps + 
+mesa_flexora (leg_curl_lying) posterior + panturrilha
+cadeira_flexora (leg_curl_seated) posterior + 
+stiff_halteres (rdl_db) posterior + gluteos/lombar

@@ -1,0 +1,8 @@
+crunch
+curl
+curl_bb
+curl_cable
+dead_bug
+deadlift
+dips
+donkey_kick

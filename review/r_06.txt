@@ -1,0 +1,8 @@
+lunge
+lunge_db
+march
+mountain_climber
+one_arm_row
+overhead_press
+overhead_press_db
+overhead_triceps

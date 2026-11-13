@@ -1,0 +1,8 @@
+face_pull
+farmer_walk
+fly_db
+front_raise
+glute_bridge
+good_morning
+hammer_curl
+hanging_leg_raise

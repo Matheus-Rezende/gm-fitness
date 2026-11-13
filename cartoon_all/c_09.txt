@@ -1,0 +1,8 @@
+prancha_joelhos (plank_knee) abdomen + 
+prancha_lateral (side_plank) abdomen + abdutores
+abdominal_supra (crunch) abdomen + 
+elevacao_pernas (leg_raise) abdomen + 
+abdominal_bicicleta (bicycle_crunch) abdomen + 
+dead_bug (dead_bug) abdomen + lombar
+escalador (mountain_climber) abdomen + cardio/ombros
+giro_russo (russian_twist) abdomen + 

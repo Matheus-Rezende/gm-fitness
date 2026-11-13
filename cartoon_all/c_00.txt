@@ -1,0 +1,8 @@
+agachamento_livre (squat_bw) quadriceps + gluteos/posterior/abdomen
+agachamento_goblet (squat_goblet) quadriceps + gluteos/abdomen
+agachamento_goblet_kettlebell (squat_goblet) quadriceps + gluteos/abdomen
+agachamento_barra (squat_bb) quadriceps + gluteos/posterior/lombar/abdomen
+agachamento_smith (squat_smith) quadriceps + gluteos/posterior
+agachamento_sumo (sumo_squat) gluteos + adutores/quadriceps
+agachamento_sumo_kettlebell (sumo_squat) gluteos + adutores/quadriceps
+afundo (lunge) quadriceps + gluteos/posterior

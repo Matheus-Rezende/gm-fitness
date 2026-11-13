@@ -1,0 +1,8 @@
+elevacao_frontal (front_raise) ombros + 
+voador_invertido (reverse_fly) ombros + costas/trapezio
+face_pull (face_pull) ombros + trapezio/costas
+encolhimento (shrug) trapezio + 
+rosca_direta_halteres (curl) biceps + antebraco
+rosca_direta_barra (curl_bb) biceps + antebraco
+rosca_martelo (hammer_curl) biceps + antebraco
+rosca_polia (curl_cable) biceps + 

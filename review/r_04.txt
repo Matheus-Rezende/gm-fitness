@@ -1,0 +1,8 @@
+hip_abduction_cable
+hip_abduction_standing
+hip_thrust
+hyperextension
+incline_press
+incline_press_db
+jump_rope
+jumping_jack

@@ -1,0 +1,8 @@
+pec_deck
+plank
+plank_knee
+preacher_curl
+pull_through
+pull_up
+push_up
+push_up_incline

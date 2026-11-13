@@ -1,0 +1,12 @@
+abductor_machine
+adductor_machine
+bench_dip
+bench_press
+bench_press_db
+bent_row
+bent_row_db
+bicycle_crunch
+bike
+bird_dog
+bulgarian
+burpee

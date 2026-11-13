@@ -1,0 +1,8 @@
+elevacao_pernas_barra (hanging_leg_raise) abdomen + antebraco
+super_homem (superman) lombar + gluteos
+perdigueiro (bird_dog) abdomen + lombar/gluteos
+caminhada_esteira (walk) cardio + panturrilha/gluteos
+caminhada_inclinada (walk) cardio + gluteos/posterior/panturrilha
+corrida_esteira (run) cardio + quadriceps/panturrilha
+corrida_intervalada (run) cardio + corpo_inteiro
+bicicleta_ergometrica (bike) cardio + quadriceps/gluteos

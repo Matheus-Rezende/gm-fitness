@@ -1,0 +1,4 @@
+triceps_kickback
+triceps_pushdown
+walk
+wall_sit
