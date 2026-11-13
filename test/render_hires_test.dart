@@ -152,6 +152,46 @@ void main() {
     }
   }, skip: !enabled);
 
+  test('boneco 2D: todos os exercícios', () async {
+    final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
+    final cat = jsonDecode(File('assets/exercises.json').readAsStringSync()) as Map<String, dynamic>;
+    final exs = (cat['exercises'] as List).cast<Map<String, dynamic>>();
+    Directory('build/cartoon_all').createSync(recursive: true);
+    const tw = 220.0, th = 180.0, per = 8;
+    const views = [0.0, 45.0, 90.0, 270.0];
+    for (var s = 0; s * per < exs.length; s++) {
+      final chunk = exs.skip(s * per).take(per).toList();
+      final rec = ui.PictureRecorder();
+      final canvas = Canvas(rec);
+      final names = <String>[];
+      for (var r = 0; r < chunk.length; r++) {
+        final ex = chunk[r];
+        final clip = lib[ex['anim'] as String];
+        names.add('${ex['id']} (${ex['anim']}) ${ex['group']} + ${(ex['secondary'] as List).join('/')}');
+        if (clip == null) continue;
+        final prim = {ex['group'] as String};
+        final sec = {for (final g in ex['secondary'] as List) g as String};
+        for (var c = 0; c < 8; c++) {
+          canvas.save();
+          canvas.translate(c * tw, r * th);
+          CartoonPainter(
+            clip: clip,
+            time: (c % 4) == 1 ? clip.keyTimes[1] : 0.3,
+            palette: FigurePalette.light,
+            style: FigureStyle(male: c < 4, primary: prim, secondary: sec, showPath: false),
+            yaw: views[c % 4],
+          ).paint(canvas, const Size(tw, th));
+          canvas.restore();
+        }
+      }
+      final img = await rec.endRecording().toImage((tw * 8).toInt(), (th * chunk.length).toInt());
+      final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+      final name = 'c_${s.toString().padLeft(2, '0')}';
+      File('build/cartoon_all/$name.txt').writeAsStringSync(names.join('\n'));
+      File('build/cartoon_all/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+    }
+  }, skip: !enabled);
+
   test('revisão de todos os movimentos', () async {
     final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
     final ids = lib.clips.keys.toList()..sort();
