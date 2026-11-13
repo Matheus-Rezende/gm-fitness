@@ -406,24 +406,29 @@ class CartoonPainter extends CustomPainter {
     {
       final r = look.headR;
       final c = _p(head + headUp * 0.6);
-      final fx = faceDir.dot(_cam.right);
-      final fz = faceDir.dot(_cam.toward);
+      final fx = faceDir.dot(_cam.right); // >0: rosto virado para a direita da tela
+      final fz = faceDir.dot(_cam.toward); // >0: rosto virado para quem vê
       final uS = _dir(headUp);
-      final rS = Offset(uS.dy, -uS.dx); // "direita" da cabeça na tela
-      final hairPath = Path();
-      final back = -fx; // lado da nuca
-      // calota de cabelo (metade de cima, puxada para a nuca)
-      hairPath.addOval(Rect.fromCenter(center: c + uS * (r * 0.18) + rS * (back * r * 0.12), width: r * 2.1, height: r * 2.05));
-      final faceCut = Path()..addOval(Rect.fromCenter(center: c - uS * (r * 0.28) + rS * (fx * r * 0.42), width: r * 2.2 * (0.55 + 0.45 * fz.abs()), height: r * 1.9));
-      final hair = fz > -0.35 ? Path.combine(PathOperation.difference, hairPath, faceCut) : hairPath;
+      final rS = Offset(-uS.dy, uS.dx); // direita da tela, no referencial da cabeça
+      final nape = -fx; // lado da nuca na tela
       final headDepth = depthOf(head);
-      // rabo de cavalo (mulher): atrás da cabeça, mais fundo quando ela olha para nós
+      // calota de cabelo: cobre o topo e a nuca; o rosto fica livre
+      final hairPath = Path()
+        ..addOval(Rect.fromCenter(center: c + uS * (r * 0.12) + rS * (nape * r * 0.14), width: r * 2.08, height: r * 2.08));
+      final faceCut = Path()
+        ..addOval(Rect.fromCenter(
+            center: c - uS * (r * 0.3) + rS * (fx * r * 0.5),
+            width: r * 1.9 * (0.5 + 0.5 * fz.clamp(0.0, 1.0)) + r * 0.3 * fx.abs(),
+            height: r * 1.85));
+      final hair = fz > -0.4 ? Path.combine(PathOperation.difference, hairPath, faceCut) : hairPath;
+      // rabo de cavalo (mulher): sai da nuca e cai pelas costas; fica atrás da
+      // cabeça quando ela olha para nós e na frente quando está de costas
       if (!look.male) {
         final tailDepth = headDepth - 0.6 - fz * 3.5;
-        final base = c + uS * (r * 0.5) + rS * (back * r * 0.75);
-        final tip = base - uS * (r * 2.6) + rS * (back * r * 1.0 + fx * r * 0.1);
-        parts.add(_Part(tailDepth, capsule(base, tip, r * 0.42, r * 0.28), look.hair,
-            over: (cv) => cv.drawCircle(base, r * 0.28, Paint()..color = look.accent)));
+        final base = c + uS * (r * 0.45) + rS * (nape * r * 0.8);
+        final tip = base - uS * (r * 2.6) + rS * (nape * r * 0.9);
+        parts.add(_Part(tailDepth, capsule(base, tip, r * 0.42, r * 0.26), look.hair,
+            over: (cv) => cv.drawCircle(base, r * 0.26, Paint()..color = look.accent)));
       }
       parts.add(_Part(
         headDepth,
@@ -432,18 +437,19 @@ class CartoonPainter extends CustomPainter {
         detail: (cv) {
           cv.drawPath(hair, Paint()..color = look.hair);
           if (look.male) {
-            // topete
-            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.95) + rS * (fx * r * 0.35), width: r * 0.9, height: r * 0.5), Paint()..color = look.hair);
+            // topete na testa e costeleta
+            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.92) + rS * (fx * r * 0.4), width: r * 1.0, height: r * 0.55), Paint()..color = look.hair);
           } else {
-            // franja de lado
-            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.72) + rS * (fx * r * 0.55), width: r * 0.95, height: r * 0.45), Paint()..color = look.hair);
+            // franja caindo para o lado da testa
+            cv.drawOval(Rect.fromCenter(center: c + uS * (r * 0.7) + rS * (fx * r * 0.62), width: r * 1.0, height: r * 0.5), Paint()..color = look.hair);
           }
-          if (fz > -0.15) _face(cv, c, r, fx, fz, uS, rS);
-          // orelha
-          if (fz.abs() < 0.9) {
-            final e = c + rS * (back * r * 0.92) - uS * (r * 0.05);
-            cv.drawOval(Rect.fromCenter(center: e, width: r * 0.34, height: r * 0.46), Paint()..color = look.skin);
-            cv.drawOval(Rect.fromCenter(center: e, width: r * 0.34, height: r * 0.46), Paint()
+          if (fz > -0.2) _face(cv, c, r, fx, fz, uS, rS);
+          // orelha do lado da nuca (some quando o rosto está bem de frente ou bem de costas)
+          if (fz.abs() < 0.93 && fx.abs() > 0.15) {
+            final e = c + rS * (nape * r * 0.95) - uS * (r * 0.05);
+            final ear = Rect.fromCenter(center: e, width: r * 0.36, height: r * 0.5);
+            cv.drawOval(ear, Paint()..color = look.skin);
+            cv.drawOval(ear, Paint()
               ..color = look.outline
               ..style = PaintingStyle.stroke
               ..strokeWidth = 0.8);
@@ -595,72 +601,88 @@ class CartoonPainter extends CustomPainter {
 
   void _face(Canvas cv, Offset c, double r, double fx, double fz, Offset uS, Offset rS) {
     final look = _look;
-    final cos = math.sqrt(math.max(0.0, 1 - fx * fx)) * (fz.clamp(0.0, 1.0));
-    final eyeY = c + uS * (r * 0.08);
-    final spread = r * 0.42 * (0.35 + 0.65 * cos);
-    final shift = rS * (fx * r * 0.45);
-    final eyeR = r * 0.17;
-    final visible = fz > 0.05;
-    for (final sg in [-1.0, 1.0]) {
-      // de lado, só o olho da frente aparece
-      if (!visible && sg * fx < 0) continue;
-      if (fz < 0.55 && sg * fx < 0 && fx.abs() > 0.55) continue;
-      final e = eyeY + shift + rS * (spread * sg);
-      cv.drawOval(Rect.fromCenter(center: e, width: eyeR * 2.1, height: eyeR * 2.4), Paint()..color = Colors.white);
-      cv.drawCircle(e + rS * (fx * eyeR * 0.5) - uS * (eyeR * 0.1), eyeR * 0.62, Paint()..color = look.outline);
-      cv.drawCircle(e + rS * (fx * eyeR * 0.5 + eyeR * 0.22) + uS * (eyeR * 0.25), eyeR * 0.2, Paint()..color = Colors.white);
+    final fzc = fz.clamp(0.0, 1.0);
+    // quanto o rosto está de frente (1) ou de perfil (0)
+    final frontal = math.sqrt(math.max(0.0, 1 - fx * fx)) * fzc;
+    final eyeLine = c + uS * (r * 0.05);
+    final spread = r * 0.38 * (0.25 + 0.75 * frontal);
+    final shift = rS * (fx * r * 0.42); // os traços andam para o lado que o rosto olha
+    final eyeW = r * 0.3 * (0.6 + 0.4 * frontal), eyeH = r * 0.34;
+    for (final sg in const [-1.0, 1.0]) {
+      // de perfil só aparece o olho da frente (o do lado para onde olha)
+      final isFrontEye = sg * fx >= 0;
+      if (fx.abs() > 0.6 && !isFrontEye) continue;
+      final e = eyeLine + shift + rS * (spread * sg);
+      cv.drawOval(Rect.fromCenter(center: e, width: eyeW, height: eyeH), Paint()..color = Colors.white);
+      cv.drawOval(Rect.fromCenter(center: e, width: eyeW, height: eyeH), Paint()
+        ..color = look.outline
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.45);
+      final iris = e + rS * (fx * eyeW * 0.22);
+      cv.drawCircle(iris, eyeH * 0.3, Paint()..color = look.male ? const Color(0xFF4A3421) : const Color(0xFF2F6B3A));
+      cv.drawCircle(iris, eyeH * 0.16, Paint()..color = look.outline);
+      cv.drawCircle(iris + rS * (eyeH * 0.1) + uS * (eyeH * 0.1), eyeH * 0.07, Paint()..color = Colors.white);
       // sobrancelha
-      final b0 = e + uS * (r * 0.33) - rS * (eyeR * 1.1), b1 = e + uS * (r * (look.male ? 0.36 : 0.4)) + rS * (eyeR * 1.1);
+      final bw = eyeW * 0.6;
+      final b0 = e + uS * (eyeH * 0.85) - rS * (bw * sg), b1 = e + uS * (eyeH * (look.male ? 0.9 : 1.0)) + rS * (bw * sg);
       cv.drawLine(b0, b1, Paint()
         ..color = look.hair
-        ..strokeWidth = look.male ? 0.95 : 0.6
+        ..strokeWidth = look.male ? 0.9 : 0.6
         ..strokeCap = StrokeCap.round);
       if (!look.male) {
-        // cílios
-        cv.drawLine(e + uS * (eyeR * 1.15) + rS * (eyeR * 0.9 * sg), e + uS * (eyeR * 1.6) + rS * (eyeR * 1.25 * sg), Paint()
+        // cílio no canto de fora
+        final tip = e + uS * (eyeH * 0.45) + rS * (eyeW * 0.55 * sg);
+        cv.drawLine(tip, tip + uS * (eyeH * 0.3) + rS * (eyeW * 0.25 * sg), Paint()
           ..color = look.outline
-          ..strokeWidth = 0.5);
+          ..strokeWidth = 0.5
+          ..strokeCap = StrokeCap.round);
       }
     }
-    // nariz
-    final nose = c - uS * (r * 0.22) + rS * (fx * r * 0.55);
-    cv.drawLine(nose, nose - uS * (r * 0.2) + rS * (fx.sign * r * 0.08), Paint()
-      ..color = look.outline.withAlpha(150)
-      ..strokeWidth = 0.6
+    // nariz: no meio do rosto, de perfil fica na borda do lado para onde olha
+    final noseTop = c - uS * (r * 0.1) + rS * (fx * r * (0.35 + 0.55 * (1 - frontal)));
+    final noseTip = noseTop - uS * (r * 0.26) + rS * (fx.sign * r * 0.1 * (1 - frontal) + fx * r * 0.05);
+    cv.drawLine(noseTop, noseTip, Paint()
+      ..color = look.outline.withAlpha(170)
+      ..strokeWidth = 0.65
       ..strokeCap = StrokeCap.round);
-    // boca: sorriso de esforço (muda com o pulso)
-    final mouth = c - uS * (r * 0.55) + rS * (fx * r * 0.4);
-    final mw = r * 0.32 * (0.4 + 0.6 * cos);
-    final effort = _pulse > 0.72;
-    final path = Path()
-      ..moveTo(mouth.dx - rS.dx * mw, mouth.dy - rS.dy * mw)
-      ..quadraticBezierTo(mouth.dx - uS.dx * (r * (effort ? 0.08 : 0.16)), mouth.dy - uS.dy * (r * (effort ? 0.08 : 0.16)), mouth.dx + rS.dx * mw, mouth.dy + rS.dy * mw);
-    cv.drawPath(path, Paint()
+    // boca: sorriso leve; na parte pesada do movimento, boca apertada
+    final mouth = c - uS * (r * 0.5) + rS * (fx * r * 0.4);
+    final mw = r * 0.3 * (0.35 + 0.65 * frontal) + r * 0.08;
+    final effort = _pulse > 0.72 && style.showMuscles && style.primary.isNotEmpty;
+    final curve = r * (effort ? 0.04 : 0.14);
+    final m0 = mouth - rS * mw, m1 = mouth + rS * mw;
+    final ctrl = mouth - uS * curve;
+    cv.drawPath(Path()
+      ..moveTo(m0.dx, m0.dy)
+      ..quadraticBezierTo(ctrl.dx, ctrl.dy, m1.dx, m1.dy), Paint()
       ..color = look.outline
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.7
       ..strokeCap = StrokeCap.round);
     if (!look.male) {
-      // bochechas
-      for (final sg in [-1.0, 1.0]) {
-        if (!visible && sg * fx < 0) continue;
-        cv.drawCircle(c - uS * (r * 0.28) + shift + rS * (spread * 1.25 * sg), r * 0.13, Paint()..color = const Color(0x55FF6B81));
+      // bochechas coradas
+      for (final sg in const [-1.0, 1.0]) {
+        if (fx.abs() > 0.6 && sg * fx < 0) continue;
+        cv.drawCircle(c - uS * (r * 0.28) + shift + rS * (spread * 1.15 * sg), r * 0.12, Paint()..color = const Color(0x55FF6B81));
       }
     } else if (fz > 0.1) {
-      // barba por fazer
+      // barba por fazer no queixo
       cv.save();
       cv.clipPath(Path()..addOval(Rect.fromCircle(center: c, radius: r)));
-      cv.drawOval(Rect.fromCenter(center: c - uS * (r * 0.62) + rS * (fx * r * 0.3), width: r * 1.5 * (0.5 + 0.5 * cos), height: r * 0.8), Paint()..color = look.hair.withAlpha(45));
+      cv.drawOval(Rect.fromCenter(center: c - uS * (r * 0.66) + rS * (fx * r * 0.3), width: r * 1.4 * (0.5 + 0.5 * frontal), height: r * 0.7),
+          Paint()..color = look.hair.withAlpha(40));
       cv.restore();
     }
-    // gota de suor no esforço
-    if (effort && style.showMuscles && (style.primary.isNotEmpty)) {
-      final d = c + uS * (r * 0.55) + rS * (-fx.sign * r * 0.95);
-      cv.drawPath(Path()
-        ..moveTo(d.dx, d.dy - r * 0.35)
-        ..quadraticBezierTo(d.dx + r * 0.3, d.dy + r * 0.1, d.dx, d.dy + r * 0.2)
-        ..quadraticBezierTo(d.dx - r * 0.3, d.dy + r * 0.1, d.dx, d.dy - r * 0.35)
-        ..close(), Paint()..color = const Color(0xFF6EC1FF));
+    // gota de suor na têmpora, na parte pesada do movimento
+    if (effort) {
+      final d = c + uS * (r * 0.5) + rS * (-fx.sign * r * 0.95);
+      cv.drawPath(
+          Path()
+            ..moveTo(d.dx, d.dy - r * 0.35)
+            ..quadraticBezierTo(d.dx + r * 0.3, d.dy + r * 0.1, d.dx, d.dy + r * 0.2)
+            ..quadraticBezierTo(d.dx - r * 0.3, d.dy + r * 0.1, d.dx, d.dy - r * 0.35)
+            ..close(),
+          Paint()..color = const Color(0xFF6EC1FF));
     }
   }
 

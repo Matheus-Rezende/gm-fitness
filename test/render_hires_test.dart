@@ -152,6 +152,36 @@ void main() {
     }
   }, skip: !enabled);
 
+  test('boneco 2D: rostos de perto', () async {
+    final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
+    Directory('build/cartoon').createSync(recursive: true);
+    final clip = lib['shrug']!;
+    const views = [0.0, 45.0, 90.0, 270.0];
+    const tw = 420.0, th = 560.0;
+    final rec = ui.PictureRecorder();
+    final canvas = Canvas(rec);
+    for (var r = 0; r < 2; r++) {
+      for (var c = 0; c < views.length; c++) {
+        canvas.save();
+        canvas.translate(c * tw, r * th);
+        canvas.clipRect(const Rect.fromLTWH(0, 0, tw, th));
+        // zoom na cabeça: desenha grande e centraliza a parte de cima
+        canvas.translate(0, 0);
+        CartoonPainter(
+          clip: clip,
+          time: 0.1,
+          palette: FigurePalette.light,
+          style: FigureStyle(male: r == 0, primary: const {'trapezio'}, showPath: false),
+          yaw: views[c],
+        ).paint(canvas, const Size(tw, th * 3));
+        canvas.restore();
+      }
+    }
+    final img = await rec.endRecording().toImage((tw * views.length).toInt(), (th * 2).toInt());
+    final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+    File('build/cartoon/faces.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+  }, skip: !enabled);
+
   test('boneco 2D: todos os exercícios', () async {
     final lib = MotionLibrary.parse(File('assets/motions.json').readAsStringSync());
     final cat = jsonDecode(File('assets/exercises.json').readAsStringSync()) as Map<String, dynamic>;
