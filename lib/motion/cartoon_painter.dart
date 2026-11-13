@@ -51,7 +51,7 @@ class CartoonPainter extends CustomPainter {
     _cam = fp.camera;
     _f = fp.frame;
     _pulse = fp.pulse;
-    _look = style.male ? _Look.male : _Look.female;
+    _look = style.male ? _Look.man : _Look.woman;
 
     final bounds = clip.boundsFor(_cam).inflate(4);
     final scale = math.min(size.width / bounds.width, size.height / bounds.height);
@@ -713,7 +713,7 @@ class _Look {
   final Color skin, top, bottom, hair, accent, outline;
   final double headR, shoulderW, chestD, waistW, waistD, hipW, hipD, armR, thighR, calfR;
 
-  static const male = _Look(
+  static const man = _Look(
     male: true,
     skin: Color(0xFFD69A72),
     top: Color(0xFF2458E6),
@@ -733,7 +733,7 @@ class _Look {
     calfR: 3.5,
   );
 
-  static const female = _Look(
+  static const woman = _Look(
     male: false,
     skin: Color(0xFFE0A47E),
     top: Color(0xFF2458E6),
