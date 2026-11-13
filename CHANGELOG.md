@@ -2,6 +2,14 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.17.1
+
+- **Boneco 2D revisado em todos os 88 movimentos e nas 4 vistas**:
+  - Os músculos do tronco (peito, abdômen, costas, lombar, glúteos) agora aparecem em qualquer vista: inteiros de frente, como uma faixa na borda quando de lado, e somem só quando estão virados para o outro lado.
+  - Nos exercícios deitados (supino, crucifixo, abdominais, prancha, ponte...), a câmera fica mais alta, então o peito e as costas ficam visíveis em vez de sumirem na borda.
+  - O boneco abre na vista em que o músculo principal aparece melhor (por exemplo, remada abre de costas; supino, de lado com o peito pintado).
+  - Rabo de cavalo dela mais comprido, visível de costas.
+
 ## 0.17.0
 
 - **Boneco de volta, agora em desenho 2D**: na tela do exercício há a opção "Vídeo" ou "Boneco". O boneco virou um desenho cartoon com contorno, cores chapadas e mais personalidade: rosto com olhos, sobrancelhas e sorriso, cabelo (ele com topete, ela com rabo de cavalo), camiseta com a marca, short ou legging com faixa e tênis.
