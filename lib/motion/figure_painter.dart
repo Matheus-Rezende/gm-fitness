@@ -100,10 +100,10 @@ class _Body {
 
   static const female = _Body(
     male: false,
-    skin: Color(0xFFE0A47E),
-    top: Color(0xFF1F4FD8),
-    bottom: Color(0xFF2A2F3A),
-    hair: Color(0xFF3A2416),
+    skin: Color(0xFFE77FAE),
+    top: Color(0xFFE77FAE),
+    bottom: Color(0xFFE77FAE),
+    hair: Color(0xFFE77FAE),
     upperArm: [3.2, 3.0, 2.5],
     foreArm: [2.6, 2.4, 1.8],
     thigh: [6.0, 5.7, 4.0],
@@ -121,10 +121,10 @@ class _Body {
 
   static const maleBody = _Body(
     male: true,
-    skin: Color(0xFFD69A72),
-    top: Color(0xFF1F4FD8),
-    bottom: Color(0xFF2A2F3A),
-    hair: Color(0xFF2A1C14),
+    skin: Color(0xFF4A86E8),
+    top: Color(0xFF4A86E8),
+    bottom: Color(0xFF4A86E8),
+    hair: Color(0xFF4A86E8),
     upperArm: [3.9, 3.7, 2.9],
     foreArm: [3.0, 2.8, 2.1],
     thigh: [6.2, 6.0, 4.3],
@@ -140,6 +140,9 @@ class _Body {
     ],
   );
 }
+
+/// Boneco manequim: corpo de uma cor só, sem rosto, cabelo ou roupa.
+const _mannequin = true;
 
 const _shoeColor = Color(0xFFF2F4F7);
 const _sole = Color(0xFF7D8696);
@@ -633,7 +636,7 @@ class FigurePainter extends CustomPainter {
     final ombros = hl ? _mw('ombros') : 0.0;
     final ante = hl ? _mw('antebraco') : 0.0;
     final ur = _b.upperArm;
-    final sleeve = _shade(_b.top, 0.18);
+    final sleeve = _mannequin ? _b.top : _shade(_b.top, 0.18);
     // músculo trabalhado fica um pouco mais cheio (efeito "pump")
     double pump(double w) => w >= 2 ? 1.0 : (w >= 1 ? 0.5 : 0.0);
     final pb = pump(biceps), pt = pump(triceps), po = pump(ombros), pa = pump(ante);
@@ -753,7 +756,7 @@ class FigurePainter extends CustomPainter {
     final w = ta.cross(anterior).unit;
     final outAng = outward.length < 1e-3 ? math.pi / 2 : math.atan2(outward.dot(w), outward.dot(anterior));
     final tr = _b.thigh;
-    final hem = _shade(_b.bottom, 0.3);
+    final hem = _mannequin ? _b.bottom : _shade(_b.bottom, 0.3);
     // faixa lateral do short/legging
     final stripe = male ? const Color(0xFFE9ECF1) : _shade(_b.top, -0.15);
     double pump(double w) => w >= 2 ? 1.0 : (w >= 1 ? 0.5 : 0.0);
@@ -833,7 +836,7 @@ class FigurePainter extends CustomPainter {
         return x;
       },
     );
-    if (fine) {
+    if (fine && !_mannequin) {
       // faixa fina na lateral do short (até a barra) ou da legging (até o tornozelo)
       final outT = outward.length < 1e-3 ? ta.cross(anterior).unit : outward.unit;
       final thR = male ? [tr[0] * 1.08, tr[1] * 1.08, tr[2]] : tr;
@@ -916,7 +919,7 @@ class FigurePainter extends CustomPainter {
         pts.add(center + side * (_sgnPow(cs, 0.75) * wdt * scale) + up * (y * scale));
         final isSole = sn < -0.55;
         final stripe = !isSole && cs.abs() > 0.75 && s > 0.3 && s < 0.62;
-        cl.add(isSole ? _sole : (stripe ? _shoeAccent : _shoeColor));
+        cl.add(_mannequin ? (isSole ? _shade(_b.skin, 0.25) : _b.skin) : (isSole ? _sole : (stripe ? _shoeAccent : _shoeColor)));
       }
       rings.add(pts);
       centers.add(center);
@@ -935,7 +938,7 @@ class FigurePainter extends CustomPainter {
       ring(1, cs, tip + fd * (2.0 * math.sqrt(1 - cs * cs)));
     }
     m.rings(rings, centers, color: (i, j) => cols[i][j], gloss: 0.12);
-    if (!fine) return;
+    if (!fine || _mannequin) return;
     // cadarço: três laços atravessando o peito do pé
     for (final s in const [0.22, 0.34, 0.46]) {
       final (wdt, top, _) = sect(s);
@@ -973,6 +976,7 @@ class FigurePainter extends CustomPainter {
     // faixas de roupa (posição ao longo do tronco)
     final breaks = male ? const [0.30, 0.34, 0.38] : const [0.37, 0.40, 0.47, 0.50];
     Color colorAt(double t) {
+      if (_mannequin) return _b.top;
       if (male) {
         if (t < 0.30) return _b.bottom;
         if (t < 0.34) return _shade(_b.bottom, 0.35);
@@ -1063,7 +1067,7 @@ class FigurePainter extends CustomPainter {
         g = math.max(g, _line(c, 0, 0.09) * back * _soft(t, -1, 0.13, 0.04));
         g = math.max(g, _line(t, -0.1, 0.03) * back * _soft(ac, 0.12, 0.8, 0.08) * 0.8);
       }
-      if (fine && g < 0.5) {
+      if (fine && g < 0.5 && !_mannequin) {
         // costura lateral da camiseta e do short
         g = math.max(g, _line(s, 0, 0.1) * 0.5 * (male || t > 0.5 || t < 0.37 ? 1 : 0));
       }
@@ -1130,7 +1134,7 @@ class FigurePainter extends CustomPainter {
     ring(1.0, 0.0, 1.0, lift: 2.1);
     m.rings(rings, centers,
         color: (i, j) => cols[i][j], muscle: (i, j) => mus[i][j], groove: (i, j) => grs[i][j], gloss: 0.06);
-    if (detail > 0) {
+    if (detail > 0 && !_mannequin) {
       // marca no peito (lado esquerdo)
       final lc = 0.42, ls = math.sqrt(1 - lc * lc);
       final logo = surfaceAt(male ? 0.8 : 0.83, lc, ls, 0.12);
@@ -1190,7 +1194,7 @@ class FigurePainter extends CustomPainter {
 
     m.ellipsoid(hc, -up, face, side, rUp, rFace, rSide,
         color: (l) => isHair(l) ? hair : skin, lat: detail == 0 ? 8 : 14, lon: detail == 0 ? 12 : 20, gloss: 0.06);
-    if (detail > 0) {
+    if (detail > 0 && !_mannequin) {
       // volume do cabelo por cima da cabeça
       final k = male ? 1.06 : 1.09;
       m.ellipsoid(hc + up * 0.25 - face * 0.15, -up, face, side, rUp * k, rFace * k, rSide * (k + 0.02),
@@ -1212,7 +1216,7 @@ class FigurePainter extends CustomPainter {
     // queixo e mandíbula: dá forma ao rosto
     m.ellipsoid(surface(-0.62, 0.55, 0, -2.4), up, face, side, 3.0, 3.2, male ? 4.4 : 3.9,
         color: (_) => skin, lat: 6, lon: 10);
-    if (!male) {
+    if (!male && !_mannequin) {
       // rabo de cavalo
       final tie = surface(0.35, -0.9, 0, -0.4);
       final end = tie - face * 3.0 - up * 7.0;
@@ -1223,7 +1227,7 @@ class FigurePainter extends CustomPainter {
       ], sides: detail == 0 ? 8 : 12, steps: 4, color: (_, _, _) => hair, gloss: 0.15);
       m.ellipsoid(tie, up, face, side, 1.2, 1.2, 1.6, color: (_) => _b.top, lat: 4, lon: 8);
     }
-    if (detail == 0) return;
+    if (detail == 0 || _mannequin) return;
     // orelhas
     for (final sg in const [1.0, -1.0]) {
       m.ellipsoid(surface(0.0, -0.05, sg, -0.35), up, face, side, 1.9, 1.2, 0.7,

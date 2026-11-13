@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'cartoon_painter.dart';
@@ -41,6 +43,9 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
   bool _playing = true;
   late bool _muscles = widget.style.showMuscles;
   late bool _path = widget.style.showPath;
+  /// Câmera mais alta nos exercícios deitados, para o peito ou as costas aparecerem.
+  double get _pitch => math.max(12.0, CartoonPainter.pitchFor(widget.clip, 0.3));
+
   late double _yaw = widget.initialYaw ?? CartoonPainter.bestYaw(widget.clip, widget.style.primary);
 
   static const _views = <(String, double)>[('Lado', 0), ('¾', 45), ('Frente', 90), ('Costas', 270)];
@@ -146,7 +151,8 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
             child: AnimatedBuilder(
               animation: _ctrl,
               builder: (context, _) => CustomPaint(
-                painter: CartoonPainter(clip: clip, time: _ctrl.value, palette: palette, style: _style, yaw: _yaw),
+                painter: FigurePainter(
+                    clip: clip, time: _ctrl.value, palette: palette, style: _style, yaw: _yaw, pitch: _pitch),
                 child: const SizedBox.expand(),
               ),
             ),
@@ -281,13 +287,13 @@ class _MotionViewState extends State<MotionView> with SingleTickerProviderStateM
               children: [
                 if (widget.style.primary.isNotEmpty)
                   _Legend(
-                    color: CartoonPainter.primaryColor,
+                    color: const Color(0xFFFFB400),
                     text: 'Principal: ${_names(widget.style.primary)}',
                     style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                   ),
                 if (widget.style.secondary.isNotEmpty)
                   _Legend(
-                    color: CartoonPainter.secondaryColor,
+                    color: const Color(0xFFFFE27A),
                     text: 'Auxiliares: ${_names(widget.style.secondary)}',
                     style: theme.textTheme.bodySmall,
                   ),
@@ -361,12 +367,14 @@ class _KeyPose extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: clip.aspectRatio,
               child: CustomPaint(
-                painter: CartoonPainter(
+                painter: FigurePainter(
                   clip: clip,
                   time: time,
                   palette: paletteOf(context),
                   style: FigureStyle(male: style.male, primary: style.primary, secondary: style.secondary, showPath: false),
+                  ghost: false,
                   yaw: yaw,
+                  pitch: math.max(12.0, CartoonPainter.pitchFor(clip, 0.3)),
                 ),
                 child: const SizedBox.expand(),
               ),
@@ -437,11 +445,12 @@ class MotionThumb extends StatelessWidget {
         height: size,
         child: RepaintBoundary(
           child: CustomPaint(
-            painter: CartoonPainter(
+            painter: FigurePainter(
               clip: c,
               time: c.keyTimes[2],
               palette: paletteOf(context),
               style: FigureStyle(male: male, showPath: false, showMuscles: false),
+              ghost: false,
             ),
           ),
         ),

@@ -217,7 +217,7 @@ class _ExerciseMediaState extends State<ExerciseMedia> {
             showSelectedIcon: false,
             segments: const [
               ButtonSegment(value: true, icon: Icon(Icons.videocam_outlined), label: Text('Vídeo')),
-              ButtonSegment(value: false, icon: Icon(Icons.accessibility_new), label: Text('Boneco')),
+              ButtonSegment(value: false, icon: Icon(Icons.accessibility_new), label: Text('Boneco 3D')),
             ],
             selected: {_showVideo},
             onSelectionChanged: (s) => setState(() => _showVideo = s.first),
