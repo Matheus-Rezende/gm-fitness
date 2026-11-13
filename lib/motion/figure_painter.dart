@@ -819,7 +819,7 @@ class FigurePainter extends CustomPainter {
           if (s < 0.74) return hem;
           return _b.skin;
         }
-        if (male) return s > 0.86 ? _sock : _b.skin;
+        if (male) return s > 0.86 && !_mannequin ? _sock : _b.skin;
         return s > 0.93 ? _b.skin : _b.bottom;
       },
       muscle: (seg, s, ang) {

@@ -2,6 +2,13 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.18.0
+
+- **Boneco 3D de volta**, agora como um manequim simples: corpo de uma cor só, sem rosto, cabelo ou roupa. Azul para ele, rosa para ela.
+- Os músculos trabalhados continuam destacados em laranja, com a legenda "Principal" e "Auxiliares".
+- Vistas prontas (Lado, ¾, Frente, Costas), sem girar com o dedo. A câmera fica um pouco mais alta nos exercícios deitados.
+- **Movimentos mais naturais**: cada fase acelera e freia como uma pessoa de verdade, e a volta controlada de cada repetição dura mais que a fase de força.
+
 ## 0.17.2
 
 - **Rosto do boneco corrigido**: os traços estavam espelhados e o rosto parecia virado para trás. Agora olhos, nariz e boca ficam do lado para onde a pessoa olha, a orelha fica do lado da nuca e o cabelo cobre o topo e a nuca. Olhos com íris e brilho, sobrancelhas, nariz e um sorriso leve; de perfil aparece só o olho da frente.

@@ -259,7 +259,10 @@ def interp(p0, p1, t, view):
 
 
 def ease(u):
-    return 0.5 - 0.5 * math.cos(math.pi * u)
+    # perfil de "mínimo solavanco" (minimum jerk), o modelo clássico de como
+    # uma pessoa acelera e freia um movimento: sai e chega devagar, e a
+    # velocidade de pico fica no meio, mais natural que o cosseno.
+    return u * u * u * (10 - 15 * u + 6 * u * u)
 
 
 class Pattern:
@@ -276,6 +279,31 @@ class Pattern:
         self.vp = vp
         self.fps = fps
         self.linear = linear
+        self._tempo()
+
+    # Ritmo de uma repetição bem feita: a volta controlada (fase excêntrica)
+    # dura mais que a fase de força (concêntrica), algo perto de 3 para 2.
+    _ECC = ('devagar', 'controlando', 'Desça', 'Volte', 'Abra devagar', 'Feche devagar', 'Quadril para trás',
+            'Estenda os braços devagar', 'Suba controlando', 'Suba devagar')
+
+    def _tempo(self):
+        if self.linear or len(self.seq) != 4:
+            return
+        (a0, b0, _, _), (a1, b1, d1, l1), (a2, b2, _, _), (a3, b3, d3, l3) = self.seq
+        if not (a0 == b0 == a1 and b1 == a2 == b2 == a3 and b3 == a1 and a1 != b1):
+            return
+        if min(d1, d3) < 0.8:
+            return
+        ecc1 = any(k in l1 for k in self._ECC)
+        ecc3 = any(k in l3 for k in self._ECC)
+        if ecc1 == ecc3:
+            return
+        tot = d1 + d3
+        ecc, con = tot * 0.58, tot * 0.42
+        seq = list(self.seq)
+        seq[1] = (a1, b1, ecc if ecc1 else con, l1)
+        seq[3] = (a3, b3, ecc if ecc3 else con, l3)
+        self.seq = seq
 
     def duration(self):
         return sum(s[2] for s in self.seq)
