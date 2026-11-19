@@ -173,4 +173,35 @@ void main() {
     await tap(tester, find.descendant(of: find.byType(NavigationBar), matching: find.text('Evolução')));
     await capture(tester, '14_evolucao_escuro');
   }, skip: !enabled);
+  testWidgets('divisão ABC e personalização', (tester) async {
+    phone(tester);
+    await tester.runAsync(loadFonts);
+    SharedPreferences.setMockInitialValues({
+      'profile_v1': '{"sex":"M","name":"Gui","onboarded":true}',
+    });
+    await tester.pumpWidget(app());
+    await waitFor(tester, find.byType(NavigationBar));
+    await settle(tester, 4);
+    await tap(tester, find.byTooltip('Organizar treinos'));
+    await capture(tester, '20_organizar');
+    await tap(tester, find.text('ABC: empurrar, puxar e pernas'));
+    await tap(tester, find.widgetWithText(ChoiceChip, 'Intermediário'));
+    await capture(tester, '21_modelo_abc');
+    await tap(tester, find.textContaining('Usar esta divisão'));
+    await capture(tester, '22_treino_abc');
+    await tap(tester, find.byType(PopupMenuButton<String>).first);
+    await tap(tester, find.text('Editar e personalizar'));
+    await tap(tester, find.text('Personalizar'));
+    await tap(tester, find.widgetWithText(ChoiceChip, 'Drop-set'));
+    await capture(tester, '23_personalizar');
+    await tap(tester, find.text('Definir carga por série'));
+    await tap(tester, find.widgetWithText(ActionChip, 'Pirâmide crescente'));
+    await tap(tester, find.widgetWithText(ActionChip, 'Aquecimento'));
+    await capture(tester, '24_carga_por_serie');
+    await tap(tester, find.text('Salvar'));
+    await capture(tester, '25_treino_personalizado');
+    await tap(tester, find.byType(PopupMenuButton<String>).at(1));
+    await tap(tester, find.text('Calcular 1RM'));
+    await capture(tester, '26_calculadora_1rm');
+  }, skip: !enabled);
 }
