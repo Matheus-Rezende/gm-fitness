@@ -9,6 +9,7 @@ import '../widgets/entry_editor.dart';
 import '../theme/gm_theme.dart';
 import '../widgets/exercise_video.dart';
 import '../widgets/exercise_visuals.dart';
+import '../widgets/step_guide.dart';
 import 'custom_exercise_screen.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
@@ -85,9 +86,14 @@ class ExerciseDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           if (clip != null)
-            ExerciseMedia(
-              videoAsset: exerciseVideoAsset(ex.id, male: state.isMale),
-              figure: MotionView(clip: clip, style: figureStyleFor(state, ex), muscleLabels: state.meta.groups),
+            FutureBuilder<void>(
+              future: GuideRepo.instance.load(),
+              builder: (context, _) => ExerciseMedia(
+                key: ValueKey('${ex.id}-${GuideRepo.instance.loaded}'),
+                guide: GuideRepo.instance.of(ex.id),
+                videoAsset: exerciseVideoAsset(ex.id, male: state.isMale),
+                figure: MotionView(clip: clip, style: figureStyleFor(state, ex), muscleLabels: state.meta.groups),
+              ),
             )
           else
             Container(

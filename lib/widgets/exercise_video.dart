@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import 'step_guide.dart';
+
 /// Exercícios que têm vídeo gravado (homem em `<id>_m.mp4`, mulher em `<id>_f.mp4`).
 const kExerciseVideos = <String>{
   'abdominal_bicicleta',
@@ -192,39 +194,63 @@ class _ExerciseVideoState extends State<ExerciseVideo> {
 /// Mostra o vídeo real do exercício quando existe, com a opção de ver o
 /// boneco (desenho 2D com os músculos trabalhados). Sem vídeo, só o boneco.
 class ExerciseMedia extends StatefulWidget {
-  const ExerciseMedia({super.key, required this.videoAsset, required this.figure});
+  const ExerciseMedia({super.key, required this.videoAsset, required this.figure, this.guide});
 
   final String? videoAsset;
   final Widget figure;
+
+  /// Ilustrações passo a passo; quando existem, substituem o boneco 3D.
+  final ExerciseGuide? guide;
 
   @override
   State<ExerciseMedia> createState() => _ExerciseMediaState();
 }
 
+enum _Media { steps, video, figure }
+
 class _ExerciseMediaState extends State<ExerciseMedia> {
-  bool _showVideo = true;
+  _Media? _picked;
 
   @override
   Widget build(BuildContext context) {
     final asset = widget.videoAsset;
-    if (asset == null) return widget.figure;
+    final guide = widget.guide;
+    final options = [
+      if (guide != null) _Media.steps,
+      if (asset != null) _Media.video,
+      if (guide == null) _Media.figure,
+    ];
+    final mode = options.contains(_picked) ? _picked! : options.first;
+    Widget body(_Media m) => switch (m) {
+          _Media.steps => StepGuideView(guide: guide!),
+          _Media.video => ExerciseVideo(key: ValueKey(asset), asset: asset!, fallback: widget.figure),
+          _Media.figure => widget.figure,
+        };
+    if (options.length == 1) return body(mode);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: SegmentedButton<bool>(
+          child: SegmentedButton<_Media>(
             showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(value: true, icon: Icon(Icons.videocam_outlined), label: Text('Vídeo')),
-              ButtonSegment(value: false, icon: Icon(Icons.accessibility_new), label: Text('Boneco 3D')),
+            segments: [
+              for (final m in options)
+                switch (m) {
+                  _Media.steps =>
+                    const ButtonSegment(value: _Media.steps, icon: Icon(Icons.burst_mode_outlined), label: Text('Passos')),
+                  _Media.video =>
+                    const ButtonSegment(value: _Media.video, icon: Icon(Icons.videocam_outlined), label: Text('Vídeo')),
+                  _Media.figure =>
+                    const ButtonSegment(value: _Media.figure, icon: Icon(Icons.accessibility_new), label: Text('Boneco 3D')),
+                },
             ],
-            selected: {_showVideo},
-            onSelectionChanged: (s) => setState(() => _showVideo = s.first),
+            selected: {mode},
+            onSelectionChanged: (s) => setState(() => _picked = s.first),
           ),
         ),
         const SizedBox(height: 8),
-        if (_showVideo) ExerciseVideo(key: ValueKey(asset), asset: asset, fallback: widget.figure) else widget.figure,
+        body(mode),
       ],
     );
   }
