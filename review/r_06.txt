@@ -1,0 +1,8 @@
+leg_extension
+leg_press
+leg_raise
+lunge
+lunge_db
+march
+mountain_climber
+one_arm_row

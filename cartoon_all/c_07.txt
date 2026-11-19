@@ -1,0 +1,8 @@
+desenvolvimento_halteres (overhead_press_db) ombros + triceps
+elevacao_lateral (lateral_raise) ombros + trapezio
+elevacao_frontal (front_raise) ombros + 
+voador_invertido (reverse_fly) ombros + costas/trapezio
+face_pull (face_pull) ombros + trapezio/costas
+encolhimento (shrug) trapezio + 
+rosca_direta_halteres (curl) biceps + antebraco
+rosca_direta_barra (curl_bb) biceps + antebraco

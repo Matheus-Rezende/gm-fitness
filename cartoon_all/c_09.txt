@@ -1,0 +1,8 @@
+rosca_scott (preacher_curl) biceps + 
+triceps_polia (triceps_pushdown) triceps + 
+triceps_corda (triceps_pushdown) triceps + 
+triceps_frances (overhead_triceps) triceps + 
+triceps_testa (skull_crusher) triceps + 
+triceps_coice (triceps_kickback) triceps + 
+triceps_banco (bench_dip) triceps + peito/ombros
+prancha (plank) abdomen + ombros/gluteos

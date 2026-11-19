@@ -1,0 +1,7 @@
+straight_arm_pulldown
+sumo_squat
+superman
+triceps_kickback
+triceps_pushdown
+walk
+wall_sit

@@ -1,0 +1,8 @@
+overhead_press
+overhead_press_db
+overhead_triceps
+pec_deck
+plank
+plank_knee
+preacher_curl
+pull_through

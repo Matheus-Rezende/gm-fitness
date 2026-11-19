@@ -1,0 +1,12 @@
+leg_extension
+leg_press
+leg_raise
+lunge
+lunge_db
+march
+mountain_climber
+one_arm_row
+overhead_press
+overhead_press_db
+overhead_triceps
+pec_deck

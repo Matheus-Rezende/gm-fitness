@@ -1,0 +1,8 @@
+stiff_barra (rdl_bb) posterior + gluteos/lombar
+levantamento_terra (deadlift) posterior + gluteos/lombar/costas/quadriceps/trapezio
+bom_dia (good_morning) posterior + lombar/gluteos
+pull_through (pull_through) gluteos + posterior
+elevacao_pelvica (hip_thrust) gluteos + posterior
+ponte_gluteo (glute_bridge) gluteos + posterior/abdomen
+coice_quatro_apoios (donkey_kick) gluteos + posterior
+coice_polia (cable_kickback) gluteos + posterior

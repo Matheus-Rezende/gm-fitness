@@ -1,0 +1,8 @@
+rosca_martelo (hammer_curl) biceps + antebraco
+rosca_alternada (curl_alt) biceps + antebraco
+rosca_martelo_alternada (hammer_alt) biceps + antebraco
+rosca_inversa (curl_bb) antebraco + biceps
+rosca_21 (curl_bb) biceps + antebraco
+rosca_martelo_corda (curl_cable) biceps + antebraco
+rosca_concentrada (concentration_curl) biceps + 
+rosca_polia (curl_cable) biceps + 

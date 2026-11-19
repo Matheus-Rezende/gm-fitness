@@ -1,0 +1,12 @@
+run
+russian_twist
+seated_row
+shrug
+side_lying_abduction
+side_plank
+skull_crusher
+squat_bb
+squat_bw
+squat_goblet
+squat_smith
+step_up

@@ -1,0 +1,8 @@
+incline_press_db
+jump_rope
+jumping_jack
+kb_swing
+lat_pulldown
+lateral_raise
+leg_curl_lying
+leg_curl_seated

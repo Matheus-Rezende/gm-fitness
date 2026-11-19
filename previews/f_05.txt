@@ -1,0 +1,12 @@
+plank
+plank_knee
+preacher_curl
+pull_through
+pull_up
+push_up
+push_up_incline
+push_up_knee
+rdl_bb
+rdl_db
+reverse_fly
+rower

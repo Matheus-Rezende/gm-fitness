@@ -1,0 +1,8 @@
+abducao_em_pe_elastico (hip_abduction_standing) abdutores + gluteos
+abducao_polia (hip_abduction_cable) abdutores + gluteos
+cadeira_abdutora (abductor_machine) abdutores + gluteos
+cadeira_adutora (adductor_machine) adutores + 
+abducao_deitada (side_lying_abduction) abdutores + gluteos
+panturrilha_em_pe (calf_raise) panturrilha + 
+panturrilha_sentado (calf_seated) panturrilha + 
+agachamento_isometrico (wall_sit) quadriceps + gluteos

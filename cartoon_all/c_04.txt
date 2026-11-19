@@ -1,0 +1,8 @@
+hiperextensao_lombar (hyperextension) lombar + gluteos/posterior
+swing_kettlebell (kb_swing) gluteos + posterior/lombar/corpo_inteiro
+supino_reto_barra (bench_press) peito + triceps/ombros
+supino_reto_halteres (bench_press_db) peito + triceps/ombros
+supino_inclinado_barra (incline_press) peito + ombros/triceps
+supino_inclinado_halteres (incline_press_db) peito + ombros/triceps
+crucifixo_halteres (fly_db) peito + ombros
+voador (pec_deck) peito + ombros

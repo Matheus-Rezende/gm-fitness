@@ -1,0 +1,8 @@
+hammer_alt
+hammer_curl
+hanging_leg_raise
+hip_abduction_cable
+hip_abduction_standing
+hip_thrust
+hyperextension
+incline_press
