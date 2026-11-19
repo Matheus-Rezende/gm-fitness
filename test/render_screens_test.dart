@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gm_fitness/main.dart';
+import 'package:gm_fitness/screens/exercise_detail_screen.dart';
 import 'package:gm_fitness/update/update_ui.dart';
 import 'package:gm_fitness/update/updater.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -217,5 +218,27 @@ void main() {
     await tap(tester, find.byType(PopupMenuButton<String>).at(1));
     await tap(tester, find.text('Calcular 1RM'));
     await capture(tester, '26_calculadora_1rm');
+  }, skip: !enabled);
+  testWidgets('passos ilustrados', (tester) async {
+    phone(tester);
+    await tester.runAsync(loadFonts);
+    SharedPreferences.setMockInitialValues({'profile_v1': '{"sex":"M","name":"Gui","onboarded":true}'});
+    await tester.pumpWidget(app());
+    await waitFor(tester, find.byType(NavigationBar));
+    await settle(tester, 4);
+    for (final id in ['supino_reto_barra', 'prancha']) {
+      final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
+      nav.push(MaterialPageRoute<void>(builder: (_) => ExerciseDetailScreen(exerciseId: id)));
+      await settle(tester, 10);
+      if (find.text('Passos').evaluate().isNotEmpty) await tap(tester, find.text('Passos'));
+      await settle(tester, 6);
+      await capture(tester, '30_passos_$id');
+      if (find.byTooltip('Próximo passo').evaluate().isNotEmpty) {
+        await tap(tester, find.byTooltip('Próximo passo'));
+        await capture(tester, '31_passos_${id}_2');
+      }
+      nav.pop();
+      await settle(tester, 4);
+    }
   }, skip: !enabled);
 }
