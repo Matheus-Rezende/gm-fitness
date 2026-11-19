@@ -14,7 +14,11 @@ const kExerciseVideos = <String>{
   'agachamento_barra',
   'agachamento_bulgaro',
   'agachamento_goblet',
+  'agachamento_goblet_kettlebell',
+  'agachamento_livre',
   'agachamento_smith',
+  'agachamento_sumo',
+  'agachamento_sumo_kettlebell',
   'barra_fixa_assistida',
   'bicicleta_ergometrica',
   'cadeira_abdutora',
@@ -29,14 +33,17 @@ const kExerciseVideos = <String>{
   'corrida_esteira',
   'corrida_intervalada',
   'crossover',
+  'crucifixo_halteres',
   'dead_bug',
   'desenvolvimento_halteres',
   'elevacao_lateral',
   'elevacao_pelvica',
+  'elevacao_pernas',
   'face_pull',
   'flexao_inclinada',
   'hiperextensao_lombar',
   'leg_press_45',
+  'levantamento_terra',
   'mesa_flexora',
   'panturrilha_em_pe',
   'panturrilha_sentado',
@@ -70,13 +77,20 @@ const kExerciseVideos = <String>{
 
 /// Exercícios que, por enquanto, só têm o vídeo do homem (usado também para a mulher).
 const kExerciseVideosMaleOnly = <String>{
+  'agachamento_sumo_kettlebell',
+  'elevacao_pernas',
   'voador_invertido',
+};
+
+/// Exercícios que por enquanto só têm o vídeo da mulher (usado também para homens).
+const kExerciseVideosFemaleOnly = <String>{
+  'agachamento_livre',
 };
 
 /// Caminho do vídeo do exercício para o sexo do usuário, ou null se não houver vídeo.
 String? exerciseVideoAsset(String exerciseId, {required bool male}) {
   if (!kExerciseVideos.contains(exerciseId)) return null;
-  final useMale = male || kExerciseVideosMaleOnly.contains(exerciseId);
+  final useMale = kExerciseVideosFemaleOnly.contains(exerciseId) ? false : (male || kExerciseVideosMaleOnly.contains(exerciseId));
   return 'assets/videos/${exerciseId}_${useMale ? 'm' : 'f'}.mp4';
 }
 

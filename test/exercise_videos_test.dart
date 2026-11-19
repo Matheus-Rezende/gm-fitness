@@ -23,5 +23,6 @@ void main() {
     }
     expect(exerciseVideoAsset('nao_existe', male: true), isNull);
     expect(kExerciseVideos.containsAll(kExerciseVideosMaleOnly), isTrue);
+    expect(kExerciseVideos.containsAll(kExerciseVideosFemaleOnly), isTrue);
   });
 }

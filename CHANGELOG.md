@@ -2,6 +2,11 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.20.0
+
+- **Vídeos de mais 7 exercícios**: agachamento sumô com halter, levantamento terra, crucifixo com halteres e agachamento goblet com kettlebell (ele e ela); agachamento sumô com kettlebell e elevação de pernas (por enquanto só com ele) e agachamento livre (por enquanto só com ela).
+- **Passos ilustrados** (teste): no agachamento com barra, supino reto, puxada frontal, rosca direta e prancha, toque em "Passos" ao lado do vídeo para ver cada posição desenhada, com dicas numeradas e setas do movimento. "Ver movimento" passa os passos em sequência.
+
 ## 0.19.0
 
 - **Divisões de treino A, B, C**: organize os treinos por letra em vez de por dia da semana. Você faz A, depois B, depois C, em qualquer dia; faltou um dia, o próximo treino continua o que ficou pendente. Vai de AB até ABCDEF.
