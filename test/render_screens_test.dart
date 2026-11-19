@@ -182,6 +182,7 @@ void main() {
     await tester.pumpWidget(app());
     await waitFor(tester, find.byType(NavigationBar));
     await settle(tester, 4);
+    await tap(tester, find.descendant(of: find.byType(NavigationBar), matching: find.text('Treino')));
     await tap(tester, find.byTooltip('Organizar treinos'));
     await capture(tester, '20_organizar');
     await tap(tester, find.text('ABC: empurrar, puxar e pernas'));
