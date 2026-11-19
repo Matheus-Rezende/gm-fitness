@@ -1,0 +1,14 @@
+name: Extrair rar (temporário)
+on:
+  push:
+    branches: [tmp-unrar]
+jobs:
+  x:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: (sudo apt-get install -y unrar >/dev/null 2>&1 || true); mkdir out && cd out && (unrar x -o+ ../x/in.rar || 7z x ../x/in.rar) && find . -type f | head -50
+      - uses: actions/upload-artifact@v4
+        with:
+          name: out
+          path: out
