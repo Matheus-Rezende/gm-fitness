@@ -1,0 +1,16 @@
+name: Extrair rar (temporário)
+on:
+  push:
+    branches: [tmp-unrar2]
+permissions:
+  contents: write
+jobs:
+  x:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          [ -d out ] && exit 0
+          mkdir out && cd out && (unrar x -o+ ../x/in.rar || 7z x ../x/in.rar) && cd ..
+          git config user.name "gm-bot" && git config user.email "gm-bot@users.noreply.github.com"
+          git add out && git commit -m "extraído" && git push
