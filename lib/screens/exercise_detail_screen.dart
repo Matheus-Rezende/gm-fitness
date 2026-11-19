@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/exercise.dart';
-import '../models/preset.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
@@ -74,7 +73,7 @@ class ExerciseDetailScreen extends StatelessWidget {
             onPressed: () async {
               final saved = await showEntryEditor(context, exerciseId: ex.id);
               if (saved != null && context.mounted) {
-                showSnack(context, 'Adicionado em ${weekdayLabel(saved.weekday).toLowerCase()}');
+                showSnack(context, 'Adicionado em ${state.plan.slotLabel(saved.weekday).toLowerCase()}');
               }
             },
             icon: const Icon(Icons.playlist_add),
@@ -216,7 +215,7 @@ class _MyEntry extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '${weekdayLabel(entry.weekday)} · ${entry.sets} × ${entry.reps}',
+                    '${state.plan.slotLabel(entry.weekday)} · ${entry.setsSummary}',
                     style: text.titleSmall,
                   ),
                 ),

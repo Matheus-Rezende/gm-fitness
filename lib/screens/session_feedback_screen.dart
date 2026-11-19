@@ -106,7 +106,7 @@ class _SessionFeedbackScreenState extends State<SessionFeedbackScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          Text('Treino de ${weekdayLabel(s.weekday).toLowerCase()}', style: text.titleMedium),
+          Text(s.label.isNotEmpty ? s.label : 'Treino de ${weekdayLabel(s.weekday).toLowerCase()}', style: text.titleMedium),
           const SizedBox(height: 4),
           const PlateStripe(),
           const SizedBox(height: 16),

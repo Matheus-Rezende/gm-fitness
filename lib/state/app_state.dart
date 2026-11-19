@@ -7,8 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/body.dart';
 import '../models/exercise.dart';
+import '../models/plan.dart';
 import '../models/preset.dart';
 import '../models/session.dart';
+import '../models/split_templates.dart';
+import '../models/training.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_clip.dart';
 import 'settings.dart';
@@ -32,10 +35,11 @@ class AppState extends ChangeNotifier {
   static const _kBody = 'body_v1';
   static const _kWeights = 'weights_v1';
   static const _kChanged = 'local_changed_v1';
+  static const _kPlan = 'plan_v1';
 
   /// Chaves guardadas no backup da nuvem.
   static const backupKeys = [
-    _kEntries, _kCustom, _kProfile, _kDone, _kActive, _kSessions, _kBody, _kWeights, AppSettings.storageKey,
+    _kEntries, _kCustom, _kProfile, _kDone, _kActive, _kSessions, _kBody, _kWeights, _kPlan, AppSettings.storageKey,
   ];
 
   /// Chamado depois de cada gravação local (o backup na nuvem se agenda aqui).
@@ -50,6 +54,9 @@ class AppState extends ChangeNotifier {
   List<Exercise> _custom = [];
   List<WorkoutEntry> _entries = [];
   int _idSeq = 0;
+
+  // organização da semana (dias da semana ou divisão A, B, C...)
+  TrainingPlan _plan = const TrainingPlan();
 
   // perfil
   String _sex = 'F';
@@ -102,6 +109,8 @@ class AppState extends ChangeNotifier {
       if (s != null) {
         _entries = [for (final e in (jsonDecode(s) as List)) WorkoutEntry.fromJson(Map<String, dynamic>.from(e as Map))];
       }
+      final pl = _prefs.getString(_kPlan);
+      if (pl != null) _plan = TrainingPlan.fromJson(Map<String, dynamic>.from(jsonDecode(pl) as Map));
       final pr = _prefs.getString(_kProfile);
       if (pr != null) {
         final m = Map<String, dynamic>.from(jsonDecode(pr) as Map);
@@ -143,6 +152,7 @@ class AppState extends ChangeNotifier {
     await _prefs.setString(
         _kProfile, jsonEncode({'sex': _sex, 'name': _name, 'presetId': _presetId, 'onboarded': _onboarded}));
     await _prefs.setString(_kBody, jsonEncode(_body.toJson()));
+    await _prefs.setString(_kPlan, jsonEncode(_plan.toJson()));
     await _prefs.setString(_kWeights, jsonEncode([for (final w in _weights) w.toJson()]));
     // guarda só as últimas 8 semanas de marcações
     final keys = _done.keys.toList()..sort();
@@ -204,6 +214,7 @@ class AppState extends ChangeNotifier {
     }
     _custom = [];
     _entries = [];
+    _plan = const TrainingPlan();
     _sex = 'F';
     _name = '';
     _presetId = null;
@@ -263,9 +274,9 @@ class AppState extends ChangeNotifier {
     final a = _active;
     final e = entry(entryId);
     if (a == null || e == null) return;
-    a.sets[entryId] = count.clamp(0, e.sets);
+    a.sets[entryId] = count.clamp(0, e.totalSets);
     final today = _done.putIfAbsent(dayKey(DateTime.now()), () => <String>{});
-    if (a.sets[entryId]! >= e.sets) {
+    if (a.sets[entryId]! >= e.totalSets) {
       today.add(entryId);
     } else {
       today.remove(entryId);
@@ -300,15 +311,25 @@ class AppState extends ChangeNotifier {
     for (final e in entriesOnDay(a.weekday)) {
       final ex = exercise(e.exerciseId);
       if (ex == null) continue;
+      final done = a.sets[e.id] ?? 0;
+      double? planVolume;
+      if (e.hasSetPlan) {
+        planVolume = 0;
+        for (final st in e.setPlan.take(done)) {
+          final timed = st.reps.contains('s') || st.reps.contains('min');
+          if (!st.warmup && !timed) planVolume = planVolume! + st.repsNumber * st.kg;
+        }
+      }
       items.add(SessionItem(
         entryId: e.id,
         exerciseId: e.exerciseId,
         name: ex.name,
-        setsDone: a.sets[e.id] ?? 0,
-        setsPlanned: e.sets,
-        reps: e.reps,
-        loadKg: e.loadKg,
+        setsDone: done,
+        setsPlanned: e.totalSets,
+        reps: e.hasSetPlan ? e.setPlan.last.reps : e.reps,
+        loadKg: e.hasSetPlan ? e.setPlan.map((x) => x.kg).fold(0.0, (m, x) => x > m ? x : m) : e.loadKg,
         feel: a.feel[e.id],
+        planVolume: planVolume,
       ));
     }
     final s = WorkoutSession(
@@ -318,6 +339,8 @@ class AppState extends ChangeNotifier {
       duration: a.elapsed,
       rpe: rpe.clamp(0, 10),
       items: items,
+      label: _plan.fullLabel(a.weekday),
+      split: _plan.isSplit,
     );
     _sessions.add(s);
     _active = null;
@@ -353,6 +376,7 @@ class AppState extends ChangeNotifier {
 
   /// Dias de treino por semana, pelo plano atual ou pela lista montada.
   int get trainingDays {
+    if (_plan.isSplit) return _plan.trainDays.isEmpty ? 3 : _plan.trainDays.length;
     final days = {for (final e in _entries) if (e.weekday >= 0) e.weekday};
     return days.isEmpty ? (currentPreset?.days.length ?? 3) : days.length;
   }
@@ -519,6 +543,151 @@ class AppState extends ChangeNotifier {
     await _save();
   }
 
+  // ------------------------------------------------------------ divisão do treino
+
+  TrainingPlan get plan => _plan;
+
+  String _presetTitle(int weekday) {
+    final p = currentPreset;
+    if (p == null) return '';
+    for (final d in p.days) {
+      if (d.weekday == weekday) return d.title;
+    }
+    return '';
+  }
+
+  /// Nome do dia ou treino (o escolhido pela pessoa ou o do plano pronto).
+  String slotName(int slot) {
+    final n = _plan.nameOf(slot);
+    if (n.isNotEmpty || _plan.isSplit) return n;
+    return _presetTitle(slot);
+  }
+
+  /// Próxima letra da divisão: a seguinte à do último treino feito nesse modo,
+  /// pulando letras sem exercícios.
+  int get nextSplitSlot {
+    final n = _plan.count;
+    int firstFrom(int start) {
+      for (var k = 0; k < n; k++) {
+        final c = (start + k) % n;
+        if (entriesOnDay(c).isNotEmpty) return c;
+      }
+      return start % n;
+    }
+
+    for (final s in _sessions.reversed) {
+      if (s.split && s.weekday >= 0) return firstFrom(s.weekday + 1);
+    }
+    return firstFrom(0);
+  }
+
+  /// Letra do último treino da divisão concluído hoje, se houver.
+  int? get splitDoneToday {
+    final now = DateTime.now();
+    for (final s in _sessions.reversed) {
+      if (!_sameDay(s.startedAt, now)) break;
+      if (s.split) return s.weekday;
+    }
+    return null;
+  }
+
+  /// Posição "de hoje": o dia da semana, ou a próxima letra da divisão.
+  int get currentSlot => _plan.isSplit ? nextSplitSlot : DateTime.now().weekday - 1;
+
+  /// Muda a organização da semana. Ao trocar de modo, os exercícios são
+  /// levados junto: os dias com exercícios viram A, B, C... na ordem da
+  /// semana, e as letras voltam para os dias de treino escolhidos.
+  Future<void> setPlan(TrainingPlan next) async {
+    final prev = _plan;
+    if (prev.mode != next.mode) {
+      if (next.isSplit) {
+        final used = ({for (final e in _entries) if (e.weekday >= 0 && e.weekday < 7) e.weekday}.toList()..sort());
+        final map = <int, int>{for (final (i, d) in used.indexed) d: i < 6 ? i : -1};
+        final names = <int, String>{};
+        for (final (i, d) in used.take(6).indexed) {
+          final n = slotName(d);
+          if (n.isNotEmpty) names[i] = n;
+        }
+        _entries = [for (final e in _entries) e.copyWith(weekday: e.weekday < 0 ? -1 : (map[e.weekday] ?? -1))];
+        _plan = TrainingPlan(
+          mode: PlanMode.split,
+          count: used.length < 2 ? next.count : used.length.clamp(2, 6),
+          names: names,
+          trainDays: used.isEmpty ? next.trainDays : used.take(6).toSet(),
+        );
+      } else {
+        final days = prev.trainDays.toList()..sort();
+        final names = <int, String>{};
+        for (final (i, d) in days.indexed) {
+          final n = prev.nameOf(i);
+          if (i < prev.count && n.isNotEmpty) names[d] = n;
+        }
+        _entries = [
+          for (final e in _entries) e.copyWith(weekday: e.weekday >= 0 && e.weekday < days.length ? days[e.weekday] : -1),
+        ];
+        _plan = TrainingPlan(mode: PlanMode.weekdays, names: names, trainDays: prev.trainDays);
+      }
+      _presetId = null;
+    } else {
+      _plan = next;
+      if (next.isSplit) {
+        _entries = [for (final e in _entries) e.weekday >= next.count ? e.copyWith(weekday: -1) : e];
+      }
+    }
+    notifyListeners();
+    await _save();
+  }
+
+  /// Dá nome a um dia ou treino ("Costas e bíceps"). Nome vazio volta ao padrão.
+  Future<void> renameSlot(int slot, String name) async {
+    final names = Map<int, String>.from(_plan.names);
+    final n = name.trim();
+    if (n.isEmpty) {
+      names.remove(slot);
+    } else {
+      names[slot] = n;
+    }
+    _plan = _plan.copyWith(names: names);
+    notifyListeners();
+    await _save();
+  }
+
+  /// Troca o treino atual por uma divisão pronta, no nível escolhido.
+  /// Cargas já registradas para o mesmo exercício são reaproveitadas.
+  Future<int> applyTemplate(SplitTemplate t, TrainLevel level) async {
+    final knownLoads = <String, double>{};
+    for (final e in _entries) {
+      if (e.loadKg > 0) knownLoads[e.exerciseId] = e.loadKg;
+    }
+    _entries.clear();
+    _presetId = null;
+    _plan = TrainingPlan(
+      mode: PlanMode.split,
+      count: t.days.length,
+      names: {for (final (i, d) in t.days.indexed) i: d.name},
+      trainDays: t.trainDays,
+    );
+    final items = planTemplate(t, level, exists: (id) => exercise(id) != null);
+    for (final it in items) {
+      final load = knownLoads[it.exercise] ?? 0;
+      _entries.add(WorkoutEntry(
+        id: _newId('e'),
+        exerciseId: it.exercise,
+        weekday: it.slot,
+        sets: it.sets,
+        reps: it.reps,
+        rest: it.rest,
+        loadKg: load,
+        technique: it.technique,
+        rir: it.rir,
+        history: load > 0 ? [LoadRecord(DateTime.now(), load)] : const [],
+      ));
+    }
+    notifyListeners();
+    await _save();
+    return items.length;
+  }
+
   // ------------------------------------------------------------ lista do usuário
 
   List<WorkoutEntry> get entries => List.unmodifiable(_entries);
@@ -535,16 +704,30 @@ class AppState extends ChangeNotifier {
   }
 
   Future<WorkoutEntry> addEntry(String exerciseId,
-      {int weekday = -1, int sets = 3, String reps = '12', double loadKg = 0, int rest = 60}) async {
+      {int weekday = -1,
+      int sets = 3,
+      String reps = '12',
+      double loadKg = 0,
+      int rest = 60,
+      Technique technique = Technique.normal,
+      String cadence = '',
+      int rir = -1,
+      String note = '',
+      List<SetSpec> setPlan = const []}) async {
     final e = WorkoutEntry(
       id: _newId('e'),
       exerciseId: exerciseId,
       weekday: weekday,
-      sets: sets,
+      sets: setPlan.isNotEmpty ? setPlan.length : sets,
       reps: reps,
       loadKg: loadKg,
       rest: rest,
       history: loadKg > 0 ? [LoadRecord(DateTime.now(), loadKg)] : const [],
+      technique: technique,
+      cadence: cadence,
+      rir: rir,
+      note: note,
+      setPlan: setPlan,
     );
     _entries.add(e);
     notifyListeners();
@@ -606,15 +789,28 @@ class AppState extends ChangeNotifier {
     }
     if (replace) _entries.clear();
     _presetId = preset.id;
+    // No modo de divisão, cada dia do plano vira uma letra (A, B, C...).
+    final split = _plan.isSplit;
+    final days = preset.days.take(split ? 6 : 7).toList();
+    final names = Map<int, String>.from(replace ? const <int, String>{} : _plan.names);
+    for (final (i, d) in days.indexed) {
+      final slot = split ? i : d.weekday;
+      if (replace || !names.containsKey(slot)) names[slot] = d.title;
+    }
+    _plan = _plan.copyWith(
+      names: names,
+      count: split ? days.length.clamp(2, 6) : null,
+      trainDays: split ? {for (final d in days) d.weekday} : null,
+    );
     var added = 0;
-    for (final d in preset.days) {
+    for (final (i, d) in days.indexed) {
       for (final it in d.items) {
         if (exercise(it.exercise) == null) continue;
         final load = knownLoads[it.exercise] ?? 0;
         _entries.add(WorkoutEntry(
           id: _newId('e'),
           exerciseId: it.exercise,
-          weekday: d.weekday,
+          weekday: split ? i : d.weekday,
           sets: it.sets,
           reps: it.reps,
           rest: it.rest,
@@ -639,6 +835,7 @@ class AppState extends ChangeNotifier {
     _weights.clear();
     _presetId = null;
     _onboarded = false;
+    _plan = const TrainingPlan();
     notifyListeners();
     await _save();
   }

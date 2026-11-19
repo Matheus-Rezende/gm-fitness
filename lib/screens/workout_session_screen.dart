@@ -3,14 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../models/preset.dart';
 import '../models/session.dart';
+import '../models/training.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
 import '../theme/gm_theme.dart';
 import '../widgets/common.dart';
 import 'exercise_detail_screen.dart';
+import 'my_workouts_screen.dart' show EntryTags;
 import 'session_feedback_screen.dart';
 
 /// Treino em andamento: cronômetro, séries, descanso e finalização.
@@ -26,6 +27,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
   DateTime? _restEnds;
   int _restTotal = 0;
   String? _restFor;
+
+  /// Aviso de bi-set/tri-set: vá direto para o próximo exercício.
+  String? _chainFrom;
 
   @override
   void initState() {
@@ -50,7 +54,15 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
   }
 
   void _startRest(WorkoutEntry e, int done) {
-    if (e.rest <= 0 || done >= e.sets) {
+    if (e.technique.skipsRest) {
+      setState(() {
+        _restEnds = null;
+        _chainFrom = e.id;
+      });
+      return;
+    }
+    _chainFrom = null;
+    if (e.rest <= 0 || done >= e.totalSets) {
       setState(() => _restEnds = null);
       return;
     }
@@ -101,13 +113,15 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
       return Scaffold(appBar: AppBar(), body: const Center(child: Text('Nenhum treino em andamento.')));
     }
     final items = state.entriesOnDay(active.weekday);
-    final planned = items.fold(0, (a, e) => a + e.sets);
+    final planned = items.fold(0, (a, e) => a + e.totalSets);
     final done = items.fold(0, (a, e) => a + state.setsDoneFor(e.id));
     final restLeft = _restEnds == null ? 0 : _restEnds!.difference(DateTime.now()).inSeconds + 1;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Treino de ${weekdayLabel(active.weekday).toLowerCase()}'),
+        title: Text(state.plan.isSplit
+            ? state.plan.slotLabel(active.weekday)
+            : 'Treino de ${state.plan.slotLabel(active.weekday).toLowerCase()}'),
         actions: [
           IconButton(
             tooltip: 'Descartar treino',
@@ -178,6 +192,13 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
               onSkip: () => setState(() => _restEnds = null),
             ),
           ],
+          if (_chainFrom != null && restLeft <= 0) ...[
+            const SizedBox(height: 12),
+            _ChainBanner(
+              text: _chainText(state, items),
+              onClose: () => setState(() => _chainFrom = null),
+            ),
+          ],
           const SizedBox(height: 14),
           if (items.isEmpty)
             Padding(
@@ -198,6 +219,43 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                 },
               ),
             ),
+        ],
+      ),
+    );
+  }
+
+  String _chainText(AppState state, List<WorkoutEntry> items) {
+    final i = items.indexWhere((e) => e.id == _chainFrom);
+    if (i < 0) return '';
+    final e = items[i];
+    final next = i + 1 < items.length ? state.exercise(items[i + 1].exerciseId)?.name : null;
+    return next == null
+        ? '${e.technique.label}: siga direto, sem descanso.'
+        : '${e.technique.label}: vá direto para $next, sem descanso.';
+  }
+}
+
+class _ChainBanner extends StatelessWidget {
+  const _ChainBanner({required this.text, required this.onClose});
+
+  final String text;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
+      decoration: BoxDecoration(color: GmColors.blue, borderRadius: BorderRadius.circular(16)),
+      child: Row(
+        children: [
+          const Icon(Icons.fast_forward_rounded, color: Colors.white),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600))),
+          IconButton(
+            tooltip: 'Fechar',
+            onPressed: onClose,
+            icon: const Icon(Icons.close_rounded, color: Colors.white),
+          ),
         ],
       ),
     );
@@ -276,7 +334,8 @@ class _SessionCard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     final done = state.setsDoneFor(entry.id);
-    final complete = done >= entry.sets;
+    final complete = done >= entry.totalSets;
+    final sets = entry.expandedSets;
     final feel = state.activeSession?.feel[entry.id];
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -300,9 +359,20 @@ class _SessionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('$position. ${ex.name}', style: text.titleMedium),
-                      Text('${entry.sets} séries de ${entry.reps}', style: text.bodySmall),
-                      const SizedBox(height: 6),
-                      LoadStepper(kg: entry.loadKg, compact: true, onChanged: (v) => state.setLoad(entry.id, v)),
+                      Text(entry.setsSummary, style: text.bodySmall),
+                      if (entry.extras.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        EntryTags(entry: entry),
+                      ],
+                      if (entry.note.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(entry.note, style: text.bodySmall?.copyWith(fontStyle: FontStyle.italic)),
+                        ),
+                      if (!entry.hasSetPlan) ...[
+                        const SizedBox(height: 6),
+                        LoadStepper(kg: entry.loadKg, compact: true, onChanged: (v) => state.setLoad(entry.id, v)),
+                      ],
                     ],
                   ),
                 ),
@@ -316,31 +386,33 @@ class _SessionCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (var i = 1; i <= entry.sets; i++)
+                for (var i = 1; i <= sets.length; i++)
                   Semantics(
                     button: true,
                     label: 'Série $i ${i <= done ? 'feita' : 'pendente'}',
                     child: InkWell(
                       borderRadius: BorderRadius.circular(22),
                       onTap: () => onSet(i <= done ? i - 1 : i),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 160),
-                        width: 44,
-                        height: 44,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: i <= done ? GmColors.green : scheme.surfaceContainerHighest,
-                          shape: BoxShape.circle,
-                        ),
-                        child: i <= done
-                            ? const Icon(Icons.check_rounded, color: Colors.white)
-                            : Text('$i',
-                                style: TextStyle(
-                                    fontFamily: display,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 18,
-                                    color: scheme.onSurface)),
-                      ),
+                      child: entry.hasSetPlan
+                          ? _PlanSetChip(spec: sets[i - 1], index: i, done: i <= done)
+                          : AnimatedContainer(
+                              duration: const Duration(milliseconds: 160),
+                              width: 44,
+                              height: 44,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: i <= done ? GmColors.green : scheme.surfaceContainerHighest,
+                                shape: BoxShape.circle,
+                              ),
+                              child: i <= done
+                                  ? const Icon(Icons.check_rounded, color: Colors.white)
+                                  : Text('$i',
+                                      style: TextStyle(
+                                          fontFamily: display,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 18,
+                                          color: scheme.onSurface)),
+                            ),
                     ),
                   ),
               ],
@@ -363,6 +435,41 @@ class _SessionCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Série com carga própria: "12 × 20 kg", com destaque quando feita.
+class _PlanSetChip extends StatelessWidget {
+  const _PlanSetChip({required this.spec, required this.index, required this.done});
+
+  final SetSpec spec;
+  final int index;
+  final bool done;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final fg = done ? Colors.white : scheme.onSurface;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      constraints: const BoxConstraints(minWidth: 64, minHeight: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: done ? GmColors.green : (spec.warmup ? scheme.surfaceContainer : scheme.surfaceContainerHighest),
+        borderRadius: BorderRadius.circular(14),
+        border: spec.warmup && !done ? Border.all(color: scheme.outlineVariant) : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(spec.warmup ? 'Aquec.' : 'Série $index', style: TextStyle(fontSize: 11, color: fg)),
+          Text(
+            spec.kg > 0 ? '${spec.reps} × ${formatKg(spec.kg)}' : spec.reps,
+            style: TextStyle(fontFamily: display, fontWeight: FontWeight.w800, fontSize: 17, color: fg),
+          ),
+        ],
       ),
     );
   }

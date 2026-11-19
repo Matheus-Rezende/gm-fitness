@@ -9,6 +9,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../models/preset.dart';
+import '../models/workout_entry.dart';
 import '../state/app_state.dart';
 
 /// Frases curtas de incentivo (vão no lembrete e nos dias de descanso).
@@ -140,11 +141,26 @@ class Reminders with WidgetsBindingObserver {
       final name = state.name.isEmpty ? '' : ', ${state.name.split(' ').first}';
       final rnd = math.Random(today.millisecondsSinceEpoch ~/ 86400000);
       var restCount = 0;
+      final plan = state.plan;
+      // Na divisão A, B, C..., os treinos seguem a ordem nos dias de treino escolhidos.
+      var nextSlot = state.nextSplitSlot;
       for (var i = 0; i < 14; i++) {
         final day = today.add(Duration(days: i));
         final wd = day.weekday - 1;
-        final list = state.entriesOnDay(wd);
+        var slot = wd;
+        if (plan.isSplit) {
+          if (plan.trainDays.contains(wd) && !(i == 0 && state.trainedOn(day))) {
+            slot = nextSlot;
+            nextSlot = (nextSlot + 1) % plan.count;
+          } else {
+            slot = -2;
+          }
+        }
+        final list = slot == -2 ? const <WorkoutEntry>[] : state.entriesOnDay(slot);
         final done = state.trainedOn(day);
+        final label = plan.isSplit
+            ? (state.slotName(slot).isEmpty ? plan.slotLabel(slot) : '${plan.slotLabel(slot)} (${state.slotName(slot)})')
+            : '';
         if (list.isNotEmpty) {
           if (!done) {
             final groups = <String>{
@@ -154,10 +170,14 @@ class Reminders with WidgetsBindingObserver {
             final n = list.length;
             var body = '$n ${n == 1 ? 'exercício' : 'exercícios'}${groups.isEmpty ? '' : ': $groups'}.';
             if (s.notifMotivation) body += ' ${kMotivation[rnd.nextInt(kMotivation.length)]}';
-            await _at(100 + i, day.add(Duration(minutes: s.notifMinutes)), 'Hoje é dia de treino$name! 💪', body);
+            await _at(100 + i, day.add(Duration(minutes: s.notifMinutes)),
+                plan.isSplit ? 'Hoje é dia de ${plan.slotLabel(slot).toLowerCase()}$name! 💪' : 'Hoje é dia de treino$name! 💪',
+                plan.isSplit ? '$label: $body' : body);
             if (s.notifEvening) {
               await _at(200 + i, day.add(const Duration(hours: 19)), 'Ainda dá tempo de treinar hoje',
-                  'Seu treino de ${weekdayLabel(wd).toLowerCase()} está esperando. Mesmo um treino curto conta!');
+                  plan.isSplit
+                      ? 'O $label está esperando. Mesmo um treino curto conta!'
+                      : 'Seu treino de ${weekdayLabel(wd).toLowerCase()} está esperando. Mesmo um treino curto conta!');
             }
           }
         } else if (s.notifMotivation && hasPlan && restCount++ % 2 == 0) {

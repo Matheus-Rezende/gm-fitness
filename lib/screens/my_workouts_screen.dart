@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/preset.dart';
+import '../models/plan.dart';
 import '../models/session.dart';
+import '../models/training.dart';
 import '../models/workout_entry.dart';
 import '../motion/motion_view.dart';
 import '../state/app_state.dart';
@@ -10,14 +11,17 @@ import '../update/updater.dart';
 import '../widgets/brand.dart';
 import '../widgets/common.dart';
 import '../widgets/entry_editor.dart';
+import '../widgets/one_rm.dart';
 import 'catalog_screen.dart';
 import 'exercise_detail_screen.dart';
 import 'home_shell.dart';
 import 'profile_sheet.dart';
 import 'sessions_history_screen.dart';
+import 'split_setup_screen.dart';
 import 'workout_session_screen.dart';
 
-/// Treino por dia da semana, abrindo no dia de hoje.
+/// Treino por dia da semana (abre no dia de hoje) ou por divisão A, B, C...
+/// (abre no próximo treino).
 class MyWorkoutsScreen extends StatefulWidget {
   const MyWorkoutsScreen({super.key});
 
@@ -26,27 +30,60 @@ class MyWorkoutsScreen extends StatefulWidget {
 }
 
 class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
-  final int _today = DateTime.now().weekday - 1;
-  late int _day = _today;
+  /// Dia ou letra escolhida; null = o de hoje (ou o próximo treino da divisão).
+  int? _picked;
+
+  int _dayOf(AppState state) {
+    final d = _picked ?? state.currentSlot;
+    return d >= state.plan.slotCount ? state.currentSlot : d;
+  }
 
   Future<void> _add() async {
+    final state = AppScope.read(context);
+    final day = _dayOf(state);
     final id = await Navigator.push<String>(
       context,
       MaterialPageRoute(builder: (_) => const CatalogScreen(pickMode: true)),
     );
     if (id == null || !mounted) return;
-    final saved = await showEntryEditor(context, exerciseId: id, initialWeekday: _day < 0 ? _today : _day);
-    if (saved != null && mounted) setState(() => _day = saved.weekday);
+    final saved = await showEntryEditor(context, exerciseId: id, initialWeekday: day < 0 ? state.currentSlot : day);
+    if (saved != null && mounted) setState(() => _picked = saved.weekday);
   }
 
-  String _dayTitle(AppState state, int day) {
-    final preset = state.currentPreset;
-    if (preset != null) {
-      for (final d in preset.days) {
-        if (d.weekday == day) return d.title;
-      }
+  void _openSetup() => Navigator.push(context, MaterialPageRoute(builder: (_) => const SplitSetupScreen()));
+
+  Future<void> _rename(AppState state, int day) async {
+    final ctrl = TextEditingController(text: state.slotName(day));
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Nome do ${state.plan.isSplit ? 'treino ${splitLetters[day]}' : 'treino de ${state.plan.slotLabel(day).toLowerCase()}'}'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: const InputDecoration(hintText: 'Ex.: Costas e bíceps', border: OutlineInputBorder()),
+          onSubmitted: (v) => Navigator.pop(ctx, v),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text), child: const Text('Salvar')),
+        ],
+      ),
+    );
+    ctrl.dispose();
+    if (name != null) await state.renameSlot(day, name);
+  }
+
+  /// Letras da divisão feitas nos últimos 7 dias (bolinha amarela).
+  List<bool> _recentSlots(AppState state) {
+    final since = DateTime.now().subtract(const Duration(days: 7));
+    final out = List<bool>.filled(state.plan.slotCount, false);
+    for (final s in state.sessions) {
+      if (s.startedAt.isBefore(since)) break;
+      if (s.split && s.weekday >= 0 && s.weekday < out.length) out[s.weekday] = true;
     }
-    return '';
+    return out;
   }
 
   @override
@@ -55,14 +92,25 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
     final theme = Theme.of(context);
     final text = theme.textTheme;
     final scheme = theme.colorScheme;
-    final items = state.entriesOnDay(_day);
-    final isToday = _day == _today;
+    final plan = state.plan;
+    final day = _dayOf(state);
+    final current = state.currentSlot;
+    final items = state.entriesOnDay(day);
+    final isToday = day == current;
     final done = isToday ? items.where((e) => state.isDone(e.id)).length : 0;
-    final activity = state.weekActivity();
-    final counts = List<int>.generate(7, (i) => state.entriesOnDay(i).length);
+    final activity = plan.isSplit ? _recentSlots(state) : state.weekActivity();
+    final counts = List<int>.generate(plan.slotCount, (i) => state.entriesOnDay(i).length);
     final noDay = state.entriesOnDay(-1).length;
-    final title = _day < 0 ? 'Sem dia definido' : weekdayNames[_day];
-    final subtitle = _day < 0 ? '' : _dayTitle(state, _day);
+    final title = day < 0 ? (plan.isSplit ? 'Sem treino definido' : 'Sem dia definido') : plan.slotLabel(day);
+    final subtitle = day < 0 ? '' : state.slotName(day);
+    final doneToday = plan.isSplit ? state.splitDoneToday : null;
+    final heading = plan.isSplit
+        ? (isToday
+            ? (doneToday != null
+                ? 'Treino ${splitLetters[doneToday]} feito hoje. Próximo:'
+                : (state.name.isEmpty ? 'Próximo treino' : 'Bora, ${state.name}'))
+            : 'Planejamento · divisão ${splitName(plan.count)}')
+        : (isToday ? (state.name.isEmpty ? 'Treino de hoje' : 'Bora, ${state.name}') : 'Planejamento');
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -85,6 +133,11 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                         alignment: Alignment.centerLeft,
                         child: FittedBox(fit: BoxFit.scaleDown, child: GmWordmark(size: 30)),
                       ),
+                    ),
+                    IconButton(
+                      tooltip: 'Organizar treinos',
+                      onPressed: _openSetup,
+                      icon: const Icon(Icons.view_week_rounded),
                     ),
                     IconButton(
                       tooltip: 'Histórico de treinos',
@@ -123,14 +176,30 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      isToday
-                          ? (state.name.isEmpty ? 'Treino de hoje' : 'Bora, ${state.name}')
-                          : 'Planejamento',
-                      style: text.titleMedium?.copyWith(color: scheme.onSurfaceVariant),
+                    Text(heading, style: text.titleMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: day < 0 ? null : () => _rename(state, day),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(child: Text(title, style: text.displayMedium)),
+                              if (day >= 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: Icon(Icons.edit_outlined, size: 20, color: scheme.onSurfaceVariant),
+                                ),
+                            ],
+                          ),
+                          if (subtitle.isNotEmpty)
+                            Text(subtitle, style: text.titleLarge?.copyWith(color: scheme.primary))
+                          else if (day >= 0)
+                            Text('Toque para dar um nome', style: text.bodySmall),
+                        ],
+                      ),
                     ),
-                    Text(title, style: text.displayMedium),
-                    if (subtitle.isNotEmpty) Text(subtitle, style: text.titleLarge?.copyWith(color: scheme.primary)),
                   ],
                 ),
               ),
@@ -140,15 +209,15 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
                 child: Row(
                   children: [
-                    for (var d = 0; d < 7; d++)
+                    for (var d = 0; d < plan.slotCount; d++)
                       Expanded(
                         child: _DayPill(
-                          label: weekdayShort[d],
+                          label: plan.slotShort(d),
                           count: counts[d],
                           active: activity[d],
-                          today: d == _today,
-                          selected: d == _day,
-                          onTap: () => setState(() => _day = d),
+                          today: d == current,
+                          selected: d == day,
+                          onTap: () => setState(() => _picked = d),
                         ),
                       ),
                   ],
@@ -162,18 +231,18 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: ChoiceChip(
-                      label: Text('Sem dia ($noDay)'),
-                      selected: _day == -1,
-                      onSelected: (_) => setState(() => _day = -1),
+                      label: Text('${plan.slotShort(-1)} ($noDay)'),
+                      selected: day == -1,
+                      onSelected: (_) => setState(() => _picked = -1),
                     ),
                   ),
                 ),
               ),
-            if (state.activeSession != null || (_day >= 0 && items.isNotEmpty))
+            if (state.activeSession != null || (day >= 0 && items.isNotEmpty))
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: _SessionBar(day: _day, hasItems: items.isNotEmpty),
+                  child: _SessionBar(day: day, hasItems: items.isNotEmpty),
                 ),
               ),
             if (isToday && items.isNotEmpty)
@@ -184,7 +253,7 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                 ),
               ),
             if (state.entries.isEmpty)
-              SliverFillRemaining(hasScrollBody: false, child: _EmptyState(onAdd: _add))
+              SliverFillRemaining(hasScrollBody: false, child: _EmptyState(onAdd: _add, onSetup: _openSetup))
             else if (items.isEmpty)
               SliverFillRemaining(
                 hasScrollBody: false,
@@ -196,7 +265,11 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                       Icon(Icons.self_improvement_rounded, size: 48, color: scheme.onSurfaceVariant),
                       const SizedBox(height: 12),
                       Text(
-                        _day == -1 ? 'Nenhum exercício sem dia.' : 'Dia de descanso. Recuperar também faz parte do treino.',
+                        day == -1
+                            ? 'Nenhum exercício aqui.'
+                            : (plan.isSplit
+                                ? 'Nenhum exercício no ${plan.slotLabel(day).toLowerCase()} ainda. Toque em "Adicionar exercício".'
+                                : 'Dia de descanso. Recuperar também faz parte do treino.'),
                         textAlign: TextAlign.center,
                         style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
                       ),
@@ -209,7 +282,7 @@ class _MyWorkoutsScreenState extends State<MyWorkoutsScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
                 sliver: SliverReorderableList(
                   itemCount: items.length,
-                  onReorderItem: (a, b) => state.reorderDay(_day, a, b),
+                  onReorderItem: (a, b) => state.reorderDay(day, a, b),
                   itemBuilder: (context, i) => ReorderableDelayedDragStartListener(
                     key: ValueKey(items[i].id),
                     index: i,
@@ -256,7 +329,9 @@ class _SessionBar extends StatelessWidget {
               }
             : null,
         icon: const Icon(Icons.play_arrow_rounded, color: GmColors.yellow, size: 28),
-        label: Text('Iniciar treino de ${weekdayLabel(day).toLowerCase()}'),
+        label: Text(state.plan.isSplit
+            ? 'Iniciar ${state.plan.slotLabel(day).toLowerCase()}'
+            : 'Iniciar treino de ${state.plan.slotLabel(day).toLowerCase()}'),
       );
     }
     return Material(
@@ -277,7 +352,13 @@ class _SessionBar extends StatelessWidget {
                   children: [
                     Text('Treino em andamento',
                         style: text.titleMedium?.copyWith(color: GmColors.ink)),
-                    Text(weekdayLabel(active.weekday), style: text.bodySmall?.copyWith(color: GmColors.ink)),
+                    Text(
+                        state.slotName(active.weekday).isEmpty
+                            ? state.plan.slotLabel(active.weekday)
+                            : '${state.plan.slotLabel(active.weekday)} · ${state.slotName(active.weekday)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: text.bodySmall?.copyWith(color: GmColors.ink)),
                   ],
                 ),
               ),
@@ -463,9 +544,23 @@ class _EntryCard extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 2),
-                      Text('${entry.sets} séries de ${entry.reps}$rest', style: text.bodySmall),
-                      const SizedBox(height: 8),
-                      LoadStepper(kg: entry.loadKg, compact: true, onChanged: (v) => state.setLoad(entry.id, v)),
+                      Text('${entry.setsSummary}$rest', style: text.bodySmall),
+                      if (entry.extras.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        EntryTags(entry: entry),
+                      ],
+                      if (entry.note.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(entry.note,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: text.bodySmall?.copyWith(fontStyle: FontStyle.italic)),
+                        ),
+                      if (!entry.hasSetPlan) ...[
+                        const SizedBox(height: 8),
+                        LoadStepper(kg: entry.loadKg, compact: true, onChanged: (v) => state.setLoad(entry.id, v)),
+                      ],
                     ],
                   ),
                 ),
@@ -486,13 +581,18 @@ class _EntryCard extends StatelessWidget {
                       onSelected: (a) async {
                         if (a == 'edit') {
                           await showEntryEditor(context, exerciseId: ex.id, existing: entry);
+                        } else if (a == 'rm') {
+                          final work = entry.expandedSets.where((s) => !s.warmup).toList();
+                          final top = work.isEmpty ? null : work.reduce((x, y) => y.kg > x.kg ? y : x);
+                          await showOneRmSheet(context, kg: top?.kg ?? entry.loadKg, reps: top?.repsNumber ?? 10);
                         } else if (a == 'remove') {
                           await state.removeEntry(entry.id);
                           if (context.mounted) showSnack(context, '${ex.name} removido do treino');
                         }
                       },
                       itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'edit', child: Text('Editar séries e dia')),
+                        PopupMenuItem(value: 'edit', child: Text('Editar e personalizar')),
+                        PopupMenuItem(value: 'rm', child: Text('Calcular 1RM')),
                         PopupMenuItem(value: 'remove', child: Text('Remover do treino')),
                       ],
                     ),
@@ -508,9 +608,10 @@ class _EntryCard extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.onAdd});
+  const _EmptyState({required this.onAdd, required this.onSetup});
 
   final VoidCallback onAdd;
+  final VoidCallback onSetup;
 
   @override
   Widget build(BuildContext context) {
@@ -526,16 +627,26 @@ class _EmptyState extends StatelessWidget {
           Text('Monte sua semana', style: text.headlineLarge),
           const SizedBox(height: 8),
           Text(
-            'Escolha um plano pronto para o seu formato de corpo ou adicione exercícios um a um.',
+            'Escolha uma divisão pronta (AB, ABC, ABCD, ABCDE), um plano para o seu formato de corpo '
+            'ou adicione exercícios um a um.',
             style: text.bodyLarge,
           ),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
+              onPressed: onSetup,
+              icon: const Icon(Icons.view_week_rounded),
+              label: const Text('Montar divisão (ABC, ABCD...)'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
               onPressed: () => homeTab.value = 2,
               icon: const Icon(Icons.accessibility_new_rounded),
-              label: const Text('Ver planos prontos'),
+              label: const Text('Planos por formato de corpo'),
             ),
           ),
           const SizedBox(height: 10),
@@ -549,6 +660,44 @@ class _EmptyState extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Etiquetas da personalização (técnica, cadência, RIR).
+class EntryTags extends StatelessWidget {
+  const EntryTags({super.key, required this.entry});
+
+  final WorkoutEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children: [
+        for (final t in entry.extras)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: t == entry.technique.label && entry.technique != Technique.normal
+                  ? GmColors.yellow
+                  : scheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              t,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: t == entry.technique.label && entry.technique != Technique.normal
+                    ? GmColors.ink
+                    : scheme.onSurface,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/preset.dart';
 import '../models/session.dart';
 import '../state/app_state.dart';
 import '../theme/gm_theme.dart';
@@ -78,7 +77,7 @@ class SessionsHistoryScreen extends StatelessWidget {
                             style: const TextStyle(
                                 fontFamily: display, fontWeight: FontWeight.w800, fontSize: 24, color: GmColors.ink)),
                       ),
-                      title: Text('${weekdayLabel(s.weekday)} · ${intensityOf(s.rpe).label}'),
+                      title: Text('${s.title} · ${intensityOf(s.rpe).label}'),
                       subtitle: Text('${_date(s.startedAt)}\n'
                           '${formatDuration(s.duration)} · ${s.setsDone}/${s.setsPlanned} séries'),
                       isThreeLine: true,

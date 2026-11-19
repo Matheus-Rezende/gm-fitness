@@ -1,3 +1,5 @@
+import 'preset.dart';
+
 /// Como o usuário sentiu um exercício ao terminar as séries.
 enum Feel { easy, right, hard }
 
@@ -58,6 +60,7 @@ class SessionItem {
     required this.reps,
     required this.loadKg,
     this.feel,
+    this.planVolume,
   });
 
   final String entryId;
@@ -69,6 +72,9 @@ class SessionItem {
   final double loadKg;
   final Feel? feel;
 
+  /// Volume calculado a partir da carga por série (quando o exercício tem uma).
+  final double? planVolume;
+
   /// Repetições como número (o primeiro número do texto, ex.: "10 cada" -> 10).
   int get repsNumber {
     final m = RegExp(r'\d+').firstMatch(reps);
@@ -78,7 +84,7 @@ class SessionItem {
   bool get isTimed => reps.contains('s') || reps.contains('min');
 
   /// Volume em kg (séries × repetições × carga), só para exercícios com carga.
-  double get volume => (loadKg <= 0 || isTimed) ? 0 : setsDone * repsNumber * loadKg;
+  double get volume => planVolume ?? ((loadKg <= 0 || isTimed) ? 0 : setsDone * repsNumber * loadKg);
 
   factory SessionItem.fromJson(Map<String, dynamic> j) => SessionItem(
         entryId: j['entryId'] as String,
@@ -89,6 +95,7 @@ class SessionItem {
         reps: (j['reps'] ?? '').toString(),
         loadKg: (j['loadKg'] as num?)?.toDouble() ?? 0,
         feel: feelFromName(j['feel'] as String?),
+        planVolume: (j['vol'] as num?)?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -100,6 +107,7 @@ class SessionItem {
         'reps': reps,
         'loadKg': loadKg,
         'feel': feel?.name,
+        if (planVolume != null) 'vol': planVolume,
       };
 }
 
@@ -112,14 +120,27 @@ class WorkoutSession {
     required this.duration,
     required this.rpe,
     required this.items,
+    this.label = '',
+    this.split = false,
   });
 
   final String id;
+
+  /// Posição do treino no plano (dia da semana ou letra, conforme [split]).
   final int weekday;
+
+  /// Como o treino se chamava quando foi feito ("Treino B · Costas e bíceps").
+  final String label;
+
+  /// Feito no modo de divisão em letras (A, B, C...).
+  final bool split;
   final DateTime startedAt;
   final Duration duration;
   final int rpe;
   final List<SessionItem> items;
+
+  /// Nome para mostrar no histórico.
+  String get title => label.isNotEmpty ? label : weekdayLabel(weekday);
 
   int get setsDone => items.fold(0, (a, i) => a + i.setsDone);
   int get setsPlanned => items.fold(0, (a, i) => a + i.setsPlanned);
@@ -136,6 +157,8 @@ class WorkoutSession {
         duration: Duration(seconds: (j['seconds'] as num).toInt()),
         rpe: (j['rpe'] as num).toInt(),
         items: [for (final i in (j['items'] as List)) SessionItem.fromJson(Map<String, dynamic>.from(i as Map))],
+        label: (j['label'] as String?) ?? '',
+        split: j['split'] == true,
       );
 
   Map<String, dynamic> toJson() => {
@@ -145,6 +168,8 @@ class WorkoutSession {
         'seconds': duration.inSeconds,
         'rpe': rpe,
         'items': [for (final i in items) i.toJson()],
+        if (label.isNotEmpty) 'label': label,
+        if (split) 'split': true,
       };
 }
 
