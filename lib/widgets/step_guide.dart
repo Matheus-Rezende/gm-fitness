@@ -37,9 +37,19 @@ class GuideStep {
 }
 
 class ExerciseGuide {
-  const ExerciseGuide(this.steps);
+  const ExerciseGuide(this.steps, {this.sexes = const {'m'}});
 
   final List<GuideStep> steps;
+
+  /// Versões desenhadas: 'm' (homem) e/ou 'f' (mulher).
+  final Set<String> sexes;
+
+  /// Caminho da imagem do passo para o sexo escolhido (usa a outra versão se faltar).
+  String imageFor(GuideStep s, {required bool male}) {
+    final want = male ? 'm' : 'f';
+    final sex = sexes.contains(want) ? want : sexes.first;
+    return 'assets/steps/${s.image}_$sex.webp';
+  }
 
   /// Passos do movimento (sem as imagens de erro).
   List<GuideStep> get moves => steps.where((s) => !s.wrong).toList();
@@ -61,10 +71,12 @@ class GuideRepo {
       final raw = jsonDecode(await rootBundle.loadString('assets/guides.json')) as Map<String, dynamic>;
       _guides = {
         for (final e in raw.entries)
-          e.key: ExerciseGuide([
+          e.key: ExerciseGuide(sexes: {
+            for (final x in ((e.value as Map)['sexes'] as List? ?? const ['m'])) x as String,
+          }, [
             for (final s in ((e.value as Map)['steps'] as List))
               GuideStep(
-                image: 'assets/steps/${(s as Map)['img']}',
+                image: (s as Map)['img'] as String,
                 title: (s['title'] as String?) ?? '',
                 wrong: s['wrong'] == true,
                 cues: [
@@ -93,9 +105,10 @@ class GuideRepo {
 /// Passos do exercício em ilustrações, com marcadores numerados, setas e um
 /// botão para ver os passos em sequência, como um movimento.
 class StepGuideView extends StatefulWidget {
-  const StepGuideView({super.key, required this.guide});
+  const StepGuideView({super.key, required this.guide, this.male = true});
 
   final ExerciseGuide guide;
+  final bool male;
 
   @override
   State<StepGuideView> createState() => _StepGuideViewState();
@@ -172,7 +185,7 @@ class _StepGuideViewState extends State<StepGuideView> {
                         key: ValueKey(_index),
                         fit: StackFit.expand,
                         children: [
-                          Image.asset(step.image, fit: BoxFit.contain),
+                          Image.asset(widget.guide.imageFor(step, male: widget.male), fit: BoxFit.contain),
                           if (!playing) CustomPaint(painter: _GuidePainter(step)),
                           Positioned(
                             left: 10,

@@ -194,13 +194,14 @@ class _ExerciseVideoState extends State<ExerciseVideo> {
 /// Mostra o vídeo real do exercício quando existe, com a opção de ver o
 /// boneco (desenho 2D com os músculos trabalhados). Sem vídeo, só o boneco.
 class ExerciseMedia extends StatefulWidget {
-  const ExerciseMedia({super.key, required this.videoAsset, required this.figure, this.guide});
+  const ExerciseMedia({super.key, required this.videoAsset, required this.figure, this.guide, this.male = true});
 
   final String? videoAsset;
   final Widget figure;
 
   /// Ilustrações passo a passo, opção ao lado do vídeo.
   final ExerciseGuide? guide;
+  final bool male;
 
   @override
   State<ExerciseMedia> createState() => _ExerciseMediaState();
@@ -224,7 +225,7 @@ class _ExerciseMediaState extends State<ExerciseMedia> {
     ];
     final mode = options.contains(_picked) ? _picked! : options.first;
     Widget body(_Media m) => switch (m) {
-          _Media.steps => StepGuideView(guide: guide!),
+          _Media.steps => StepGuideView(guide: guide!, male: widget.male),
           _Media.video => ExerciseVideo(key: ValueKey(asset), asset: asset!, fallback: widget.figure),
           _Media.figure => widget.figure,
         };

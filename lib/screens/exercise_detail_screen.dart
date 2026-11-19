@@ -91,6 +91,7 @@ class ExerciseDetailScreen extends StatelessWidget {
               builder: (context, _) => ExerciseMedia(
                 key: ValueKey('${ex.id}-${GuideRepo.instance.loaded}'),
                 guide: GuideRepo.instance.of(ex.id),
+                male: state.isMale,
                 videoAsset: exerciseVideoAsset(ex.id, male: state.isMale),
                 figure: MotionView(clip: clip, style: figureStyleFor(state, ex), muscleLabels: state.meta.groups),
               ),

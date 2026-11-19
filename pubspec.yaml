@@ -29,6 +29,7 @@ flutter:
   assets:
     - assets/
     - assets/videos/
+    - assets/steps/
     - assets/onboarding/
     - CHANGELOG.md
   fonts:

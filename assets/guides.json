@@ -1,0 +1,305 @@
+{
+ "agachamento_barra": {
+  "sexes": [
+   "m"
+  ],
+  "steps": [
+   {
+    "img": "agachamento_barra_1",
+    "title": "Posição inicial",
+    "cues": [
+     {
+      "x": 0.47,
+      "y": 0.13,
+      "t": "Barra apoiada no trapézio, nunca no pescoço"
+     },
+     {
+      "x": 0.54,
+      "y": 0.38,
+      "t": "Abdômen firme e coluna neutra"
+     },
+     {
+      "x": 0.55,
+      "y": 0.87,
+      "t": "Pés na largura dos ombros, pontas levemente para fora"
+     }
+    ],
+    "arrows": [
+     [
+      0.8,
+      0.3,
+      0.8,
+      0.52
+     ]
+    ]
+   },
+   {
+    "img": "agachamento_barra_2",
+    "title": "Posição mais baixa",
+    "cues": [
+     {
+      "x": 0.33,
+      "y": 0.6,
+      "t": "Quadril para trás, como quem vai sentar"
+     },
+     {
+      "x": 0.66,
+      "y": 0.6,
+      "t": "Joelhos apontando na direção da ponta dos pés"
+     },
+     {
+      "x": 0.44,
+      "y": 0.87,
+      "t": "Calcanhares sempre no chão"
+     },
+     {
+      "x": 0.55,
+      "y": 0.4,
+      "t": "Peito aberto; desça até as coxas ficarem perto da paralela"
+     }
+    ],
+    "arrows": [
+     [
+      0.9,
+      0.52,
+      0.9,
+      0.3
+     ]
+    ]
+   }
+  ]
+ },
+ "supino_reto_barra": {
+  "sexes": [
+   "m"
+  ],
+  "steps": [
+   {
+    "img": "supino_reto_barra_1",
+    "title": "Posição inicial",
+    "cues": [
+     {
+      "x": 0.45,
+      "y": 0.4,
+      "t": "Barra alinhada acima do peito, braços estendidos"
+     },
+     {
+      "x": 0.3,
+      "y": 0.6,
+      "t": "Escápulas juntas e glúteo apoiado no banco"
+     },
+     {
+      "x": 0.86,
+      "y": 0.8,
+      "t": "Pés firmes no chão"
+     }
+    ],
+    "arrows": [
+     [
+      0.62,
+      0.18,
+      0.62,
+      0.36
+     ]
+    ]
+   },
+   {
+    "img": "supino_reto_barra_2",
+    "title": "Barra no peito",
+    "cues": [
+     {
+      "x": 0.46,
+      "y": 0.53,
+      "t": "A barra encosta no meio do peito, sem quicar"
+     },
+     {
+      "x": 0.4,
+      "y": 0.62,
+      "t": "Cotovelos a 45–70° do tronco, não abertos a 90°"
+     },
+     {
+      "x": 0.86,
+      "y": 0.8,
+      "t": "Empurre com os pés no chão, sem tirar o quadril do banco"
+     }
+    ],
+    "arrows": [
+     [
+      0.62,
+      0.36,
+      0.62,
+      0.16
+     ]
+    ]
+   }
+  ]
+ },
+ "puxada_frontal": {
+  "sexes": [
+   "m"
+  ],
+  "steps": [
+   {
+    "img": "puxada_frontal_1",
+    "title": "Posição inicial",
+    "cues": [
+     {
+      "x": 0.34,
+      "y": 0.22,
+      "t": "Pegada um pouco mais larga que os ombros"
+     },
+     {
+      "x": 0.2,
+      "y": 0.48,
+      "t": "Tronco levemente inclinado para trás, peito alto"
+     },
+     {
+      "x": 0.55,
+      "y": 0.57,
+      "t": "Coxas presas embaixo do apoio"
+     }
+    ],
+    "arrows": [
+     [
+      0.08,
+      0.2,
+      0.08,
+      0.38
+     ]
+    ]
+   },
+   {
+    "img": "puxada_frontal_2",
+    "title": "Barra no peito",
+    "cues": [
+     {
+      "x": 0.38,
+      "y": 0.37,
+      "t": "Puxe a barra até a parte de cima do peito"
+     },
+     {
+      "x": 0.1,
+      "y": 0.44,
+      "t": "Cotovelos para baixo e para trás, junto ao corpo"
+     },
+     {
+      "x": 0.32,
+      "y": 0.44,
+      "t": "Ombros longe das orelhas; não puxe com o pescoço"
+     }
+    ],
+    "arrows": [
+     [
+      0.04,
+      0.78,
+      0.04,
+      0.58
+     ]
+    ]
+   }
+  ]
+ },
+ "rosca_direta_halteres": {
+  "sexes": [
+   "m"
+  ],
+  "steps": [
+   {
+    "img": "rosca_direta_halteres_1",
+    "title": "Posição inicial",
+    "cues": [
+     {
+      "x": 0.4,
+      "y": 0.42,
+      "t": "Cotovelos colados ao tronco"
+     },
+     {
+      "x": 0.7,
+      "y": 0.44,
+      "t": "Palmas viradas para a frente"
+     },
+     {
+      "x": 0.58,
+      "y": 0.3,
+      "t": "Tronco parado, sem balançar"
+     }
+    ],
+    "arrows": [
+     [
+      0.84,
+      0.48,
+      0.84,
+      0.28
+     ]
+    ]
+   },
+   {
+    "img": "rosca_direta_halteres_2",
+    "title": "Halteres no alto",
+    "cues": [
+     {
+      "x": 0.72,
+      "y": 0.13,
+      "t": "Suba até perto dos ombros e contraia o bíceps"
+     },
+     {
+      "x": 0.44,
+      "y": 0.38,
+      "t": "O cotovelo não vai para a frente"
+     },
+     {
+      "x": 0.92,
+      "y": 0.33,
+      "t": "Desça devagar até estender os braços"
+     }
+    ],
+    "arrows": [
+     [
+      0.84,
+      0.22,
+      0.84,
+      0.44
+     ]
+    ]
+   }
+  ]
+ },
+ "prancha": {
+  "sexes": [
+   "m"
+  ],
+  "steps": [
+   {
+    "img": "prancha_1",
+    "title": "Posição da prancha",
+    "cues": [
+     {
+      "x": 0.8,
+      "y": 0.62,
+      "t": "Cotovelos embaixo dos ombros"
+     },
+     {
+      "x": 0.47,
+      "y": 0.43,
+      "t": "Quadril alinhado: nem alto, nem caído"
+     },
+     {
+      "x": 0.6,
+      "y": 0.55,
+      "t": "Abdômen e glúteos contraídos"
+     },
+     {
+      "x": 0.92,
+      "y": 0.39,
+      "t": "Olhe para o chão, pescoço neutro"
+     },
+     {
+      "x": 0.11,
+      "y": 0.62,
+      "t": "Apoio na ponta dos pés"
+     }
+    ]
+   }
+  ]
+ }
+}
