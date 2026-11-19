@@ -199,7 +199,7 @@ class ExerciseMedia extends StatefulWidget {
   final String? videoAsset;
   final Widget figure;
 
-  /// Ilustrações passo a passo; quando existem, substituem o boneco 3D.
+  /// Ilustrações passo a passo, opção ao lado do vídeo.
   final ExerciseGuide? guide;
 
   @override
@@ -215,10 +215,12 @@ class _ExerciseMediaState extends State<ExerciseMedia> {
   Widget build(BuildContext context) {
     final asset = widget.videoAsset;
     final guide = widget.guide;
+    // O vídeo vem primeiro; as ilustrações são a segunda opção. O boneco 3D só
+    // aparece enquanto o exercício não tem vídeo nem ilustração.
     final options = [
-      if (guide != null) _Media.steps,
       if (asset != null) _Media.video,
-      if (guide == null) _Media.figure,
+      if (guide != null) _Media.steps,
+      if (asset == null && guide == null) _Media.figure,
     ];
     final mode = options.contains(_picked) ? _picked! : options.first;
     Widget body(_Media m) => switch (m) {
