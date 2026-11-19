@@ -2,6 +2,23 @@
 
 Cada versão publicada usa a seção com o mesmo número como texto da Release e do aviso de atualização dentro do app.
 
+## 0.19.0
+
+- **Divisões de treino A, B, C**: organize os treinos por letra em vez de por dia da semana. Você faz A, depois B, depois C, em qualquer dia; faltou um dia, o próximo treino continua o que ficou pendente. Vai de AB até ABCDEF.
+- **Divisões prontas** para iniciante, intermediário e avançado: Corpo inteiro A/B, AB (superiores e inferiores), ABC (empurrar, puxar e pernas), ABCD e ABCDE. O app ajusta séries, repetições e descanso para o seu nível, com base nas recomendações do ACSM.
+- **Personalize cada exercício** em "Editar e personalizar":
+  - técnicas: bi-set, tri-set, drop-set, rest-pause, pirâmide crescente e decrescente, pico de contração e negativa lenta, com explicação de cada uma;
+  - repetições na reserva (RIR), para saber o quanto se esforçar em cada série;
+  - cadência (ex.: 3-0-1);
+  - carga por série, com aquecimento e pirâmide montada automaticamente;
+  - observação (ajuste do banco, pegada...).
+- Dê nome aos treinos ("Costas e bíceps") tocando no título.
+- **Calculadora de 1RM**: estima sua carga máxima a partir de uma série e mostra a carga para cada faixa de repetições.
+- No treino, bi-set e tri-set avisam para ir direto ao próximo exercício, e as séries com carga própria mostram repetições e peso de cada uma.
+- **Novos exercícios**: rosca alternada, rosca martelo alternada, rosca inversa, rosca 21, rosca concentrada, rosca martelo na corda, puxada supinada e desenvolvimento Arnold.
+- **Enviar e receber treinos**: o personal monta o treino e envia por WhatsApp; o aluno cola a mensagem e o treino aparece pronto. Também dá para guardar vários treinos numa biblioteca.
+- Os lembretes avisam qual treino da divisão é o do dia.
+
 ## 0.18.0
 
 - **Boneco 3D de volta**, agora como um manequim simples: corpo de uma cor só, sem rosto, cabelo ou roupa. Azul para ele, rosa para ela.

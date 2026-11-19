@@ -26,6 +26,20 @@ class MainActivity : FlutterActivity() {
                     // APK instalado (base para montar a versão nova só com a diferença)
                     "apkPath" -> result.success(applicationInfo.sourceDir)
                     "abis" -> result.success(Build.SUPPORTED_ABIS.toList())
+                    // enviar texto (treino em código) pelo WhatsApp, e-mail etc.
+                    "shareText" -> {
+                        val text = call.argument<String>("text")
+                        if (text == null) {
+                            result.error("args", "Texto ausente", null)
+                        } else {
+                            val send = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, text)
+                            }
+                            startActivity(Intent.createChooser(send, call.argument<String>("title") ?: "Enviar treino"))
+                            result.success(true)
+                        }
+                    }
                     "openInstallSettings" -> {
                         openInstallSettings()
                         result.success(null)

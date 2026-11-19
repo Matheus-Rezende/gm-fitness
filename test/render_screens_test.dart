@@ -177,7 +177,7 @@ void main() {
     phone(tester);
     // toque dentro da folha de edição (rola a folha até o item aparecer)
     Future<void> tapSheet(Finder f) async {
-      await tester.scrollUntilVisible(f, 200, scrollable: find.byType(Scrollable).last);
+      await tester.scrollUntilVisible(f, 200, scrollable: find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first);
       await tester.pump();
       await tester.tap(f);
       await settle(tester, 6);

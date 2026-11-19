@@ -746,10 +746,18 @@ preacher = add_pattern(Pattern('preacher_curl', 'Rosca Scott', 'side', _preacher
                                       dict(type='rect', x=54, y=101, w=26, h=6),
                                       dict(type='line', x1=66, y1=107, x2=66, y2=GROUND, w=3), plate()]))
 
-# Rosca concentrada: sentado, cotovelo apoiado na parte de dentro da coxa.
-concentration = variant(preacher, 'concentration_curl', 'Rosca concentrada',
-                        [dict(type='rect', x=54, y=101, w=26, h=6),
-                         dict(type='line', x1=66, y1=107, x2=66, y2=GROUND, w=3), db_end()])
+# Rosca concentrada: sentado, tronco inclinado, um braço por vez com o cotovelo
+# apoiado na parte de dentro da coxa; a outra mão fica apoiada no joelho.
+def _concentration_keys():
+    hip = (66.0, 94.0)
+    base = dict(leg=IL((96, ANK), 1, 90), arm2=FA(150, 150))
+    return [P(hip, 34, arm=FA(176, 174), **base), P(hip, 34, arm=FA(176, 40), **base)]
+
+
+concentration = add_pattern(Pattern('concentration_curl', 'Rosca concentrada', 'side', _concentration_keys(),
+                                    rep_seq(l1='Flexione o cotovelo', l3='Desça devagar', down=1.0, up=1.4),
+                                    props=[dict(type='rect', x=54, y=101, w=26, h=6),
+                                           dict(type='line', x1=66, y1=107, x2=66, y2=GROUND, w=3), db_end()]))
 
 
 def _pushdown_keys():

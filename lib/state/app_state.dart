@@ -10,6 +10,7 @@ import '../models/exercise.dart';
 import '../models/plan.dart';
 import '../models/preset.dart';
 import '../models/session.dart';
+import '../models/shared_plan.dart';
 import '../models/split_templates.dart';
 import '../models/training.dart';
 import '../models/workout_entry.dart';
@@ -36,10 +37,11 @@ class AppState extends ChangeNotifier {
   static const _kWeights = 'weights_v1';
   static const _kChanged = 'local_changed_v1';
   static const _kPlan = 'plan_v1';
+  static const _kSaved = 'saved_plans_v1';
 
   /// Chaves guardadas no backup da nuvem.
   static const backupKeys = [
-    _kEntries, _kCustom, _kProfile, _kDone, _kActive, _kSessions, _kBody, _kWeights, _kPlan, AppSettings.storageKey,
+    _kEntries, _kCustom, _kProfile, _kDone, _kActive, _kSessions, _kBody, _kWeights, _kPlan, _kSaved, AppSettings.storageKey,
   ];
 
   /// Chamado depois de cada gravação local (o backup na nuvem se agenda aqui).
@@ -57,6 +59,9 @@ class AppState extends ChangeNotifier {
 
   // organização da semana (dias da semana ou divisão A, B, C...)
   TrainingPlan _plan = const TrainingPlan();
+
+  // treinos guardados (biblioteca do personal)
+  List<SavedPlan> _saved = [];
 
   // perfil
   String _sex = 'F';
@@ -109,6 +114,10 @@ class AppState extends ChangeNotifier {
       if (s != null) {
         _entries = [for (final e in (jsonDecode(s) as List)) WorkoutEntry.fromJson(Map<String, dynamic>.from(e as Map))];
       }
+      final sv = _prefs.getString(_kSaved);
+      if (sv != null) {
+        _saved = [for (final x in (jsonDecode(sv) as List)) SavedPlan.fromJson(Map<String, dynamic>.from(x as Map))];
+      }
       final pl = _prefs.getString(_kPlan);
       if (pl != null) _plan = TrainingPlan.fromJson(Map<String, dynamic>.from(jsonDecode(pl) as Map));
       final pr = _prefs.getString(_kProfile);
@@ -153,6 +162,7 @@ class AppState extends ChangeNotifier {
         _kProfile, jsonEncode({'sex': _sex, 'name': _name, 'presetId': _presetId, 'onboarded': _onboarded}));
     await _prefs.setString(_kBody, jsonEncode(_body.toJson()));
     await _prefs.setString(_kPlan, jsonEncode(_plan.toJson()));
+    await _prefs.setString(_kSaved, jsonEncode([for (final x in _saved) x.toJson()]));
     await _prefs.setString(_kWeights, jsonEncode([for (final w in _weights) w.toJson()]));
     // guarda só as últimas 8 semanas de marcações
     final keys = _done.keys.toList()..sort();
@@ -215,6 +225,7 @@ class AppState extends ChangeNotifier {
     _custom = [];
     _entries = [];
     _plan = const TrainingPlan();
+    _saved = [];
     _sex = 'F';
     _name = '';
     _presetId = null;
@@ -686,6 +697,85 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     await _save();
     return items.length;
+  }
+
+  // ------------------------------------------------------------ enviar e importar treinos
+
+  /// Empacota o treino atual para enviar ou guardar.
+  SharedPlan exportShared(String name) {
+    final used = {for (final e in _entries) e.exerciseId};
+    return SharedPlan(
+      name: name.trim().isEmpty ? 'Meu treino' : name.trim(),
+      author: _name,
+      plan: _plan,
+      entries: _entries,
+      customExercises: [for (final c in _custom) if (used.contains(c.id)) c],
+    );
+  }
+
+  /// Troca o treino atual pelo recebido. Cargas do treino recebido são usadas;
+  /// onde não houver, ficam as que a pessoa já tinha para o mesmo exercício.
+  Future<int> importShared(SharedPlan sp) async {
+    final knownLoads = <String, double>{};
+    for (final e in _entries) {
+      if (e.loadKg > 0) knownLoads[e.exerciseId] = e.loadKg;
+    }
+    // exercícios criados por quem enviou: reaproveita se for igual, senão cria com outro id
+    final remap = <String, String>{};
+    for (final c in sp.customExercises) {
+      final mine = exercise(c.id);
+      if (mine != null && mine.name == c.name) continue;
+      if (mine == null) {
+        _custom.add(c);
+      } else {
+        final id = _newId('c');
+        remap[c.id] = id;
+        _custom.add(Exercise.fromJson({...c.toJson(), 'id': id}, custom: true));
+      }
+    }
+    _entries.clear();
+    _presetId = null;
+    _plan = sp.plan;
+    var n = 0;
+    for (final e in sp.entries) {
+      final exId = remap[e.exerciseId] ?? e.exerciseId;
+      if (exercise(exId) == null) continue;
+      final load = e.loadKg > 0 ? e.loadKg : (knownLoads[exId] ?? 0);
+      _entries.add(WorkoutEntry.fromJson({
+        ...e.toJson(),
+        'id': _newId('e'),
+        'exerciseId': exId,
+        'loadKg': load,
+        'history': load > 0 ? [LoadRecord(DateTime.now(), load).toJson()] : const [],
+      }));
+      n++;
+    }
+    notifyListeners();
+    await _save();
+    return n;
+  }
+
+  List<SavedPlan> get savedPlans => List.unmodifiable(_saved);
+
+  /// Guarda o treino atual na biblioteca com um nome.
+  Future<void> saveCurrentPlan(String name) async {
+    final sp = exportShared(name);
+    _saved.insert(0, SavedPlan(id: _newId('s'), name: sp.name, date: DateTime.now(), code: sp.encode()));
+    notifyListeners();
+    await _save();
+  }
+
+  /// Guarda um treino recebido sem trocar o atual.
+  Future<void> saveShared(SharedPlan sp) async {
+    _saved.insert(0, SavedPlan(id: _newId('s'), name: sp.name, date: DateTime.now(), code: sp.encode()));
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> deleteSaved(String id) async {
+    _saved.removeWhere((x) => x.id == id);
+    notifyListeners();
+    await _save();
   }
 
   // ------------------------------------------------------------ lista do usuário

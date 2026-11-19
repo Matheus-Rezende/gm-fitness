@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gm_fitness/models/plan.dart';
+import 'package:gm_fitness/models/shared_plan.dart';
 import 'package:gm_fitness/models/split_templates.dart';
 import 'package:gm_fitness/models/training.dart';
 import 'package:gm_fitness/models/workout_entry.dart';
@@ -88,5 +89,32 @@ void main() {
     expect(back.trainDays, {0, 1, 3, 4});
     expect(splitName(5), 'ABCDE');
     expect(const TrainingPlan().slotLabel(2), 'Quarta');
+  });
+
+  test('treino enviado por código volta igual', () {
+    const sp = SharedPlan(
+      name: 'João · ABC',
+      author: 'Gui',
+      plan: TrainingPlan(mode: PlanMode.split, count: 3, names: {0: 'Peito'}, trainDays: {0, 2, 4}),
+      entries: [
+        WorkoutEntry(id: 'a', exerciseId: 'supino_reto_barra', weekday: 0, sets: 4, reps: '8-10', loadKg: 40, rir: 2),
+        WorkoutEntry(
+            id: 'b', exerciseId: 'rosca_alternada', weekday: 1, technique: Technique.dropset, note: 'última com drop'),
+      ],
+    );
+    final msg = sp.message();
+    expect(SharedPlan.containsCode(msg), isTrue);
+    final back = SharedPlan.decode('Olá! Segue o treino:\n$msg\nAbraço')!;
+    expect(back.name, 'João · ABC');
+    expect(back.author, 'Gui');
+    expect(back.plan.count, 3);
+    expect(back.plan.nameOf(0), 'Peito');
+    expect(back.entries.length, 2);
+    expect(back.entries.first.loadKg, 40);
+    expect(back.entries.first.rir, 2);
+    expect(back.entries.last.technique, Technique.dropset);
+    expect(back.entries.last.note, 'última com drop');
+    expect(SharedPlan.decode('GMF1.abc'), isNull);
+    expect(SharedPlan.decode('sem código'), isNull);
   });
 }

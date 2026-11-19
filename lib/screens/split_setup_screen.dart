@@ -7,6 +7,7 @@ import '../models/training.dart';
 import '../state/app_state.dart';
 import '../theme/gm_theme.dart';
 import '../widgets/common.dart';
+import 'share_plan_screen.dart';
 
 /// Organização da semana: por dia da semana ou em divisão A, B, C...,
 /// com nomes de cada treino, dias em que a pessoa treina e divisões prontas.
@@ -24,6 +25,16 @@ class SplitSetupScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
         children: [
+          Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: ListTile(
+              leading: const Icon(Icons.swap_horiz_rounded),
+              title: const Text('Enviar e receber treinos'),
+              subtitle: const Text('Importe o treino do seu personal ou envie o seu. Biblioteca de treinos.'),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SharePlanScreen())),
+            ),
+          ),
           Text('Como você organiza a semana?', style: text.titleMedium),
           const SizedBox(height: 8),
           SegmentedButton<PlanMode>(
