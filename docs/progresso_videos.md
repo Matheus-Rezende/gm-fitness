@@ -22,7 +22,7 @@ Arquivo de controle para retomar a geração dos vídeos quando os créditos do 
 1. Exercícios com máquina (aparelho, polia, Smith, esteira, remo).
 2. Por último, exercícios sem máquina (barra, halter, kettlebell, peso corporal).
 
-## Status (atualizado em 12/11/2026, saldo ~5 créditos; 50 grátis amanhã)
+## Status (atualizado em 19/11/2026, saldo ~5 créditos)
 
 Legenda: [x] pronto no Flow · [~] gerado, com ressalva · [ ] falta
 
@@ -60,15 +60,31 @@ Gerados em 12/11 (Omni 1.2 Flash, 8 s, soltos na aba Vídeos):
 - [x] remada_curvada_barra — homem e mulher
 - [x] remada_curvada_halteres — homem e mulher
 
-Faltam (próximo: agachamento_sumo):
-agachamento_sumo, crucifixo_halteres, afundo_halteres, elevacao_pernas, marcha_estacionaria,
-agachamento_livre, agachamento_goblet_kettlebell, agachamento_sumo_kettlebell, afundo,
-levantamento_terra, bom_dia, abducao_deitada, agachamento_isometrico, swing_kettlebell,
+Gerados em 19/11 — formato econômico: vídeo de 3 s a 360p (3 créditos) só com a DESCIDA,
+entre a imagem de início e a de fim; no app vira ida + pausa + volta (trecho invertido) com ffmpeg:
+- [x] agachamento_sumo — homem e mulher
+- [x] afundo_halteres — homem e mulher
+- [x] agachamento_livre — homem e mulher
+- [x] agachamento_goblet_kettlebell — homem e mulher
+- [x] crucifixo_halteres — homem e mulher
+- [x] elevacao_pernas — homem e mulher
+- [x] agachamento_sumo_kettlebell — homem e mulher
+- [~] afundo — homem e mulher (desce pouco; imagem final pouco profunda)
+- [x] levantamento_terra — homem e mulher
+Baixados no Chrome do usuário em 19/11 (aguardando o .zip).
+
+Faltam (próximo: marcha_estacionaria):
+marcha_estacionaria, bom_dia, abducao_deitada, agachamento_isometrico, swing_kettlebell,
 supino_reto_barra, supino_inclinado_barra, flexao_braco, flexao_joelhos, paralelas, barra_fixa,
 desenvolvimento_barra, elevacao_frontal, encolhimento, rosca_scott, triceps_frances, triceps_testa,
 triceps_coice, triceps_banco, escalador, giro_russo, elevacao_pernas_barra, super_homem,
-polichinelo, pular_corda, burpee
+polichinelo, pular_corda, burpee,
+e os novos da 0.19.0: rosca_alternada, rosca_martelo_alternada, rosca_inversa, rosca_21,
+rosca_concentrada, rosca_martelo_corda, puxada_supinada, desenvolvimento_arnold.
 
+Dica de custo (19/11): gerar as imagens de início e fim pelo agente (0 crédito), conferir se a câmera
+e a direção batem (pedir que a de FIM seja feita a partir da de INÍCIO), e só então o vídeo de 3 s.
+Créditos: 59 em 19/11 de manhã, ~5 depois desses 18 vídeos; mensais renovam dia 10.
 
 Obs. 12/11: todos os vídeos [x] e [~] acima (e o dead bug corrigido) já estão em assets/videos no repositório, ainda sem versão nova do app.
 voador_invertido usa o vídeo do homem também para a mulher (kExerciseVideosMaleOnly) até existir um vídeo bom dela.
