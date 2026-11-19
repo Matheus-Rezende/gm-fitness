@@ -204,7 +204,8 @@ void main() {
     await capture(tester, '22_treino_abc');
     await tap(tester, find.byType(PopupMenuButton<String>).first);
     await tap(tester, find.text('Editar e personalizar'));
-    await tapSheet(find.text('Personalizar'));
+    // "Personalizar" já abre expandido quando o exercício tem algo personalizado (RIR do modelo)
+    if (find.widgetWithText(ChoiceChip, 'Drop-set').evaluate().isEmpty) await tapSheet(find.text('Personalizar'));
     await tapSheet(find.widgetWithText(ChoiceChip, 'Drop-set'));
     await capture(tester, '23_personalizar');
     await tapSheet(find.text('Definir carga por série'));
