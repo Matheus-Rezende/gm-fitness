@@ -447,6 +447,14 @@ E('paralelas', 'Mergulho nas paralelas', 'triceps', ['peito', 'ombros'], 'barra_
   ['Descer demais forçando os ombros.', 'Balançar o corpo.'])
 
 # ------------------------------------------------------------------ COSTAS
+E('puxada_supinada', 'Puxada frontal supinada', 'costas', ['biceps'], 'polia', 'iniciante', 'lat_pulldown',
+  ['Segure a barra com as palmas viradas para você, na largura dos ombros.',
+   'Peito alto e leve inclinação do tronco para trás.',
+   'Puxe a barra até a parte de cima do peito, levando os cotovelos para baixo e junto ao corpo.',
+   'Volte devagar até estender os braços.'],
+  ['A pegada supinada envolve mais o bíceps e costuma permitir mais carga.'],
+  ['Puxar com os braços sem descer os ombros.', 'Jogar o tronco para trás para ajudar.'])
+
 E('puxada_frontal', 'Puxada frontal', 'costas', ['biceps', 'ombros'], 'polia', 'iniciante', 'lat_pulldown',
   ['Ajuste o apoio das coxas e segure a barra com pegada pronada, um pouco além dos ombros.',
    'Incline o tronco levemente para trás, cerca de 15 graus, com o peito aberto.',
@@ -526,6 +534,14 @@ E('desenvolvimento_barra', 'Desenvolvimento em pé com barra', 'ombros', ['trice
   ['Não arqueie a lombar: mantenha o abdômen firme.'],
   ['Inclinar o tronco para trás.', 'Empurrar a barra à frente do corpo.'])
 
+E('desenvolvimento_arnold', 'Desenvolvimento Arnold', 'ombros', ['triceps'], 'halter', 'intermediario',
+  'overhead_press_db',
+  ['Sentado com encosto, segure os halteres na frente dos ombros com as palmas viradas para você.',
+   'Ao empurrar para cima, gire os punhos até as palmas ficarem para a frente no alto.',
+   'Desça devagar fazendo o giro de volta, até as palmas ficarem viradas para você.'],
+  ['O giro trabalha também a parte da frente do ombro.', 'Use uma carga menor que no desenvolvimento comum.'],
+  ['Arquear a lombar.', 'Bater os halteres no alto.'])
+
 E('desenvolvimento_halteres', 'Desenvolvimento com halteres sentado', 'ombros', ['triceps'], 'halter',
   'iniciante', 'overhead_press_db',
   ['Sente-se com as costas apoiadas, halteres na altura dos ombros.',
@@ -598,6 +614,57 @@ E('rosca_martelo', 'Rosca martelo', 'biceps', ['antebraco'], 'halter', 'iniciant
    'Desça devagar.'],
   ['Trabalha também o antebraço.'],
   ['Balançar o tronco.'])
+
+E('rosca_alternada', 'Rosca alternada com halteres', 'biceps', ['antebraco'], 'halter', 'iniciante', 'curl_alt',
+  ['Em pé, halteres ao lado do corpo com as palmas viradas para o corpo.',
+   'Suba um halter girando o punho até a palma ficar para cima no alto do movimento.',
+   'Desça devagar até estender o braço, girando o punho de volta.',
+   'Repita com o outro braço. Cada subida dos dois braços conta uma repetição.'],
+  ['Alternar deixa você se concentrar num braço por vez e descansar o outro por alguns segundos.',
+   'O giro do punho (supinação) trabalha mais o bíceps.'],
+  ['Balançar o tronco para ajudar a subir.', 'Levar o cotovelo para a frente.', 'Descer o halter de uma vez.'])
+
+E('rosca_martelo_alternada', 'Rosca martelo alternada', 'biceps', ['antebraco'], 'halter', 'iniciante', 'hammer_alt',
+  ['Em pé, halteres ao lado do corpo com as palmas viradas para o corpo (pegada neutra).',
+   'Suba um halter sem girar o punho, como se fosse martelar.',
+   'Desça devagar e repita com o outro braço.'],
+  ['Trabalha o braquial e o braquiorradial, que dão espessura ao braço e ao antebraço.'],
+  ['Girar o punho durante a subida.', 'Balançar o tronco.'])
+
+E('rosca_inversa', 'Rosca inversa com barra', 'antebraco', ['biceps'], 'barra', 'intermediario', 'curl_bb',
+  ['Segure a barra com as palmas viradas para baixo (pegada pronada), na largura dos ombros.',
+   'Cotovelos colados ao tronco e punhos alinhados com o antebraço.',
+   'Flexione os cotovelos subindo a barra até perto dos ombros.',
+   'Desça devagar até estender os braços.'],
+  ['Use uma carga menor que na rosca direta: com a palma para baixo, o antebraço faz mais força.',
+   'A barra W deixa o punho mais confortável.'],
+  ['Dobrar os punhos para trás.', 'Jogar o corpo para subir.'])
+
+E('rosca_21', 'Rosca 21', 'biceps', ['antebraco'], 'barra', 'intermediario', 'curl_bb',
+  ['Segure a barra com as palmas para frente, cotovelos junto ao corpo.',
+   'Faça 7 repetições da parte de baixo: dos braços estendidos até os cotovelos a 90 graus.',
+   'Sem descansar, faça 7 repetições da parte de cima: dos 90 graus até a barra perto dos ombros.',
+   'Termine com 7 repetições completas, de baixo até em cima.'],
+  ['São 21 repetições por série; use uma carga cerca de 30% menor que a da rosca direta.',
+   'Ótima para variar o estímulo, mas cansa bastante: 2 a 3 séries bastam.'],
+  ['Perder a contagem e misturar as partes.', 'Balançar o tronco nas repetições finais.'])
+
+E('rosca_martelo_corda', 'Rosca martelo na polia com corda', 'biceps', ['antebraco'], 'polia', 'iniciante',
+  'curl_cable',
+  ['De frente para a polia baixa, segure a corda com as palmas viradas uma para a outra.',
+   'Cotovelos colados ao corpo.',
+   'Flexione os cotovelos trazendo a corda em direção aos ombros, sem girar os punhos.',
+   'Volte devagar.'],
+  ['O cabo mantém o músculo trabalhando durante todo o movimento.'],
+  ['Inclinar o tronco para trás.', 'Afastar os cotovelos do corpo.'])
+
+E('rosca_concentrada', 'Rosca concentrada', 'biceps', [], 'halter', 'iniciante', 'concentration_curl',
+  ['Sente-se na ponta do banco com as pernas afastadas e o tronco inclinado à frente.',
+   'Apoie a parte de trás do braço na parte de dentro da coxa, com o halter na mão e o braço estendido.',
+   'Flexione o cotovelo levando o halter em direção ao ombro.',
+   'Desça devagar até quase estender. Faça todas as repetições e troque de braço.'],
+  ['O apoio na coxa impede o balanço, isolando bem o bíceps.'],
+  ['Tirar o braço da coxa.', 'Usar o ombro para subir o peso.'])
 
 E('rosca_polia', 'Rosca na polia', 'biceps', [], 'polia', 'iniciante', 'curl_cable',
   ['Segure a barra da polia baixa com as palmas para cima.',

@@ -715,6 +715,24 @@ curl_cable = variant(curl_db, 'curl_cable', 'Rosca na polia', [dict(type='pulley
                                                                 cable(112, 116, 'handN')])
 
 
+
+def _curl_alt_keys():
+    down, up = FA(180, 178), FA(176, 30)
+    return [standing(X0, 0, arm=down, arm2=down), standing(X0, 0, arm=up, arm2=down),
+            standing(X0, 0, arm=down, arm2=up)]
+
+
+# Rosca alternada: um braço sobe e desce, depois o outro.
+CURL_ALT_SEQ = [S(0, 0, 0.3, 'Braços estendidos'), S(0, 1, 1.0, 'Suba um braço'), S(1, 1, 0.3, 'Contraia'),
+                S(1, 0, 1.4, 'Desça devagar'), S(0, 2, 1.0, 'Agora o outro braço'), S(2, 2, 0.3, 'Contraia'),
+                S(2, 0, 1.4, 'Desça devagar')]
+curl_alt = add_pattern(Pattern('curl_alt', 'Rosca alternada', 'side', _curl_alt_keys(), CURL_ALT_SEQ,
+                               props=[db_end('handN'), db_end('handF')]))
+hammer_alt = variant(curl_alt, 'hammer_alt', 'Rosca martelo alternada',
+                     [dict(type='db_side', angle=0.0, along=True, track=[J_('handN'), J_('elbN')]),
+                      dict(type='db_side', angle=0.0, along=True, track=[J_('handF'), J_('elbF')])])
+
+
 def _preacher_keys():
     hip = (66.0, 94.0)
     base = dict(leg=IL((96, ANK), 1, 90))
@@ -727,6 +745,11 @@ preacher = add_pattern(Pattern('preacher_curl', 'Rosca Scott', 'side', _preacher
                                       dict(type='line', x1=94, y1=96, x2=94, y2=GROUND, w=3),
                                       dict(type='rect', x=54, y=101, w=26, h=6),
                                       dict(type='line', x1=66, y1=107, x2=66, y2=GROUND, w=3), plate()]))
+
+# Rosca concentrada: sentado, cotovelo apoiado na parte de dentro da coxa.
+concentration = variant(preacher, 'concentration_curl', 'Rosca concentrada',
+                        [dict(type='rect', x=54, y=101, w=26, h=6),
+                         dict(type='line', x1=66, y1=107, x2=66, y2=GROUND, w=3), db_end()])
 
 
 def _pushdown_keys():

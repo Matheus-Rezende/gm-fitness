@@ -330,7 +330,7 @@ class _SessionBar extends StatelessWidget {
             : null,
         icon: const Icon(Icons.play_arrow_rounded, color: GmColors.yellow, size: 28),
         label: Text(state.plan.isSplit
-            ? 'Iniciar ${state.plan.slotLabel(day).toLowerCase()}'
+            ? 'Iniciar treino ${splitLetters[day.clamp(0, 5)]}'
             : 'Iniciar treino de ${state.plan.slotLabel(day).toLowerCase()}'),
       );
     }

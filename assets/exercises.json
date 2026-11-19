@@ -1341,6 +1341,30 @@
    ]
   },
   {
+   "id": "puxada_supinada",
+   "name": "Puxada frontal supinada",
+   "group": "costas",
+   "secondary": [
+    "biceps"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "lat_pulldown",
+   "steps": [
+    "Segure a barra com as palmas viradas para você, na largura dos ombros.",
+    "Peito alto e leve inclinação do tronco para trás.",
+    "Puxe a barra até a parte de cima do peito, levando os cotovelos para baixo e junto ao corpo.",
+    "Volte devagar até estender os braços."
+   ],
+   "tips": [
+    "A pegada supinada envolve mais o bíceps e costuma permitir mais carga."
+   ],
+   "mistakes": [
+    "Puxar com os braços sem descer os ombros.",
+    "Jogar o tronco para trás para ajudar."
+   ]
+  },
+  {
    "id": "puxada_frontal",
    "name": "Puxada frontal",
    "group": "costas",
@@ -1590,6 +1614,30 @@
    ]
   },
   {
+   "id": "desenvolvimento_arnold",
+   "name": "Desenvolvimento Arnold",
+   "group": "ombros",
+   "secondary": [
+    "triceps"
+   ],
+   "equipment": "halter",
+   "level": "intermediario",
+   "anim": "overhead_press_db",
+   "steps": [
+    "Sentado com encosto, segure os halteres na frente dos ombros com as palmas viradas para você.",
+    "Ao empurrar para cima, gire os punhos até as palmas ficarem para a frente no alto.",
+    "Desça devagar fazendo o giro de volta, até as palmas ficarem viradas para você."
+   ],
+   "tips": [
+    "O giro trabalha também a parte da frente do ombro.",
+    "Use uma carga menor que no desenvolvimento comum."
+   ],
+   "mistakes": [
+    "Arquear a lombar.",
+    "Bater os halteres no alto."
+   ]
+  },
+  {
    "id": "desenvolvimento_halteres",
    "name": "Desenvolvimento com halteres sentado",
    "group": "ombros",
@@ -1824,6 +1872,151 @@
    ],
    "mistakes": [
     "Balançar o tronco."
+   ]
+  },
+  {
+   "id": "rosca_alternada",
+   "name": "Rosca alternada com halteres",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "curl_alt",
+   "steps": [
+    "Em pé, halteres ao lado do corpo com as palmas viradas para o corpo.",
+    "Suba um halter girando o punho até a palma ficar para cima no alto do movimento.",
+    "Desça devagar até estender o braço, girando o punho de volta.",
+    "Repita com o outro braço. Cada subida dos dois braços conta uma repetição."
+   ],
+   "tips": [
+    "Alternar deixa você se concentrar num braço por vez e descansar o outro por alguns segundos.",
+    "O giro do punho (supinação) trabalha mais o bíceps."
+   ],
+   "mistakes": [
+    "Balançar o tronco para ajudar a subir.",
+    "Levar o cotovelo para a frente.",
+    "Descer o halter de uma vez."
+   ]
+  },
+  {
+   "id": "rosca_martelo_alternada",
+   "name": "Rosca martelo alternada",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "hammer_alt",
+   "steps": [
+    "Em pé, halteres ao lado do corpo com as palmas viradas para o corpo (pegada neutra).",
+    "Suba um halter sem girar o punho, como se fosse martelar.",
+    "Desça devagar e repita com o outro braço."
+   ],
+   "tips": [
+    "Trabalha o braquial e o braquiorradial, que dão espessura ao braço e ao antebraço."
+   ],
+   "mistakes": [
+    "Girar o punho durante a subida.",
+    "Balançar o tronco."
+   ]
+  },
+  {
+   "id": "rosca_inversa",
+   "name": "Rosca inversa com barra",
+   "group": "antebraco",
+   "secondary": [
+    "biceps"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "curl_bb",
+   "steps": [
+    "Segure a barra com as palmas viradas para baixo (pegada pronada), na largura dos ombros.",
+    "Cotovelos colados ao tronco e punhos alinhados com o antebraço.",
+    "Flexione os cotovelos subindo a barra até perto dos ombros.",
+    "Desça devagar até estender os braços."
+   ],
+   "tips": [
+    "Use uma carga menor que na rosca direta: com a palma para baixo, o antebraço faz mais força.",
+    "A barra W deixa o punho mais confortável."
+   ],
+   "mistakes": [
+    "Dobrar os punhos para trás.",
+    "Jogar o corpo para subir."
+   ]
+  },
+  {
+   "id": "rosca_21",
+   "name": "Rosca 21",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "barra",
+   "level": "intermediario",
+   "anim": "curl_bb",
+   "steps": [
+    "Segure a barra com as palmas para frente, cotovelos junto ao corpo.",
+    "Faça 7 repetições da parte de baixo: dos braços estendidos até os cotovelos a 90 graus.",
+    "Sem descansar, faça 7 repetições da parte de cima: dos 90 graus até a barra perto dos ombros.",
+    "Termine com 7 repetições completas, de baixo até em cima."
+   ],
+   "tips": [
+    "São 21 repetições por série; use uma carga cerca de 30% menor que a da rosca direta.",
+    "Ótima para variar o estímulo, mas cansa bastante: 2 a 3 séries bastam."
+   ],
+   "mistakes": [
+    "Perder a contagem e misturar as partes.",
+    "Balançar o tronco nas repetições finais."
+   ]
+  },
+  {
+   "id": "rosca_martelo_corda",
+   "name": "Rosca martelo na polia com corda",
+   "group": "biceps",
+   "secondary": [
+    "antebraco"
+   ],
+   "equipment": "polia",
+   "level": "iniciante",
+   "anim": "curl_cable",
+   "steps": [
+    "De frente para a polia baixa, segure a corda com as palmas viradas uma para a outra.",
+    "Cotovelos colados ao corpo.",
+    "Flexione os cotovelos trazendo a corda em direção aos ombros, sem girar os punhos.",
+    "Volte devagar."
+   ],
+   "tips": [
+    "O cabo mantém o músculo trabalhando durante todo o movimento."
+   ],
+   "mistakes": [
+    "Inclinar o tronco para trás.",
+    "Afastar os cotovelos do corpo."
+   ]
+  },
+  {
+   "id": "rosca_concentrada",
+   "name": "Rosca concentrada",
+   "group": "biceps",
+   "secondary": [],
+   "equipment": "halter",
+   "level": "iniciante",
+   "anim": "concentration_curl",
+   "steps": [
+    "Sente-se na ponta do banco com as pernas afastadas e o tronco inclinado à frente.",
+    "Apoie a parte de trás do braço na parte de dentro da coxa, com o halter na mão e o braço estendido.",
+    "Flexione o cotovelo levando o halter em direção ao ombro.",
+    "Desça devagar até quase estender. Faça todas as repetições e troque de braço."
+   ],
+   "tips": [
+    "O apoio na coxa impede o balanço, isolando bem o bíceps."
+   ],
+   "mistakes": [
+    "Tirar o braço da coxa.",
+    "Usar o ombro para subir o peso."
    ]
   },
   {

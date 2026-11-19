@@ -175,6 +175,14 @@ void main() {
   }, skip: !enabled);
   testWidgets('divisão ABC e personalização', (tester) async {
     phone(tester);
+    // toque dentro da folha de edição (rola a folha até o item aparecer)
+    Future<void> tapSheet(Finder f) async {
+      await tester.scrollUntilVisible(f, 200, scrollable: find.byType(Scrollable).last);
+      await tester.pump();
+      await tester.tap(f);
+      await settle(tester, 6);
+    }
+
     await tester.runAsync(loadFonts);
     SharedPreferences.setMockInitialValues({
       'profile_v1': '{"sex":"M","name":"Gui","onboarded":true}',
@@ -192,14 +200,14 @@ void main() {
     await capture(tester, '22_treino_abc');
     await tap(tester, find.byType(PopupMenuButton<String>).first);
     await tap(tester, find.text('Editar e personalizar'));
-    await tap(tester, find.text('Personalizar'));
-    await tap(tester, find.widgetWithText(ChoiceChip, 'Drop-set'));
+    await tapSheet(find.text('Personalizar'));
+    await tapSheet(find.widgetWithText(ChoiceChip, 'Drop-set'));
     await capture(tester, '23_personalizar');
-    await tap(tester, find.text('Definir carga por série'));
-    await tap(tester, find.widgetWithText(ActionChip, 'Pirâmide crescente'));
-    await tap(tester, find.widgetWithText(ActionChip, 'Aquecimento'));
+    await tapSheet(find.text('Definir carga por série'));
+    await tapSheet(find.widgetWithText(ActionChip, 'Pirâmide crescente'));
+    await tapSheet(find.widgetWithText(ActionChip, 'Aquecimento'));
     await capture(tester, '24_carga_por_serie');
-    await tap(tester, find.text('Salvar'));
+    await tapSheet(find.text('Salvar'));
     await capture(tester, '25_treino_personalizado');
     await tap(tester, find.byType(PopupMenuButton<String>).at(1));
     await tap(tester, find.text('Calcular 1RM'));
