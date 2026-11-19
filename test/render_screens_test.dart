@@ -177,7 +177,11 @@ void main() {
     phone(tester);
     // toque dentro da folha de edição (rola a folha até o item aparecer)
     Future<void> tapSheet(Finder f) async {
-      await tester.scrollUntilVisible(f, 200, scrollable: find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first);
+      if (f.evaluate().isEmpty) {
+        final texts = find.byType(Text).evaluate().map((e) => (e.widget as Text).data).whereType<String>().join(' | ');
+        fail('Não achei $f. Textos na tela: $texts');
+      }
+      await tester.ensureVisible(f);
       await tester.pump();
       await tester.tap(f);
       await settle(tester, 6);
